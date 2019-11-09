@@ -265,7 +265,7 @@ public class GameState implements Cloneable {
                 
         for(PlaceArmiesMove move : moves)
         {
-            Region region = move.getRegion();
+            Region region = region(move.getRegion());
             int armies = move.getArmies();
             
             if (!region.isOwnedBy(turn))
@@ -383,8 +383,8 @@ public class GameState implements Cloneable {
     //see wiki.warlight.net/index.php/Combat_Basics
     private void doAttack(AttackTransferMove move)
     {
-        Region fromRegion = move.getFromRegion();
-        Region toRegion = move.getToRegion();
+        Region fromRegion = region(move.getFromRegion());
+        Region toRegion = region(move.getToRegion());
         int attackingArmies;
         int defendingArmies = toRegion.getArmies();
         
@@ -434,8 +434,8 @@ public class GameState implements Cloneable {
         
         for (int i = 0 ; i < moves.size() ; ++i) {
             AttackTransferMove move = moves.get(i);
-            Region fromRegion = move.getFromRegion();
-            Region toRegion = move.getToRegion();
+            Region fromRegion = region(move.getFromRegion());
+            Region toRegion = region(move.getToRegion());
 
             if (!fromRegion.isOwnedBy(turn))
                 move.setIllegalMove(fromRegion.getId() + " attack/transfer not owned");
@@ -471,8 +471,8 @@ public class GameState implements Cloneable {
             if(!move.getIllegalMove().equals("")) //the move is illegal
                 continue;
             
-            Region fromRegion = move.getFromRegion();
-            Region toRegion = move.getToRegion();
+            Region fromRegion = region(move.getFromRegion());
+            Region toRegion = region(move.getToRegion());
             
             move.setArmies(Math.min(move.getArmies(), fromRegion.getArmies() - 1));
 

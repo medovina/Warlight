@@ -18,6 +18,7 @@
 package conquest.game.move;
 
 import conquest.game.Region;
+import conquest.game.world.WorldRegion;
 
 /**
  * This Move is used in the second part of each round. It represents the attack or transfer of armies from
@@ -26,16 +27,16 @@ import conquest.game.Region;
  */
 
 public class AttackTransferMove extends Move {
-    
-    private Region fromRegion;
-    private Region toRegion;
+    private WorldRegion fromRegion;
+    private WorldRegion toRegion;
     private int armies;
     
-    public AttackTransferMove(Region fromRegion, Region toRegion, int armies)
-    {
-        this.fromRegion = fromRegion;
-        this.toRegion = toRegion;
-        this.armies = armies;
+    public AttackTransferMove(WorldRegion fromRegion, WorldRegion toRegion, int armies) {
+        this.fromRegion = fromRegion; this.toRegion = toRegion; this.armies = armies;
+    }
+
+    public AttackTransferMove(Region fromRegion, Region toRegion, int armies) {
+        this(fromRegion.getWorldRegion(), toRegion.getWorldRegion(), armies);
     }
 
     /**
@@ -48,14 +49,14 @@ public class AttackTransferMove extends Move {
     /**
      * @return The Region this Move is attacking or transferring from
      */
-    public Region getFromRegion() {
+    public WorldRegion getFromRegion() {
         return fromRegion;
     }
     
     /**
      * @return The Region this Move is attacking or transferring to
      */
-    public Region getToRegion() {
+    public WorldRegion getToRegion() {
         return toRegion;
     }
     
@@ -71,7 +72,7 @@ public class AttackTransferMove extends Move {
      */
     public String getString() {
         if(getIllegalMove().equals(""))
-            return "attack/transfer " + fromRegion.getId() + " " + toRegion.getId() + " " + armies;
+            return "attack/transfer " + fromRegion.id + " " + toRegion.id + " " + armies;
         else
             return "illegal_move " + getIllegalMove();
     }

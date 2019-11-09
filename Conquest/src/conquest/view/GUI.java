@@ -454,7 +454,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         int total = 0;
         
         for (PlaceArmiesMove move : placeArmiesMoves) {
-            int id = move.getRegion().getId();
+            int id = move.getRegion().id;
             RegionInfo region = this.regions[id-1];    
             region.setArmies(region.getArmies() - move.getArmies());
             region.armiesPlus += move.getArmies();
@@ -468,7 +468,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         waitForClick();
         
         for (PlaceArmiesMove move : placeArmiesMoves) {
-            int id = move.getRegion().getId();
+            int id = move.getRegion().id;
             RegionInfo region = this.regions[id-1];
             region.setArmies(region.getArmies() + region.armiesPlus);
             region.armiesPlus = 0;
@@ -484,12 +484,12 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     public void transfer(AttackTransferMove move) {
         this.requestFocusInWindow();
         
-        String toName = move.getToRegion().mapName();
+        String toName = move.getToRegion().mapName;
         actionTxt.setText(botName(game.me()) + " transfers to " + toName);
         Team player = getTeam(game.me());
         
-        RegionInfo fromRegion = this.regions[move.getFromRegion().getId() - 1];
-        RegionInfo toRegion = this.regions[move.getToRegion().getId() - 1];
+        RegionInfo fromRegion = this.regions[move.getFromRegion().id - 1];
+        RegionInfo toRegion = this.regions[move.getToRegion().id - 1];
         int armies = move.getArmies();
         
         fromRegion.armiesPlus = -armies;
@@ -498,8 +498,8 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         toRegion.armiesPlus = armies;
         toRegion.setHighlight(true);
         
-        int[] fromPos = positions[move.getFromRegion().getId() - 1];
-        int[] toPos = positions[move.getToRegion().getId() - 1];
+        int[] fromPos = positions[move.getFromRegion().id - 1];
+        int[] toPos = positions[move.getToRegion().id - 1];
         mainArrow.setFromTo(fromPos[0], fromPos[1] + 20, toPos[0], toPos[1] + 20);
         mainArrow.setColor(TeamView.getColor(player));
         mainArrow.setNumber(armies);
@@ -542,12 +542,12 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     public void attack(AttackTransferMove move) {
         this.requestFocusInWindow();
         
-        String toName = move.getToRegion().mapName();
+        String toName = move.getToRegion().mapName;
         actionTxt.setText(botName(game.me()) + " attacks " + toName);
         
         Team attacker = getTeam(game.me());
-        RegionInfo fromRegion = this.regions[move.getFromRegion().getId() - 1];
-        RegionInfo toRegion = this.regions[move.getToRegion().getId() - 1];
+        RegionInfo fromRegion = this.regions[move.getFromRegion().id - 1];
+        RegionInfo toRegion = this.regions[move.getToRegion().id - 1];
         int armies = move.getArmies();
         
         fromRegion.armiesPlus = -armies;
@@ -556,7 +556,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         toRegion.armiesPlus = armies;
         toRegion.setHighlight(true);
         
-        showArrow(mainArrow, move.getFromRegion().getId(), move.getToRegion().getId(), attacker, armies);
+        showArrow(mainArrow, move.getFromRegion().id, move.getToRegion().id, attacker, armies);
         
         waitForClick();        
     }

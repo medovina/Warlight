@@ -75,13 +75,13 @@ public class IORobot implements Robot
         
         handler.writeLine(output);
         String line = handler.readLine(config.timeoutMillis);
-        return parser.parseStartingRegion(state, line);
+        return state.region(parser.parseStartingRegion(line));
     }
 
-    private List<PlaceArmiesMove> placeArmiesMoves(GameState state, String input) {
+    private List<PlaceArmiesMove> placeArmiesMoves(String input) {
         ArrayList<PlaceArmiesMove> moves = new ArrayList<PlaceArmiesMove>();
         
-        for (Move move : parser.parseMoves(state, input, player))
+        for (Move move : parser.parseMoves(input, player))
                 if (move instanceof PlaceArmiesMove)
                         moves.add((PlaceArmiesMove) move);
                 else
@@ -93,13 +93,13 @@ public class IORobot implements Robot
     @Override
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state)
     {
-        return placeArmiesMoves(state, getMoves("place_armies"));
+        return placeArmiesMoves(getMoves("place_armies"));
     }
 
-    private List<AttackTransferMove> attackTransferMoves(GameState state, String input) {
+    private List<AttackTransferMove> attackTransferMoves(String input) {
         ArrayList<AttackTransferMove> moves = new ArrayList<AttackTransferMove>();
         
-        for (Move move : parser.parseMoves(state, input, player))
+        for (Move move : parser.parseMoves(input, player))
                 if (move instanceof AttackTransferMove)
                         moves.add((AttackTransferMove) move);
                 else
@@ -111,7 +111,7 @@ public class IORobot implements Robot
     @Override
     public List<AttackTransferMove> getAttackTransferMoves(GameState state)
     {
-        return attackTransferMoves(state, getMoves("attack/transfer"));
+        return attackTransferMoves(getMoves("attack/transfer"));
     }
     
     private String getMoves(String moveType)
