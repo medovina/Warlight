@@ -101,6 +101,10 @@ public class Region {
     public int getId() {
         return id;
     }
+
+    public String mapName() {
+        return worldRegion.mapName;
+    }
     
     /**
      * @return A list of this Region's neighboring Regions

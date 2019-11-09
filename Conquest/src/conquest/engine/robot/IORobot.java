@@ -26,9 +26,8 @@ import conquest.engine.Robot;
 import conquest.engine.io.handler.Handler;
 import conquest.engine.io.handler.IHandler;
 import conquest.engine.replay.GameLog;
-import conquest.game.GameState;
+import conquest.game.*;
 import conquest.game.move.*;
-import conquest.game.world.WorldRegion;
 
 public class IORobot implements Robot
 {
@@ -68,21 +67,21 @@ public class IORobot implements Robot
     }
         
     @Override
-    public WorldRegion getStartingRegion(GameState state)
+    public Region getStartingRegion(GameState state)
     {
         String output = "pick_starting_region";
-        for(WorldRegion region : state.getPickableRegions())
-            output = output.concat(" " + region.id);
+        for(Region region : state.getPickableRegions())
+            output = output.concat(" " + region.getId());
         
         handler.writeLine(output);
         String line = handler.readLine(config.timeoutMillis);
-        return parser.parseStartingRegion(line);
+        return parser.parseStartingRegion(state, line);
     }
 
-    private List<PlaceArmiesMove> placeArmiesMoves(String input) {
+    private List<PlaceArmiesMove> placeArmiesMoves(GameState state, String input) {
         ArrayList<PlaceArmiesMove> moves = new ArrayList<PlaceArmiesMove>();
         
-        for (Move move : parser.parseMoves(input, player))
+        for (Move move : parser.parseMoves(state, input, player))
                 if (move instanceof PlaceArmiesMove)
                         moves.add((PlaceArmiesMove) move);
                 else
@@ -94,13 +93,13 @@ public class IORobot implements Robot
     @Override
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state)
     {
-        return placeArmiesMoves(getMoves("place_armies"));
+        return placeArmiesMoves(state, getMoves("place_armies"));
     }
 
-    private List<AttackTransferMove> attackTransferMoves(String input) {
+    private List<AttackTransferMove> attackTransferMoves(GameState state, String input) {
         ArrayList<AttackTransferMove> moves = new ArrayList<AttackTransferMove>();
         
-        for (Move move : parser.parseMoves(input, player))
+        for (Move move : parser.parseMoves(state, input, player))
                 if (move instanceof AttackTransferMove)
                         moves.add((AttackTransferMove) move);
                 else
@@ -112,7 +111,7 @@ public class IORobot implements Robot
     @Override
     public List<AttackTransferMove> getAttackTransferMoves(GameState state)
     {
-        return attackTransferMoves(getMoves("attack/transfer"));
+        return attackTransferMoves(state, getMoves("attack/transfer"));
     }
     
     private String getMoves(String moveType)

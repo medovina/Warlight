@@ -9,7 +9,6 @@ import conquest.bot.*;
 import conquest.engine.Robot;
 import conquest.game.*;
 import conquest.game.move.*;
-import conquest.game.world.WorldRegion;
 
 public class InternalRobot implements Robot {
     
@@ -81,7 +80,7 @@ public class InternalRobot implements Robot {
     }
     
     @Override
-    public WorldRegion getStartingRegion(GameState state)
+    public Region getStartingRegion(GameState state)
     {
         if (hijacked) {
             return humanHijack.getStartingRegion(state);            

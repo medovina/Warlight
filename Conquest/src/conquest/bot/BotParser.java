@@ -59,7 +59,7 @@ public class BotParser extends Thread {
         this.output = output;
         
         this.bot = bot;
-        this.currentState = new GameState(null, new GameMap(), null, new ArrayList<WorldRegion>());
+        this.currentState = new GameState(null, new GameMap(), null, new ArrayList<Region>());
     }
     
     public static Bot constructBot(String botFQCN) {
@@ -110,14 +110,14 @@ public class BotParser extends Thread {
     //regions from which a player is able to pick his preferred starting regions
     void setPickableStartingRegions(GameState state, String[] mapInput)
     {
-        ArrayList<WorldRegion> regions = new ArrayList<WorldRegion>();
+        ArrayList<Region> regions = new ArrayList<Region>();
         
         for(int i=2; i<mapInput.length; i++)
         {
             int regionId;
             try {
                 regionId = Integer.parseInt(mapInput[i]);
-                WorldRegion pickableRegion = WorldRegion.forId(regionId);
+                Region pickableRegion = state.getRegion(regionId);
                 regions.add(pickableRegion);
             }
             catch(Exception e) {
@@ -251,8 +251,8 @@ public class BotParser extends Thread {
                     //pick a region you want to start with
                     currentState.setPhase(Phase.STARTING_REGIONS);
                     setPickableStartingRegions(currentState, parts);
-                    WorldRegion startingRegion = bot.chooseRegion(currentState);
-                    String output = startingRegion.id + "";
+                    Region startingRegion = bot.chooseRegion(currentState);
+                    String output = startingRegion.getId() + "";
                     
                     log("OUT: " + output);
                     this.output.println(output);

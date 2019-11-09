@@ -1,12 +1,11 @@
 package conquest.game.move;
 
-import conquest.game.GameState;
-import conquest.game.world.WorldRegion;
+import conquest.game.*;
 
 public class ChooseAction implements Action {
-    public WorldRegion region;
+    public Region region;
     
-    public ChooseAction(WorldRegion region) {
+    public ChooseAction(Region region) {
         this.region = region;
     }
     

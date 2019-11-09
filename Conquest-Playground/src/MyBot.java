@@ -8,7 +8,6 @@ import conquest.engine.Config;
 import conquest.engine.RunGame;
 import conquest.game.*;
 import conquest.game.move.*;
-import conquest.game.world.WorldRegion;
 import conquest.utils.Util;
 
 public class MyBot implements Bot
@@ -35,8 +34,8 @@ public class MyBot implements Bot
     // Choose a starting region.
     
     @Override
-    public WorldRegion chooseRegion(GameState state) {
-        ArrayList<WorldRegion> choosable = state.getPickableRegions();
+    public Region chooseRegion(GameState state) {
+        ArrayList<Region> choosable = state.getPickableRegions();
         return choosable.get(rand.nextInt(choosable.size()));
     }
 
@@ -58,7 +57,7 @@ public class MyBot implements Bot
         List<PlaceArmiesMove> ret = new ArrayList<PlaceArmiesMove>();
         for (int i = 0 ; i < numRegions ; ++i)
             if (count[i] > 0)
-                ret.add(new PlaceArmiesMove(mine.get(i).getWorldRegion(), count[i]));
+                ret.add(new PlaceArmiesMove(mine.get(i), count[i]));
         return ret;
     }
     

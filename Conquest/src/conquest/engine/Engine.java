@@ -24,7 +24,6 @@ import conquest.engine.robot.HumanRobot;
 import conquest.game.*;
 import conquest.game.move.AttackTransferMove;
 import conquest.game.move.PlaceArmiesMove;
-import conquest.game.world.WorldRegion;
 import conquest.view.GUI;
 
 public class Engine {
@@ -119,7 +118,7 @@ public class Engine {
             for (int p = 1 ; p <= 2 ; ++p) {
                 sendUpdateMapInfo(p);
                 long start = System.currentTimeMillis();
-                WorldRegion region = robot(p).getStartingRegion(game);
+                Region region = robot(p).getStartingRegion(game);
                 if (timeout(robot(p), start)) {
                     System.err.println("bot failed to return starting region in time!");
                     region = null;
@@ -140,7 +139,7 @@ public class Engine {
         }
     }
     
-    private WorldRegion getRandomStartingRegion()
+    private Region getRandomStartingRegion()
     {
         return game.pickableRegions.get(game.random.nextInt(game.pickableRegions.size()));
     }

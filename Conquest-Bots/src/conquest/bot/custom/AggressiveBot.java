@@ -13,7 +13,6 @@ import conquest.engine.Config;
 import conquest.engine.RunGame;
 import conquest.game.*;
 import conquest.game.move.*;
-import conquest.game.world.WorldContinent;
 import conquest.game.world.WorldRegion;
 import conquest.utils.Util;
 
@@ -39,14 +38,14 @@ public class AggressiveBot implements Bot
     // ================
     
     @Override
-    public WorldRegion chooseRegion(GameState state) {
-        ArrayList<WorldRegion> choosable = state.getPickableRegions();
+    public Region chooseRegion(GameState state) {
+        ArrayList<Region> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
-        WorldRegion best = null;
+        Region best = null;
         
-        for (WorldRegion r : choosable) {
-            int p = getPreferredContinentPriority(r.worldContinent);
+        for (Region r : choosable) {
+            int p = getPreferredContinentPriority(r.getContinent());
             if (p < min) {
                 min = p;
                 best = r;
@@ -56,8 +55,8 @@ public class AggressiveBot implements Bot
         return best;
     }
     
-    public int getPreferredContinentPriority(WorldContinent continent) {
-        switch (continent) {
+    public int getPreferredContinentPriority(Continent continent) {
+        switch (continent.getWorldContinent()) {
         case Australia:     return 1;
         case South_America: return 2;
         case North_America: return 3;
@@ -106,7 +105,7 @@ public class AggressiveBot implements Bot
         
         while (armiesLeft > 0) {
             int count = Math.min(3, armiesLeft);
-            result.add(new PlaceArmiesMove(mine.get(index).getWorldRegion(), count));
+            result.add(new PlaceArmiesMove(mine.get(index), count));
             armiesLeft -= count;
             ++index;
             if (index >= mine.size()) index = 0;
@@ -189,7 +188,7 @@ public class AggressiveBot implements Bot
     }
         
     private AttackTransferMove transfer(Region from, Region to) {
-        AttackTransferMove result = new AttackTransferMove(from.getWorldRegion(), to.getWorldRegion(), from.getArmies()-1);
+        AttackTransferMove result = new AttackTransferMove(from, to, from.getArmies()-1);
         return result;
     }
     

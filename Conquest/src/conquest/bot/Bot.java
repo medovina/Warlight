@@ -19,10 +19,9 @@ package conquest.bot;
 
 import java.util.List;
 
-import conquest.game.GameState;
+import conquest.game.*;
 import conquest.game.move.AttackTransferMove;
 import conquest.game.move.PlaceArmiesMove;
-import conquest.game.world.WorldRegion;
 
 public interface Bot {
     public void init(long timeoutMillis);
@@ -32,7 +31,7 @@ public interface Bot {
      * @param state
      * @param timeoutMillis in milliseconds
      */
-    public WorldRegion chooseRegion(GameState state);
+    public Region chooseRegion(GameState state);
     
     /**
      * PLACE ARMIES - distribute armies between your regions.

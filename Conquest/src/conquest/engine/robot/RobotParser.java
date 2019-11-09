@@ -19,14 +19,12 @@ package conquest.engine.robot;
 
 import java.util.ArrayList;
 
-import conquest.game.move.AttackTransferMove;
-import conquest.game.move.Move;
-import conquest.game.move.PlaceArmiesMove;
-import conquest.game.world.WorldRegion;
+import conquest.game.*;
+import conquest.game.move.*;
 
 public class RobotParser {
     
-    public ArrayList<Move> parseMoves(String input, int player)
+    public ArrayList<Move> parseMoves(GameState state, String input, int player)
     {
         ArrayList<Move> moves = new ArrayList<Move>();
         
@@ -43,7 +41,7 @@ public class RobotParser {
                     //player.getBot().addToDump("Maximum number of moves reached, max 50 moves are allowed");
                     break;
                 }
-                Move move = parseMove(split[i], player);
+                Move move = parseMove(state, split[i], player);
                 if(move != null)
                     moves.add(move);
             }
@@ -55,7 +53,7 @@ public class RobotParser {
     }
 
     //returns the correct Move. Null if input is incorrect.
-    private Move parseMove(String input, int player)
+    private Move parseMove(GameState state, String input, int player)
     {
         int armies = -1;
         
@@ -63,7 +61,7 @@ public class RobotParser {
 
         if(split[0].equals("place_armies"))        
         {
-            WorldRegion region = parseRegion(split[1], input);
+            Region region = parseRegion(state, split[1], input);
 
             try { armies = Integer.parseInt(split[2]); }
             catch(Exception e) { errorOut("Number of armies input incorrect", input);}
@@ -74,8 +72,8 @@ public class RobotParser {
         }
         else if(split[0].equals("attack/transfer"))
         {
-            WorldRegion fromRegion = parseRegion(split[1], input);
-            WorldRegion toRegion = parseRegion(split[2], input);
+            Region fromRegion = parseRegion(state, split[1], input);
+            Region toRegion = parseRegion(state, split[2], input);
             
             try { armies = Integer.parseInt(split[3]); }
             catch(Exception e) { errorOut("Number of armies input incorrect", input);}
@@ -90,19 +88,19 @@ public class RobotParser {
     }
     
     //parse the region given the id string.
-    private WorldRegion parseRegion(String regionId, String input)
+    private Region parseRegion(GameState state, String regionId, String input)
     {
         int id = -1;
         
         try { id = Integer.parseInt(regionId); }
         catch(NumberFormatException e) { errorOut("Region id input incorrect", input); return null;}
         
-        return WorldRegion.forId(id);
+        return state.getRegion(id);
     }
     
-    public WorldRegion parseStartingRegion(String input)
+    public Region parseStartingRegion(GameState state, String input)
     {
-        return parseRegion(input, input);
+        return parseRegion(state, input, input);
     }
 
     private void errorOut(String error, String input)

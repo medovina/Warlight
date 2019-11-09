@@ -17,7 +17,7 @@
 
 package conquest.game.move;
 
-import conquest.game.world.WorldRegion;
+import conquest.game.Region;
 
 /**
  * This Move is used in the first part of each round. It represents what Region is increased
@@ -25,10 +25,10 @@ import conquest.game.world.WorldRegion;
  */
 
 public class PlaceArmiesMove extends Move {
-    private WorldRegion region;
+    private Region region;
     private int armies;
     
-    public PlaceArmiesMove(WorldRegion region, int armies)
+    public PlaceArmiesMove(Region region, int armies)
     {
         this.region = region;
         this.armies = armies;
@@ -44,7 +44,7 @@ public class PlaceArmiesMove extends Move {
     /**
      * @return The Region this Move will be placing armies on
      */
-    public WorldRegion getRegion() {
+    public Region getRegion() {
         return region;
     }
     
@@ -60,7 +60,7 @@ public class PlaceArmiesMove extends Move {
      */
     public String getString() {
         if(getIllegalMove().equals(""))
-            return "place_armies " + region.id + " " + armies;
+            return "place_armies " + region.getId() + " " + armies;
         else
             return "illegal_move " + getIllegalMove();
                 
