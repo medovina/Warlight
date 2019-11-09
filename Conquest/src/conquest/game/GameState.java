@@ -156,7 +156,7 @@ public class GameState implements Cloneable {
             armies /= 2;
         
         for(Continent cd : map.getContinents())
-            if (cd.owner() == player)
+            if (cd.getOwner() == player)
                 armies += cd.getArmiesReward();
         
         return armies;
@@ -174,7 +174,7 @@ public class GameState implements Cloneable {
         });
         
         for (WorldContinent worldContinent : WorldContinent.values()) {
-            Continent continent = new Continent(worldContinent, worldContinent.id, worldContinent.reward);
+            Continent continent = new Continent(worldContinent, worldContinent.id, worldContinent.reward, 0);
             continents.put(worldContinent, continent);
         }
         

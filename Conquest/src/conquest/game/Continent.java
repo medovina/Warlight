@@ -25,12 +25,14 @@ public class Continent {
     private int id;
     private int armiesReward;
     private ArrayList<Region> regions;
+    private int owner;
     
-    public Continent(WorldContinent continent, int id, int armiesReward)
+    public Continent(WorldContinent continent, int id, int armiesReward, int owner)
     {
         this.worldContinent = continent;
         this.id = id;
         this.armiesReward = armiesReward;
+        this.owner = owner;
         regions = new ArrayList<Region>();
     }
     
@@ -40,18 +42,24 @@ public class Continent {
             regions.add(region);
     }
     
-    /**
-     * @return The player that fully owns this continent, or 0 if none
-     */
-    public int owner()
+    public void computeOwner()
     {
         int player = regions.get(0).getOwner();
         for(Region region : regions)
         {
-            if (player != region.getOwner())
-                return 0;
+            if (player != region.getOwner()) {
+                player = 0;
+                break;
+            }
         }
-        return player;
+        owner = player;
+    }
+
+    /**
+     * @return The player that fully owns this continent, or 0 if none
+     */
+    public int getOwner() {
+        return owner;
     }
     
     /**

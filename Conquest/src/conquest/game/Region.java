@@ -84,6 +84,7 @@ public class Region {
      */
     public void setOwner(int owner) {
         this.owner = owner;
+        continent.computeOwner();
     }
     
     /**
@@ -125,18 +126,10 @@ public class Region {
         return owner;
     }
     
-    public boolean isNeutral() {
-        return owner == 0;
-    }
-
     public WorldRegion getWorldRegion() {
         return worldRegion;
     }
 
-    public WorldContinent getWorldContinent() {
-        return worldRegion.worldContinent;
-    }
-    
     public boolean isVisible(int player) {
         if (isOwnedBy(player))
             return true;

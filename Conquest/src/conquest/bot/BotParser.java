@@ -141,7 +141,7 @@ public class BotParser extends Thread {
                     int continentId = Integer.parseInt(mapInput[i]);
                     i++;
                     int reward = Integer.parseInt(mapInput[i]);
-                    map.add(new Continent(WorldContinent.forId(continentId), continentId, reward));
+                    map.add(new Continent(WorldContinent.forId(continentId), continentId, reward, 0));
                 }
                 catch(Exception e) {
                     System.err.println("Unable to parse Continents");
