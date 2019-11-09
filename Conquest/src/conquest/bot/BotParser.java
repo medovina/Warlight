@@ -251,8 +251,8 @@ public class BotParser extends Thread {
                     //pick a region you want to start with
                     currentState.setPhase(Phase.STARTING_REGIONS);
                     setPickableStartingRegions(currentState, parts);
-                    Region startingRegion = bot.chooseRegion(currentState);
-                    String output = startingRegion.getId() + "";
+                    WorldRegion startingRegion = bot.chooseRegion(currentState);
+                    String output = startingRegion.id + "";
                     
                     log("OUT: " + output);
                     this.output.println(output);

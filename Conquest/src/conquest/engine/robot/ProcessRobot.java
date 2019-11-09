@@ -24,6 +24,7 @@ import java.util.*;
 import conquest.engine.Robot;
 import conquest.game.*;
 import conquest.game.move.*;
+import conquest.game.world.WorldRegion;
 
 public class ProcessRobot implements Robot
 {
@@ -59,7 +60,7 @@ public class ProcessRobot implements Robot
     }
     
     @Override
-    public Region getStartingRegion(GameState state)
+    public WorldRegion getStartingRegion(GameState state)
     {
         if (!isRunning()) {
             throw new RuntimeException(botDied());

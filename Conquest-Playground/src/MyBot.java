@@ -8,6 +8,7 @@ import conquest.engine.Config;
 import conquest.engine.RunGame;
 import conquest.game.*;
 import conquest.game.move.*;
+import conquest.game.world.WorldRegion;
 import conquest.utils.Util;
 
 public class MyBot implements Bot
@@ -34,9 +35,9 @@ public class MyBot implements Bot
     // Choose a starting region.
     
     @Override
-    public Region chooseRegion(GameState state) {
+    public WorldRegion chooseRegion(GameState state) {
         ArrayList<Region> choosable = state.getPickableRegions();
-        return choosable.get(rand.nextInt(choosable.size()));
+        return choosable.get(rand.nextInt(choosable.size())).getWorldRegion();
     }
 
     // Decide where to place armies this turn.

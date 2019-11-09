@@ -118,7 +118,7 @@ public class Engine {
             for (int p = 1 ; p <= 2 ; ++p) {
                 sendUpdateMapInfo(p);
                 long start = System.currentTimeMillis();
-                Region region = robot(p).getStartingRegion(game);
+                Region region = game.region(robot(p).getStartingRegion(game));
                 if (timeout(robot(p), start)) {
                     System.err.println("bot failed to return starting region in time!");
                     region = null;

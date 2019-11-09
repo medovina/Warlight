@@ -38,7 +38,7 @@ public class AggressiveBot implements Bot
     // ================
     
     @Override
-    public Region chooseRegion(GameState state) {
+    public WorldRegion chooseRegion(GameState state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
@@ -52,7 +52,7 @@ public class AggressiveBot implements Bot
             }
         }
         
-        return best;
+        return best.getWorldRegion();
     }
     
     public int getPreferredContinentPriority(Continent continent) {
