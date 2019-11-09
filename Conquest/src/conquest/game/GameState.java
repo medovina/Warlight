@@ -174,7 +174,7 @@ public class GameState implements Cloneable {
         });
         
         for (WorldContinent worldContinent : WorldContinent.values()) {
-            Continent continent = new Continent(worldContinent, worldContinent.id, worldContinent.reward, 0);
+            Continent continent = new Continent(worldContinent, 0);
             continents.put(worldContinent, continent);
         }
         
@@ -186,7 +186,7 @@ public class GameState implements Cloneable {
         });
         
         for (WorldRegion worldRegion : WorldRegion.values()) {
-            Region region = new Region(worldRegion, worldRegion.id, continents.get(worldRegion.worldContinent));
+            Region region = new Region(worldRegion, continents.get(worldRegion.worldContinent));
             regions.put(worldRegion, region);
         }
         

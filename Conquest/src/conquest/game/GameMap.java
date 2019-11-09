@@ -64,12 +64,12 @@ public class GameMap implements Cloneable {
         for(Continent sr : continents) //copy continents
         {
             Continent newContinent = new Continent(
-                WorldContinent.forId(sr.getId()), sr.getId(), sr.getArmiesReward(), sr.getOwner());
+                WorldContinent.forId(sr.getId()), sr.getOwner());
             newMap.add(newContinent);
         }
         for(Region r : regions) //copy regions
         {
-            Region newRegion = new Region(WorldRegion.forId(r.getId()), r.getId(),
+            Region newRegion = new Region(WorldRegion.forId(r.getId()),
                     newMap.getContinent(r.getContinent().getId()), r.getOwner(), r.getArmies());
             newMap.add(newRegion);
         }

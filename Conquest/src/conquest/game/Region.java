@@ -22,16 +22,14 @@ import conquest.game.world.WorldRegion;
 
 public class Region {
     private WorldRegion worldRegion;
-    private int id;
     private ArrayList<Region> neighbors;
     private Continent continent;
     private int armies;
     private int owner;
     
-    public Region(WorldRegion region, int id, Continent continent, int owner, int armies)
+    public Region(WorldRegion region, Continent continent, int owner, int armies)
     {
         this.worldRegion = region;
-        this.id = id;
         this.continent = continent;
         this.neighbors = new ArrayList<Region>();
         this.owner = owner;
@@ -40,8 +38,8 @@ public class Region {
         continent.addRegion(this);
     }
     
-    public Region(WorldRegion region, int id, Continent continent) {
-        this(region, id, continent, 0, 0);
+    public Region(WorldRegion region,Continent continent) {
+        this(region, continent, 0, 0);
     }
     
     public void addNeighbor(Region neighbor)
@@ -90,7 +88,7 @@ public class Region {
      * @return The id of this Region
      */
     public int getId() {
-        return id;
+        return worldRegion.id;
     }
 
     public String mapName() {

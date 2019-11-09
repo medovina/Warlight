@@ -22,16 +22,12 @@ import conquest.game.world.WorldContinent;
 
 public class Continent {
     private WorldContinent worldContinent;
-    private int id;
-    private int armiesReward;
     private ArrayList<Region> regions;
     private int owner;
     
-    public Continent(WorldContinent continent, int id, int armiesReward, int owner)
+    public Continent(WorldContinent continent, int owner)
     {
         this.worldContinent = continent;
-        this.id = id;
-        this.armiesReward = armiesReward;
         this.owner = owner;
         regions = new ArrayList<Region>();
     }
@@ -66,14 +62,14 @@ public class Continent {
      * @return The id of this continent
      */
     public int getId() {
-        return id;
+        return worldContinent.id;
     }
     
     /**
      * @return The number of armies a Player is rewarded when he fully owns this continent
      */
     public int getArmiesReward() {
-        return armiesReward;
+        return worldContinent.reward;
     }
     
     /**
