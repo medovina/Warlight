@@ -29,19 +29,6 @@ public class Region {
     private int armies;
     private int owner;
     
-    public Region(WorldRegion region, int id, Continent continent)
-    {
-        this.worldRegion = region;
-        this.id = id;
-        this.continent = continent;
-        this.neighbors = new ArrayList<Region>();
-        this.owner = 0;
-        this.armies = 0;
-        if (continent != null) {
-            continent.addRegion(this);
-        }
-    }
-    
     public Region(WorldRegion region, int id, Continent continent, int owner, int armies)
     {
         this.worldRegion = region;
@@ -52,6 +39,10 @@ public class Region {
         this.armies = armies;
         
         continent.addRegion(this);
+    }
+    
+    public Region(WorldRegion region, int id, Continent continent) {
+        this(region, id, continent, 0, 0);
     }
     
     public void addNeighbor(Region neighbor)

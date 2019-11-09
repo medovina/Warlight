@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import conquest.game.world.WorldContinent;
 
 public class Continent {
-    
     private WorldContinent worldContinent;
     private int id;
     private int armiesReward;

@@ -62,9 +62,13 @@ public class GameState implements Cloneable {
         // Unfortunately java.util.Random is not cloneable.  So a cloned game will have its
         // own random number generator, and actions applied to it may have different results
         // than in the original game.
+
+        GameMap newMap = map.clone();
+        ArrayList<Region> newPickable = new ArrayList<Region>();
+        for (Region r : pickableRegions)
+            newPickable.add(newMap.getRegion(r.getId()));
         
-        return new GameState(config, map.clone(), playerNames, round, turn, phase,
-                                new ArrayList<Region>(pickableRegions));
+        return new GameState(config, newMap, playerNames, round, turn, phase, newPickable);
     }
     
     public GameMap getMap() { return map; }
