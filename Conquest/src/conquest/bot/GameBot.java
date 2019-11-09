@@ -19,11 +19,10 @@ public abstract class GameBot implements Bot {
     public final Region getStartingRegion(GameState state, Long timeOut) {
         updateState(state);
         
-        return chooseRegion(state.getPickableRegions(),
-                            timeOut == null ? Long.MAX_VALUE : timeOut);
+        return chooseRegion(timeOut == null ? Long.MAX_VALUE : timeOut);
     }
     
-    public abstract Region chooseRegion(List<Region> choosable, long timeout);    
+    public abstract Region chooseRegion(long timeout);    
     
     @Override
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state, Long timeOut) {

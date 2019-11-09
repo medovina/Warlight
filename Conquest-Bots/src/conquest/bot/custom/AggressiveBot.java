@@ -33,7 +33,9 @@ public class AggressiveBot extends GameBot
     // ================
     
     @Override
-    public Region chooseRegion(List<Region> choosable, long timeout) {
+    public Region chooseRegion(long timeout) {
+        ArrayList<Region> choosable = state.getPickableRegions();
+        
         int min = Integer.MAX_VALUE;
         Region best = null;
         

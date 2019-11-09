@@ -31,7 +31,8 @@ public class MyBot extends GameBot
     // Choose a starting region.
     
     @Override
-    public Region chooseRegion(List<Region> choosable, long timeout) {
+    public Region chooseRegion(long timeout) {
+        ArrayList<Region> choosable = state.getPickableRegions();
         return choosable.get(rand.nextInt(choosable.size()));
     }
 
