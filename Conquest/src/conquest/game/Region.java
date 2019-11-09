@@ -18,7 +18,6 @@ package conquest.game;
 
 import java.util.ArrayList;
 
-import conquest.game.world.WorldContinent;
 import conquest.game.world.WorldRegion;
 
 public class Region {

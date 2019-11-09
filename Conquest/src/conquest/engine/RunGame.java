@@ -17,10 +17,8 @@
 
 package conquest.engine;
 
-import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import conquest.engine.Robot.RobotConfig;
 import conquest.engine.replay.FileGameLog;
@@ -131,10 +129,8 @@ public class RunGame
         }        
                 
         //send the bots the info they need to start
-        for (int i = 0 ; i < 2 ; ++i) {
+        for (int i = 0 ; i < 2 ; ++i)
             robots[i].writeInfo("settings your_player_number " + (i + 1));
-            sendSetupMapInfo(robots[i], game.getMap());
-        }
         engine.distributeStartingRegions(); //decide the players' starting regions
         engine.sendAllInfo();
         engine.nextRound();   // advance to round 1
@@ -194,71 +190,7 @@ public class RunGame
         
         return this.saveGame(map);        
     }
-
-    private void sendSetupMapInfo(Robot bot, GameMap initMap)
-    {
-        bot.writeInfo(getSuperRegionsString(initMap));
-        bot.writeInfo(getRegionsString(initMap));
-        bot.writeInfo(getNeighborsString(initMap));
-    }
     
-    private String getSuperRegionsString(GameMap map)
-    {
-        String superRegionsString = "setup_map continents";
-        for(Continent superRegion : map.continents)
-        {
-            int id = superRegion.getId();
-            int reward = superRegion.getArmiesReward();
-            superRegionsString = superRegionsString.concat(" " + id + " " + reward);
-        }
-        return superRegionsString;
-    }
-    
-    private String getRegionsString(GameMap map)
-    {
-        String regionsString = "setup_map regions";
-        for(Region region : map.regions)
-        {
-            int id = region.getId();
-            int superRegionId = region.getContinent().getId();
-            regionsString = regionsString.concat(" " + id + " " + superRegionId);
-        }
-        return regionsString;
-    }
-    
-    private String getNeighborsString(GameMap map)
-    {
-        String neighborsString = "setup_map neighbors";
-        ArrayList<Point> doneList = new ArrayList<Point>();
-        for(Region region : map.regions)
-        {
-            int id = region.getId();
-            String neighbors = "";
-            for(Region neighbor : region.getNeighbors())
-            {
-                if(checkDoneList(doneList, id, neighbor.getId()))
-                {
-                    neighbors = neighbors.concat("," + neighbor.getId());
-                    doneList.add(new Point(id,neighbor.getId()));
-                }
-            }
-            if(neighbors.length() != 0)
-            {
-                neighbors = neighbors.replaceFirst(","," ");
-                neighborsString = neighborsString.concat(" " + id + neighbors);
-            }
-        }
-        return neighborsString;
-    }
-    
-    private Boolean checkDoneList(ArrayList<Point> doneList, int regionId, int neighborId)
-    {
-        for(Point p : doneList)
-            if((p.x == regionId && p.y == neighborId) || (p.x == neighborId && p.y == regionId))
-                return false;
-        return true;
-    }
-
     public GameResult saveGame(GameMap map) {
 
         GameResult result = new GameResult();

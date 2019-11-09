@@ -59,7 +59,7 @@ public class BotParser extends Thread {
         this.output = output;
         
         this.bot = bot;
-        this.currentState = new GameState(null, new GameMap(), null, new ArrayList<Region>());
+        this.currentState = new GameState(null, null, null, new ArrayList<Region>());
     }
     
     public static Bot constructBot(String botFQCN) {
@@ -126,63 +126,6 @@ public class BotParser extends Thread {
         }
 
         state.setPickableRegions(regions);
-    }
-
-    //initial map is given to the bot with all the information except for player and armies info
-    void setupMap(GameState state, String[] mapInput)
-    {
-        GameMap map = state.getMap();
-
-        if(mapInput[1].equals("continents"))
-        {
-            for(int i=2; i<mapInput.length; i++)
-            {
-                try {
-                    int continentId = Integer.parseInt(mapInput[i]);
-                    i++;
-                    int reward = Integer.parseInt(mapInput[i]);
-                    map.add(new Continent(WorldContinent.forId(continentId), continentId, reward, 0));
-                }
-                catch(Exception e) {
-                    System.err.println("Unable to parse Continents");
-                }
-            }
-        }
-        else if(mapInput[1].equals("regions"))
-        {
-            for(int i=2; i<mapInput.length; i++)
-            {
-                try {
-                    int regionId = Integer.parseInt(mapInput[i]);
-                    i++;
-                    int continentId = Integer.parseInt(mapInput[i]);
-                    Continent continent = map.getContinent(continentId);
-                    map.add(new Region(WorldRegion.forId(regionId), regionId, continent));
-                }
-                catch(Exception e) {
-                    System.err.println("Unable to parse Regions " + e.getMessage());
-                }
-            }
-        }
-        else if(mapInput[1].equals("neighbors"))
-        {
-            for(int i=2; i<mapInput.length; i++)
-            {
-                try {
-                    Region region = map.getRegion(Integer.parseInt(mapInput[i]));
-                    i++;
-                    String[] neighborIds = mapInput[i].split(",");
-                    for(int j=0; j<neighborIds.length; j++)
-                    {
-                        Region neighbor = map.getRegion(Integer.parseInt(neighborIds[j]));
-                        region.addNeighbor(neighbor);
-                    }
-                }
-                catch(Exception e) {
-                    System.err.println("Unable to parse Neighbors " + e.getMessage());
-                }
-            }
-        }
     }
 
     //visible regions are given to the bot with player and armies info
@@ -289,10 +232,6 @@ public class BotParser extends Thread {
                     }
                     if (parts[1].equals("your_player_number"))
                         currentState.setTurn(Integer.parseInt(parts[2]));
-                    break;
-                case "setup_map":
-                    //initial full map is given
-                    setupMap(currentState, parts);
                     break;
                 case "update_map":
                     //all visible regions are given
