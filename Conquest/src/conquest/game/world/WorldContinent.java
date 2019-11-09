@@ -18,7 +18,6 @@ public enum WorldContinent {
      */
     public final int id;
     public final int reward;
-    public final int continentFlag;
     public final String mapName;
     
     private List<WorldRegion> regions = null;
@@ -27,7 +26,6 @@ public enum WorldContinent {
         this.mapName = mapName;
         this.id = id;
         this.reward = reward;    
-        this.continentFlag = 1 << (id-1);
     }
     
     public List<WorldRegion> getRegions() {
@@ -58,17 +56,4 @@ public enum WorldContinent {
         }
         return id2Continent.get(id);
     }
-    
-    private static Map<Integer, WorldContinent> flagToContinent = null;
-    
-    public static WorldContinent fromFlag(int continentFlag) {
-        if (flagToContinent == null) {
-            flagToContinent = new HashMap<Integer, WorldContinent>();
-            for (WorldContinent continent : WorldContinent.values()) {
-                flagToContinent.put(continent.continentFlag, continent);
-            }
-        }
-        return flagToContinent.get(continentFlag);
-    }
-
 }

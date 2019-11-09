@@ -77,11 +77,6 @@ public enum WorldRegion {
     public final boolean continentBorder;
     
     /**
-     * Region flag.
-     */
-    public final long regionFlag;
-    
-    /**
      * DO NOT USE, contains only "forward" neighbours. Use {@link #getNeighbours()} to obtain ALL neighbours.
      * Used for {@link GameMap} initialization only.
      */
@@ -102,7 +97,6 @@ public enum WorldRegion {
         this.id = id;
         this.worldContinent = superRegion;
         this.continentBorder = continentBorder;
-        this.regionFlag = ((long)1) << (id-1);
         this.forwardNeighbourIds = forwardNeighbourIds;
     }
     
@@ -181,16 +175,4 @@ public enum WorldRegion {
         return id2Region.get(id);
     }
     
-    private static Map<Long, WorldRegion> flagToRegion = null;
-        
-    public static WorldRegion fromFlag(long regionFlag) {
-        if (flagToRegion == null) {
-            flagToRegion = new HashMap<Long, WorldRegion>();
-            for (WorldRegion region : WorldRegion.values()) {
-                flagToRegion.put(region.regionFlag, region);
-            }
-        }
-        return flagToRegion.get(regionFlag);
-    }
-
 }
