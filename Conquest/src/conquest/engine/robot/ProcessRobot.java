@@ -60,30 +60,30 @@ public class ProcessRobot implements Robot
     }
     
     @Override
-    public Region getStartingRegion(GameState state, long timeOut)
+    public Region getStartingRegion(GameState state)
     {
         if (!isRunning()) {
             throw new RuntimeException(botDied());
         }
-        return robot.getStartingRegion(state, timeOut);
+        return robot.getStartingRegion(state);
     }
     
     @Override
-    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state, long timeOut)
+    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state)
     {
         if (!isRunning()) {
             throw new RuntimeException(botDied());
         }
-        return robot.getPlaceArmiesMoves(state, timeOut);
+        return robot.getPlaceArmiesMoves(state);
     }
     
     @Override
-    public List<AttackTransferMove> getAttackTransferMoves(GameState state, long timeOut)
+    public List<AttackTransferMove> getAttackTransferMoves(GameState state)
     {
         if (!isRunning()) {
             throw new RuntimeException(botDied());
         }
-        return robot.getAttackTransferMoves(state, timeOut);
+        return robot.getAttackTransferMoves(state);
     }
     
     @Override

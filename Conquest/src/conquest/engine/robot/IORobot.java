@@ -64,17 +64,18 @@ public class IORobot implements Robot
     public void setup(RobotConfig config) {
         this.config = config;
         handler.setGameLog(config.gameLog, config.player, config.logToConsole);
+        handler.writeLine("init " + config.timeoutMillis);
     }
         
     @Override
-    public Region getStartingRegion(GameState state, long timeOut)
+    public Region getStartingRegion(GameState state)
     {
-        String output = "pick_starting_region " + timeOut;
+        String output = "pick_starting_region";
         for(Region region : state.getPickableRegions())
             output = output.concat(" " + region.id);
         
         handler.writeLine(output);
-        String line = handler.readLine(timeOut);
+        String line = handler.readLine(config.timeoutMillis);
         return parser.parseStartingRegion(line);
     }
 
@@ -91,9 +92,9 @@ public class IORobot implements Robot
   }
     
     @Override
-    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state, long timeOut)
+    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state)
     {
-        return placeArmiesMoves(getMoves("place_armies", timeOut));
+        return placeArmiesMoves(getMoves("place_armies"));
     }
 
     private List<AttackTransferMove> attackTransferMoves(String input) {
@@ -109,25 +110,25 @@ public class IORobot implements Robot
   }
     
     @Override
-    public List<AttackTransferMove> getAttackTransferMoves(GameState state, long timeOut)
+    public List<AttackTransferMove> getAttackTransferMoves(GameState state)
     {
-        return attackTransferMoves(getMoves("attack/transfer", timeOut));
+        return attackTransferMoves(getMoves("attack/transfer"));
     }
     
-    private String getMoves(String moveType, long timeOut)
+    private String getMoves(String moveType)
     {
         String line = "";
         if(errorCounter < maxErrors)
         {
-            handler.writeLine("go " + moveType + " " + timeOut);
+            handler.writeLine("go " + moveType);
             
             long timeStart = System.currentTimeMillis();
             while(line != null && line.length() < 1)
             {
                 long timeNow = System.currentTimeMillis();
                 long timeElapsed = timeNow - timeStart;
-                line = handler.readLine(timeOut);
-                if(timeElapsed >= timeOut)
+                line = handler.readLine(config.timeoutMillis);
+                if(timeElapsed >= config.timeoutMillis)
                     break;
             }
             if(line == null) {
@@ -140,7 +141,7 @@ public class IORobot implements Robot
         else
         {
             if (log != null) {
-                log.logComment(0, "go " + moveType + " " + timeOut + "\n");
+                log.logComment(0, "go " + moveType + "\n");
                 log.logComment(0, "Maximum number of idle moves returned: skipping move (let bot return 'No moves' instead of nothing)");
             }
         }

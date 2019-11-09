@@ -27,11 +27,15 @@ public class MyBot implements Bot
     //
     // This is a dummy implemementation that moves randomly.
     //
+
+    @Override
+    public void init(long timeoutMillis) {
+    }
     
     // Choose a starting region.
     
     @Override
-    public Region chooseRegion(GameState state, long timeout) {
+    public Region chooseRegion(GameState state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         return choosable.get(rand.nextInt(choosable.size()));
     }
@@ -40,7 +44,7 @@ public class MyBot implements Bot
     // state.armiesPerTurn(state.me()) is the number of armies available to place.
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(GameState state, long timeout) {
+    public List<PlaceArmiesMove> placeArmies(GameState state) {
         int me = state.me();
         List<RegionData> mine = state.regionsOwnedBy(me);
         int numRegions = mine.size();
@@ -61,7 +65,7 @@ public class MyBot implements Bot
     // Decide where to move armies this turn.
     
     @Override
-    public List<AttackTransferMove> moveArmies(GameState state, long timeout) {
+    public List<AttackTransferMove> moveArmies(GameState state) {
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
         for (RegionData rd : state.regionsOwnedBy(state.me())) {

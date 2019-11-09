@@ -25,29 +25,27 @@ import conquest.game.move.PlaceArmiesMove;
 import conquest.game.world.Region;
 
 public interface Bot {
-    
+    public void init(long timeoutMillis);
+
     /**
      * CHOOSE REGIONS - called only at the beginning.
      * @param state
      * @param timeoutMillis in milliseconds
-     * @return
      */
-    public Region chooseRegion(GameState state, long timeoutMillis);
+    public Region chooseRegion(GameState state);
     
     /**
      * PLACE ARMIES - distribute armies between your regions.
      * @param state
      * @param timeoutMillis in milliseconds
-     * @return
      */
-    public List<PlaceArmiesMove> placeArmies(GameState state, long timeoutMillis);
+    public List<PlaceArmiesMove> placeArmies(GameState state);
     
     /**
      * MOVE ARMIES - attack opponents' regions or neutral ones ... or transfer armies between your regions.
      * @param state
      * @param timeoutMillis in milliseconds
-     * @return
      */
-    public List<AttackTransferMove> moveArmies(GameState state, long timeoutMillis);
+    public List<AttackTransferMove> moveArmies(GameState state);
 
 }

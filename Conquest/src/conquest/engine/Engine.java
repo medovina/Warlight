@@ -48,6 +48,11 @@ public class Engine {
         return robots[i - 1];
     }
     
+    boolean timeout(Robot robot, long start) {
+        return !(robot instanceof HumanRobot) &&
+               timeoutMillis > 0 && System.currentTimeMillis() - start > timeoutMillis;
+    }
+
     public void playRound()
     {
         if (gui != null) {
@@ -56,7 +61,12 @@ public class Engine {
         }
         
         for (int i = 1 ; i <= 2 ; ++i) {
-            List<PlaceArmiesMove> placeMoves = robot(i).getPlaceArmiesMoves(game, timeoutMillis);
+            long start = System.currentTimeMillis();
+            List<PlaceArmiesMove> placeMoves = robot(i).getPlaceArmiesMoves(game);
+            if (timeout(robot(i), start)) {
+                System.err.println("bot failed to return place armies moves in time!");
+                placeMoves = new ArrayList<PlaceArmiesMove>();
+            }
             
             game.placeArmies(placeMoves);
     
@@ -72,7 +82,12 @@ public class Engine {
                 gui.placeArmies(i, game.getMap().regions, legalMoves);
             }
             
-            List<AttackTransferMove> moves = robot(i).getAttackTransferMoves(game, timeoutMillis);
+            start = System.currentTimeMillis();
+            List<AttackTransferMove> moves = robot(i).getAttackTransferMoves(game);
+            if (timeout(robot(i), start)) {
+                System.err.println("bot failed to return attack transfer moves in time!");
+                moves = new ArrayList<AttackTransferMove>();
+            }
             
             game.attackTransfer(moves);
             
@@ -97,10 +112,14 @@ public class Engine {
         for (int i = 1 ; i <= GameState.nrOfStartingRegions ; ++i)
             for (int p = 1 ; p <= 2 ; ++p) {
                 sendUpdateMapInfo(p);
-                Region region = robot(p).getStartingRegion(game, timeoutMillis);
+                long start = System.currentTimeMillis();
+                Region region = robot(p).getStartingRegion(game);
+                if (timeout(robot(p), start)) {
+                    System.err.println("bot failed to return starting region in time!");
+                    region = null;
+                }
                 
-                //if the bot did not correctly return a starting region, get some random ones
-                if (!game.pickableRegions.contains(region)) {
+                if (region == null || !game.pickableRegions.contains(region)) {
                     System.err.println("invalid starting region; choosing one at random");
                     region = getRandomStartingRegion();
                 }

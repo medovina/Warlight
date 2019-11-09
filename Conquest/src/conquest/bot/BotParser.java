@@ -209,6 +209,10 @@ public class BotParser extends Thread {
         state.setRoundNumber(state.getRoundNumber() + 1);
     }
     
+    void parseError(String line) {
+        log("Unable to parse line: " + line);
+    }
+
     @Override
     public void run()
     {
@@ -237,48 +241,68 @@ public class BotParser extends Thread {
             if(line.length() == 0) { continue; }
             log("IN : " + line);
             String[] parts = line.split(" ");
-            if(parts[0].equals("pick_starting_region")) {
-                //pick a region you want to start with
-                currentState.setPhase(Phase.STARTING_REGIONS);
-                setPickableStartingRegions(currentState, parts);
-                Region startingRegion = bot.chooseRegion(currentState, Long.valueOf(parts[1]));
-                String output = startingRegion.id + "";
-                
-                log("OUT: " + output);
-                this.output.println(output);
-            } else if(parts.length == 3 && parts[0].equals("go")) {
-                //we need to do a move
-                String output = "";
-                if(parts[1].equals("place_armies")) 
-                {
-                    currentState.setPhase(Phase.PLACE_ARMIES);
-                    List<PlaceArmiesMove> placeArmiesMoves = bot.placeArmies(currentState, Long.valueOf(parts[2]));
-                    for(PlaceArmiesMove move : placeArmiesMoves)
-                        output = output.concat(move.getString() + ",");
-                } 
-                else if(parts[1].equals("attack/transfer")) 
-                {
-                    currentState.setPhase(Phase.ATTACK_TRANSFER);
-                    List<AttackTransferMove> attackTransferMoves = bot.moveArmies(currentState, Long.valueOf(parts[2]));
-                    for(AttackTransferMove move : attackTransferMoves)
-                        output = output.concat(move.getString() + ",");
-                }
-                if(output.length() == 0) output = "No moves";
-                log("OUT: " + output);
-                this.output.println(output);
-            } else if(parts.length == 3 && parts[0].equals("settings")) {
-                if (parts[1].equals("your_player_number"))
-                    currentState.setTurn(Integer.parseInt(parts[2]));
-            } else if(parts[0].equals("setup_map")) {
-                //initial full map is given
-                setupMap(currentState, parts);
-            } else if(parts[0].equals("update_map")) {
-                //all visible regions are given
-                updateMap(currentState, parts);
-            } else if (parts[0].equals("next_round"))
-                nextRound(currentState);
-            else {
-                log("Unable to parse line: " + line);
+            switch (parts[0]) {
+                case "init":
+                    if (parts.length == 2)
+                        bot.init(Long.parseLong(parts[1]));
+                    else parseError(line);
+                    break;
+                case "pick_starting_region":
+                    //pick a region you want to start with
+                    currentState.setPhase(Phase.STARTING_REGIONS);
+                    setPickableStartingRegions(currentState, parts);
+                    Region startingRegion = bot.chooseRegion(currentState);
+                    String output = startingRegion.id + "";
+                    
+                    log("OUT: " + output);
+                    this.output.println(output);
+                    break;
+                case "go":
+                    if (parts.length != 2) {
+                        parseError(line);
+                        break;
+                    }
+                    //we need to do a move
+                    output = "";
+                    if(parts[1].equals("place_armies")) 
+                    {
+                        currentState.setPhase(Phase.PLACE_ARMIES);
+                        List<PlaceArmiesMove> placeArmiesMoves = bot.placeArmies(currentState);
+                        for(PlaceArmiesMove move : placeArmiesMoves)
+                            output = output.concat(move.getString() + ",");
+                    } 
+                    else if(parts[1].equals("attack/transfer")) 
+                    {
+                        currentState.setPhase(Phase.ATTACK_TRANSFER);
+                        List<AttackTransferMove> attackTransferMoves = bot.moveArmies(currentState);
+                        for(AttackTransferMove move : attackTransferMoves)
+                            output = output.concat(move.getString() + ",");
+                    }
+                    if(output.length() == 0) output = "No moves";
+                    log("OUT: " + output);
+                    this.output.println(output);
+                    break;
+                case "settings":
+                    if (parts.length != 3) {
+                        parseError(line);
+                        break;
+                    }
+                    if (parts[1].equals("your_player_number"))
+                        currentState.setTurn(Integer.parseInt(parts[2]));
+                    break;
+                case "setup_map":
+                    //initial full map is given
+                    setupMap(currentState, parts);
+                    break;
+                case "update_map":
+                    //all visible regions are given
+                    updateMap(currentState, parts);
+                    break;
+                case "next_round":
+                    nextRound(currentState);
+                    break;
+                default:
+                    parseError(line);
             }
         }
         // COULD NOT REACH HERE...

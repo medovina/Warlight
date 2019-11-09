@@ -76,33 +76,35 @@ public class InternalRobot implements Robot {
             myKeyListener = new MyKeyListener();
             config.gui.addKeyListener(myKeyListener);
         }
+
+        bot.init(config.timeoutMillis);
     }
     
     @Override
-    public Region getStartingRegion(GameState state, long timeOut)
+    public Region getStartingRegion(GameState state)
     {
         if (hijacked) {
-            return humanHijack.getStartingRegion(state, timeOut);            
+            return humanHijack.getStartingRegion(state);            
         }
-        return bot.chooseRegion(state, timeOut);
+        return bot.chooseRegion(state);
     }
     
     @Override
-    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state, long timeOut)
+    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state)
     {
         if (hijacked) {
-            return humanHijack.getPlaceArmiesMoves(state, timeOut);        
+            return humanHijack.getPlaceArmiesMoves(state);        
         }
-        return bot.placeArmies(state, timeOut);
+        return bot.placeArmies(state);
     }
     
     @Override
-    public List<AttackTransferMove> getAttackTransferMoves(GameState state, long timeOut)
+    public List<AttackTransferMove> getAttackTransferMoves(GameState state)
     {
         if (hijacked) {
-            return humanHijack.getAttackTransferMoves(state, timeOut);    
+            return humanHijack.getAttackTransferMoves(state);    
         }
-        return bot.moveArmies(state, timeOut);
+        return bot.moveArmies(state);
     }
     
     @Override

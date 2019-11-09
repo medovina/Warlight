@@ -63,11 +63,11 @@ public interface Robot {
 
     public void setup(RobotConfig config);
     
-    public Region getStartingRegion(GameState state, long timeOut);
+    public Region getStartingRegion(GameState state);
     
-    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state, long timeOut);
+    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state);
     
-    public List<AttackTransferMove> getAttackTransferMoves(GameState state, long timeOut);
+    public List<AttackTransferMove> getAttackTransferMoves(GameState state);
     
     public void writeInfo(String info);
 

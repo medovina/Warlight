@@ -18,17 +18,17 @@ public class HumanRobot implements Robot {
     }
 
     @Override
-    public Region getStartingRegion(GameState state, long timeOut) {
+    public Region getStartingRegion(GameState state) {
         return config.gui.chooseRegionHuman();
     }
 
     @Override
-    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state, long timeOut) {
+    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state) {
         return config.gui.placeArmiesHuman(config.team);
     }
 
     @Override
-    public List<AttackTransferMove> getAttackTransferMoves(GameState state, long timeOut) {
+    public List<AttackTransferMove> getAttackTransferMoves(GameState state) {
         return config.gui.moveArmiesHuman(config.team);
     }
 

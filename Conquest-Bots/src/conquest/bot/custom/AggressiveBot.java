@@ -29,13 +29,17 @@ public class AggressiveBot implements Bot
         dRes = FightDefendersResults.loadFromFile(Util.findFile("Conquest-Bots/FightSimulation-Defenders-A200-D200.obj"));
         System.err.println("---==[ AGGRESSIVE BOT INITIALIZED ]==---");
     }
+
+    @Override
+    public void init(long timeoutMillis) {
+    }
     
     // ================
     // CHOOSING REGIONS
     // ================
     
     @Override
-    public Region chooseRegion(GameState state, long timeout) {
+    public Region chooseRegion(GameState state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
@@ -69,7 +73,7 @@ public class AggressiveBot implements Bot
     // ==============
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(GameState state, long timeout) {
+    public List<PlaceArmiesMove> placeArmies(GameState state) {
         this.state = state;
 
         int me = state.me();
@@ -127,7 +131,7 @@ public class AggressiveBot implements Bot
     // =============
 
     @Override
-    public List<AttackTransferMove> moveArmies(GameState state, long timeout) {
+    public List<AttackTransferMove> moveArmies(GameState state) {
         this.state = state;
         
         int me = state.me();
