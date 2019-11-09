@@ -89,10 +89,6 @@ public class MyBot implements Bot
         
         config.botCommandTimeoutMillis = 20 * 1000;
         
-        config.game.maxGameRounds = 200;
-        
-        config.game.fight = FightMode.CONTINUAL_1_1_A60_D70;
-        
         config.visualize = true;
         
         config.replayLog = new File("./replay.log");
