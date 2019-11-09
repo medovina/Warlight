@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.*;
 
 import conquest.bot.BotParser;
-import conquest.bot.GameBot;
+import conquest.bot.Bot;
 import conquest.bot.fight.FightSimulation.FightAttackersResults;
 import conquest.bot.fight.FightSimulation.FightDefendersResults;
 import conquest.bot.map.RegionBFS;
@@ -17,8 +17,10 @@ import conquest.game.world.Continent;
 import conquest.game.world.Region;
 import conquest.utils.Util;
 
-public class AggressiveBot extends GameBot 
+public class AggressiveBot implements Bot 
 {
+    GameState state;
+
     FightAttackersResults aRes;
     FightDefendersResults dRes;
     
@@ -33,7 +35,7 @@ public class AggressiveBot extends GameBot
     // ================
     
     @Override
-    public Region chooseRegion(long timeout) {
+    public Region chooseRegion(GameState state, long timeout) {
         ArrayList<Region> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
@@ -67,8 +69,10 @@ public class AggressiveBot extends GameBot
     // ==============
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(long timeout) {
-      int me = state.me();
+    public List<PlaceArmiesMove> placeArmies(GameState state, long timeout) {
+        this.state = state;
+
+        int me = state.me();
         List<PlaceArmiesMove> result = new ArrayList<PlaceArmiesMove>();
         
         // CLONE REGIONS OWNED BY ME
@@ -123,7 +127,9 @@ public class AggressiveBot extends GameBot
     // =============
 
     @Override
-    public List<AttackTransferMove> moveArmies(long timeout) {
+    public List<AttackTransferMove> moveArmies(GameState state, long timeout) {
+        this.state = state;
+        
         int me = state.me();
         List<AttackTransferMove> result = new ArrayList<AttackTransferMove>();
         Collection<RegionData> regions = state.regionsOwnedBy(me);

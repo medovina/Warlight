@@ -2,7 +2,7 @@ import java.io.File;
 import java.util.*;
 
 import conquest.bot.BotParser;
-import conquest.bot.GameBot;
+import conquest.bot.Bot;
 import conquest.bot.fight.FightSimulation.FightAttackersResults;
 import conquest.engine.Config;
 import conquest.engine.RunGame;
@@ -11,7 +11,7 @@ import conquest.game.move.*;
 import conquest.game.world.Region;
 import conquest.utils.Util;
 
-public class MyBot extends GameBot
+public class MyBot implements Bot
 {
     Random rand = new Random();
     
@@ -31,7 +31,7 @@ public class MyBot extends GameBot
     // Choose a starting region.
     
     @Override
-    public Region chooseRegion(long timeout) {
+    public Region chooseRegion(GameState state, long timeout) {
         ArrayList<Region> choosable = state.getPickableRegions();
         return choosable.get(rand.nextInt(choosable.size()));
     }
@@ -40,7 +40,7 @@ public class MyBot extends GameBot
     // state.armiesPerTurn(state.me()) is the number of armies available to place.
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(long timeout) {
+    public List<PlaceArmiesMove> placeArmies(GameState state, long timeout) {
         int me = state.me();
         List<RegionData> mine = state.regionsOwnedBy(me);
         int numRegions = mine.size();
@@ -61,7 +61,7 @@ public class MyBot extends GameBot
     // Decide where to move armies this turn.
     
     @Override
-    public List<AttackTransferMove> moveArmies(long timeout) {
+    public List<AttackTransferMove> moveArmies(GameState state, long timeout) {
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
         for (RegionData rd : state.regionsOwnedBy(state.me())) {

@@ -241,7 +241,7 @@ public class BotParser extends Thread {
                 //pick a region you want to start with
                 currentState.setPhase(Phase.STARTING_REGIONS);
                 setPickableStartingRegions(currentState, parts);
-                Region startingRegion = bot.getStartingRegion(currentState, Long.valueOf(parts[1]));
+                Region startingRegion = bot.chooseRegion(currentState, Long.valueOf(parts[1]));
                 String output = startingRegion.id + "";
                 
                 log("OUT: " + output);
@@ -252,14 +252,14 @@ public class BotParser extends Thread {
                 if(parts[1].equals("place_armies")) 
                 {
                     currentState.setPhase(Phase.PLACE_ARMIES);
-                    List<PlaceArmiesMove> placeArmiesMoves = bot.getPlaceArmiesMoves(currentState, Long.valueOf(parts[2]));
+                    List<PlaceArmiesMove> placeArmiesMoves = bot.placeArmies(currentState, Long.valueOf(parts[2]));
                     for(PlaceArmiesMove move : placeArmiesMoves)
                         output = output.concat(move.getString() + ",");
                 } 
                 else if(parts[1].equals("attack/transfer")) 
                 {
                     currentState.setPhase(Phase.ATTACK_TRANSFER);
-                    List<AttackTransferMove> attackTransferMoves = bot.getAttackTransferMoves(currentState, Long.valueOf(parts[2]));
+                    List<AttackTransferMove> attackTransferMoves = bot.moveArmies(currentState, Long.valueOf(parts[2]));
                     for(AttackTransferMove move : attackTransferMoves)
                         output = output.concat(move.getString() + ",");
                 }

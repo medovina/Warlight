@@ -32,7 +32,7 @@ public interface Bot {
      * @param timeoutMillis in milliseconds
      * @return
      */
-    public Region getStartingRegion(GameState state, Long timeoutMillis);
+    public Region chooseRegion(GameState state, long timeoutMillis);
     
     /**
      * PLACE ARMIES - distribute armies between your regions.
@@ -40,7 +40,7 @@ public interface Bot {
      * @param timeoutMillis in milliseconds
      * @return
      */
-    public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state, Long timeoutMillis);
+    public List<PlaceArmiesMove> placeArmies(GameState state, long timeoutMillis);
     
     /**
      * MOVE ARMIES - attack opponents' regions or neutral ones ... or transfer armies between your regions.
@@ -48,6 +48,6 @@ public interface Bot {
      * @param timeoutMillis in milliseconds
      * @return
      */
-    public List<AttackTransferMove> getAttackTransferMoves(GameState state, Long timeoutMillis);
+    public List<AttackTransferMove> moveArmies(GameState state, long timeoutMillis);
 
 }

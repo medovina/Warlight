@@ -84,7 +84,7 @@ public class InternalRobot implements Robot {
         if (hijacked) {
             return humanHijack.getStartingRegion(state, timeOut);            
         }
-        return bot.getStartingRegion(state, timeOut);
+        return bot.chooseRegion(state, timeOut);
     }
     
     @Override
@@ -93,7 +93,7 @@ public class InternalRobot implements Robot {
         if (hijacked) {
             return humanHijack.getPlaceArmiesMoves(state, timeOut);        
         }
-        return bot.getPlaceArmiesMoves(state, timeOut);
+        return bot.placeArmies(state, timeOut);
     }
     
     @Override
@@ -102,7 +102,7 @@ public class InternalRobot implements Robot {
         if (hijacked) {
             return humanHijack.getAttackTransferMoves(state, timeOut);    
         }
-        return bot.getAttackTransferMoves(state, timeOut);
+        return bot.moveArmies(state, timeOut);
     }
     
     @Override
