@@ -205,7 +205,7 @@ public class RunGame
     private String getSuperRegionsString(GameMap map)
     {
         String superRegionsString = "setup_map continents";
-        for(ContinentData superRegion : map.continents)
+        for(Continent superRegion : map.continents)
         {
             int id = superRegion.getId();
             int reward = superRegion.getArmiesReward();
@@ -217,10 +217,10 @@ public class RunGame
     private String getRegionsString(GameMap map)
     {
         String regionsString = "setup_map regions";
-        for(RegionData region : map.regions)
+        for(Region region : map.regions)
         {
             int id = region.getId();
-            int superRegionId = region.getContinentData().getId();
+            int superRegionId = region.getContinent().getId();
             regionsString = regionsString.concat(" " + id + " " + superRegionId);
         }
         return regionsString;
@@ -230,11 +230,11 @@ public class RunGame
     {
         String neighborsString = "setup_map neighbors";
         ArrayList<Point> doneList = new ArrayList<Point>();
-        for(RegionData region : map.regions)
+        for(Region region : map.regions)
         {
             int id = region.getId();
             String neighbors = "";
-            for(RegionData neighbor : region.getNeighbors())
+            for(Region neighbor : region.getNeighbors())
             {
                 if(checkDoneList(doneList, id, neighbor.getId()))
                 {

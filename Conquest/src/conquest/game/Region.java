@@ -18,23 +18,23 @@ package conquest.game;
 
 import java.util.ArrayList;
 
-import conquest.game.world.Continent;
-import conquest.game.world.Region;
+import conquest.game.world.WorldContinent;
+import conquest.game.world.WorldRegion;
 
-public class RegionData {
-    private Region region;
+public class Region {
+    private WorldRegion worldRegion;
     private int id;
-    private ArrayList<RegionData> neighbors;
-    private ContinentData continent;
+    private ArrayList<Region> neighbors;
+    private Continent continent;
     private int armies;
     private int owner;
     
-    public RegionData(Region region, int id, ContinentData continent)
+    public Region(WorldRegion region, int id, Continent continent)
     {
-        this.region = region;
+        this.worldRegion = region;
         this.id = id;
         this.continent = continent;
-        this.neighbors = new ArrayList<RegionData>();
+        this.neighbors = new ArrayList<Region>();
         this.owner = 0;
         this.armies = 0;
         if (continent != null) {
@@ -42,19 +42,19 @@ public class RegionData {
         }
     }
     
-    public RegionData(Region region, int id, ContinentData continent, int owner, int armies)
+    public Region(WorldRegion region, int id, Continent continent, int owner, int armies)
     {
-        this.region = region;
+        this.worldRegion = region;
         this.id = id;
         this.continent = continent;
-        this.neighbors = new ArrayList<RegionData>();
+        this.neighbors = new ArrayList<Region>();
         this.owner = owner;
         this.armies = armies;
         
         continent.addRegion(this);
     }
     
-    public void addNeighbor(RegionData neighbor)
+    public void addNeighbor(Region neighbor)
     {
         if(!neighbors.contains(neighbor))
         {
@@ -67,7 +67,7 @@ public class RegionData {
      * @param region a Region object
      * @return True if this Region is a neighbor of given Region, false otherwise
      */
-    public boolean isNeighbor(RegionData region)
+    public boolean isNeighbor(Region region)
     {
         return neighbors.contains(region);
     }
@@ -105,14 +105,14 @@ public class RegionData {
     /**
      * @return A list of this Region's neighboring Regions
      */
-    public ArrayList<RegionData> getNeighbors() {
+    public ArrayList<Region> getNeighbors() {
         return neighbors;
     }
 
     /**
      * @return The continent this Region is part of
      */
-    public ContinentData getContinentData() {
+    public Continent getContinent() {
         return continent;
     }
     
@@ -134,19 +134,19 @@ public class RegionData {
         return owner == 0;
     }
 
-    public Region getRegion() {
-        return region;
+    public WorldRegion getWorldRegion() {
+        return worldRegion;
     }
 
-    public Continent getContinent() {
-        return region.continent;
+    public WorldContinent getWorldContinent() {
+        return worldRegion.worldContinent;
     }
     
     public boolean isVisible(int player) {
         if (isOwnedBy(player))
             return true;
         
-        for (RegionData s : getNeighbors())
+        for (Region s : getNeighbors())
             if (s.isOwnedBy(player))
                 return true;
         
@@ -155,6 +155,6 @@ public class RegionData {
     
     @Override
     public String toString() {
-        return region.name() + "[" + owner + "|" + armies + "]";
+        return worldRegion.name() + "[" + owner + "|" + armies + "]";
     }
 }

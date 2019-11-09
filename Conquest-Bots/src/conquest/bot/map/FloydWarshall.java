@@ -8,10 +8,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import conquest.game.world.Region;
+import conquest.game.world.WorldRegion;
 
 /**
- * Floyd-Warshall algorithm for precomputing all-possible paths within the map using {@link Region#getNeighbours()}.
+ * Floyd-Warshall algorithm for precomputing all-possible paths within the map using {@link WorldRegion#getNeighbours()}.
  * <p><p>
  * It precomputes all the paths inside the environment using Floyd-Warshall
  * algorithm (time: O(n^3)) in the form of matrix.
@@ -112,17 +112,17 @@ public class FloydWarshall  {
     /**
      * Map converting Regions to their corresponding indices inside {@link FloydWarshall#pathMatrix}.
      */
-    private Map<Region, Integer> nodeIndices;
+    private Map<WorldRegion, Integer> nodeIndices;
 
     /**
      * Mapping indices (inside {@link FloydWarshall#pathMatrix}) to Regions.
      */
-    private Map<Integer, Region> indicesNodes;
+    private Map<Integer, WorldRegion> indicesNodes;
 
     /**
      * FloydWarshall's matrix of distances & paths.
      */
-    private PathMatrixRegion<Region>[][] pathMatrix;
+    private PathMatrixRegion<WorldRegion>[][] pathMatrix;
     
     // ===========
     // CONSTRUCTOR
@@ -144,9 +144,9 @@ public class FloydWarshall  {
      */
     public synchronized void compute() {
         
-        List<Region> nodes = new ArrayList<Region>();
+        List<WorldRegion> nodes = new ArrayList<WorldRegion>();
         
-        for (Region region : Region.values()) {
+        for (WorldRegion region : WorldRegion.values()) {
             nodes.add(region);
         }
         
@@ -177,11 +177,11 @@ public class FloydWarshall  {
      * @param nodes
      */
     @SuppressWarnings("unchecked")
-    private void performFloydWarshall(List<Region> nodes) {
+    private void performFloydWarshall(List<WorldRegion> nodes) {
         // prepares data structures
         int size = nodes.size();
-        nodeIndices = new HashMap<Region, Integer>(size);
-        indicesNodes = new HashMap<Integer, Region>(size);
+        nodeIndices = new HashMap<WorldRegion, Integer>(size);
+        indicesNodes = new HashMap<Integer, WorldRegion>(size);
         pathMatrix = new PathMatrixRegion[size][size];
 
         // Initialize navPoint indices mapping.
@@ -193,20 +193,20 @@ public class FloydWarshall  {
         // Initialize distance matrix.
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                pathMatrix[i][j] = new PathMatrixRegion<Region>((i == j) ? 0 : Integer.MAX_VALUE);
+                pathMatrix[i][j] = new PathMatrixRegion<WorldRegion>((i == j) ? 0 : Integer.MAX_VALUE);
             }
         }
 
         // Set initial arc costs into distance matrix.
         for (int i = 0; i < size; i++) {
-            Region node1 = nodes.get(i);
+            WorldRegion node1 = nodes.get(i);
             
-            Collection<Region> neighbors = node1.getNeighbours();
+            Collection<WorldRegion> neighbors = node1.getNeighbours();
             
-            Iterator<Region> iterator = neighbors.iterator();
+            Iterator<WorldRegion> iterator = neighbors.iterator();
             
             while(iterator.hasNext()) {
-                Region node2 = iterator.next();
+                WorldRegion node2 = iterator.next();
                 int j = nodeIndices.get(node2);
                 
                 int arcCost = 1;
@@ -257,17 +257,17 @@ public class FloydWarshall  {
      * @param to
      * @return
      */
-    private List<Region> retrievePathInner(Integer from, Integer to) {
-        PathMatrixRegion<Region> region = pathMatrix[from][to];
+    private List<WorldRegion> retrievePathInner(Integer from, Integer to) {
+        PathMatrixRegion<WorldRegion> region = pathMatrix[from][to];
         if (region.getPathCost() == Integer.MAX_VALUE)
             return null;
         if (region.getViaRegion() == null) {
-            return new ArrayList<Region>(0);
+            return new ArrayList<WorldRegion>(0);
         }
         if (region.getViaRegion() == null)
-            return new ArrayList<Region>(0);
+            return new ArrayList<WorldRegion>(0);
 
-        List<Region> path = new ArrayList<Region>();
+        List<WorldRegion> path = new ArrayList<WorldRegion>();
         path.addAll(retrievePathInner(from, region.getViaRegion()));
         path.add(indicesNodes.get(region.getViaRegion()));
         path.addAll(retrievePathInner(region.getViaRegion(), to));
@@ -285,8 +285,8 @@ public class FloydWarshall  {
      * @param to
      * @return
      */
-    private List<Region> retrievePath(Integer from, Integer to) {
-        List<Region> path = new ArrayList<Region>();
+    private List<WorldRegion> retrievePath(Integer from, Integer to) {
+        List<WorldRegion> path = new ArrayList<WorldRegion>();
         path.add(indicesNodes.get(from));
         path.addAll(retrievePathInner(from, to));
         path.add(indicesNodes.get(to));
@@ -299,7 +299,7 @@ public class FloydWarshall  {
      * @param RegionTo
      * @return
      */
-    protected PathMatrixRegion<Region> getPathMatrixRegion(Region RegionFrom, Region RegionTo) {
+    protected PathMatrixRegion<WorldRegion> getPathMatrixRegion(WorldRegion RegionFrom, WorldRegion RegionTo) {
         Integer from = nodeIndices.get(RegionFrom);
         Integer to = nodeIndices.get(RegionTo);
         if (from == null || to == null) return null;
@@ -313,9 +313,9 @@ public class FloydWarshall  {
      * @param to
      * @return
      */
-    public boolean isReachable(Region from, Region to) {
+    public boolean isReachable(WorldRegion from, WorldRegion to) {
         if ((from == null) || (to == null)) return false;
-        PathMatrixRegion<Region> matrixRegion = getPathMatrixRegion(from, to);
+        PathMatrixRegion<WorldRegion> matrixRegion = getPathMatrixRegion(from, to);
         if (matrixRegion == null) return false;
         return matrixRegion.getPathCost() != Integer.MAX_VALUE;
     }
@@ -328,10 +328,10 @@ public class FloydWarshall  {
      * 
      * @return Distance or {@link Integer#MAX_VALUE} if there's no path.
      */
-    public int getPathCost(Region from, Region to) {
+    public int getPathCost(WorldRegion from, WorldRegion to) {
         if ((from == null) || (to == null))
             return Integer.MAX_VALUE;
-        PathMatrixRegion<Region> matrixRegion = getPathMatrixRegion(from, to);
+        PathMatrixRegion<WorldRegion> matrixRegion = getPathMatrixRegion(from, to);
         if (matrixRegion == null) return Integer.MAX_VALUE;
         return matrixRegion.getPathCost();
     }
@@ -346,13 +346,13 @@ public class FloydWarshall  {
      * @param to
      * @return
      */
-    public List<Region> getPath(Region from, Region to) {
+    public List<WorldRegion> getPath(WorldRegion from, WorldRegion to) {
         if ((from == null) || (to == null))
             return null;
-        PathMatrixRegion<Region> matrixRegion = getPathMatrixRegion(from, to);
+        PathMatrixRegion<WorldRegion> matrixRegion = getPathMatrixRegion(from, to);
         if (matrixRegion == null) return null;
         if (matrixRegion.getPathCost() == Integer.MAX_VALUE) return null;
-        List<Region> path = matrixRegion.getPath();
+        List<WorldRegion> path = matrixRegion.getPath();
         if (path == null) {
             // was not cached or JVM has GC()ed it
             path = retrievePathInner(nodeIndices.get(from), nodeIndices.get(to));
@@ -366,7 +366,7 @@ public class FloydWarshall  {
      * Returns matrix of Regions as computed by FloydWarshall algorithm. You should not alter it by hand!
      * @return
      */
-    protected PathMatrixRegion<Region>[][] getMatrix() {
+    protected PathMatrixRegion<WorldRegion>[][] getMatrix() {
         return pathMatrix;
     }
     
@@ -376,7 +376,7 @@ public class FloydWarshall  {
      * @param Region
      * @return
      */
-    protected Integer getRegionIndex(Region Region) {
+    protected Integer getRegionIndex(WorldRegion Region) {
         return nodeIndices.get(Region);
     }
 
@@ -389,12 +389,12 @@ public class FloydWarshall  {
         // SIMPLE TEST...
         FloydWarshall fw = new FloydWarshall();
         
-        for (Region from : Region.values()) {
-            for (Region to : Region.values()) {
+        for (WorldRegion from : WorldRegion.values()) {
+            for (WorldRegion to : WorldRegion.values()) {
                 
                 if (from == to) continue;
                 
-                List<Region> path = fw.getPath(from, to);
+                List<WorldRegion> path = fw.getPath(from, to);
 
                 System.out.print(from + " --> " + to + " <><><> ");
                 

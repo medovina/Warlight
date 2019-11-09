@@ -6,7 +6,7 @@ import conquest.engine.Robot;
 import conquest.game.GameState;
 import conquest.game.move.AttackTransferMove;
 import conquest.game.move.PlaceArmiesMove;
-import conquest.game.world.Region;
+import conquest.game.world.WorldRegion;
 
 public class HumanRobot implements Robot {
     private RobotConfig config;
@@ -18,7 +18,7 @@ public class HumanRobot implements Robot {
     }
 
     @Override
-    public Region getStartingRegion(GameState state) {
+    public WorldRegion getStartingRegion(GameState state) {
         return config.gui.chooseRegionHuman();
     }
 

@@ -8,7 +8,7 @@ import conquest.engine.Config;
 import conquest.engine.RunGame;
 import conquest.game.*;
 import conquest.game.move.*;
-import conquest.game.world.Region;
+import conquest.game.world.WorldRegion;
 import conquest.utils.Util;
 
 public class MyBot implements Bot
@@ -35,8 +35,8 @@ public class MyBot implements Bot
     // Choose a starting region.
     
     @Override
-    public Region chooseRegion(GameState state) {
-        ArrayList<Region> choosable = state.getPickableRegions();
+    public WorldRegion chooseRegion(GameState state) {
+        ArrayList<WorldRegion> choosable = state.getPickableRegions();
         return choosable.get(rand.nextInt(choosable.size()));
     }
 
@@ -46,7 +46,7 @@ public class MyBot implements Bot
     @Override
     public List<PlaceArmiesMove> placeArmies(GameState state) {
         int me = state.me();
-        List<RegionData> mine = state.regionsOwnedBy(me);
+        List<Region> mine = state.regionsOwnedBy(me);
         int numRegions = mine.size();
         
         int[] count = new int[numRegions];
@@ -58,7 +58,7 @@ public class MyBot implements Bot
         List<PlaceArmiesMove> ret = new ArrayList<PlaceArmiesMove>();
         for (int i = 0 ; i < numRegions ; ++i)
             if (count[i] > 0)
-                ret.add(new PlaceArmiesMove(mine.get(i).getRegion(), count[i]));
+                ret.add(new PlaceArmiesMove(mine.get(i).getWorldRegion(), count[i]));
         return ret;
     }
     
@@ -68,11 +68,11 @@ public class MyBot implements Bot
     public List<AttackTransferMove> moveArmies(GameState state) {
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
-        for (RegionData rd : state.regionsOwnedBy(state.me())) {
+        for (Region rd : state.regionsOwnedBy(state.me())) {
             int count = rand.nextInt(rd.getArmies());
             if (count > 0) {
-                List<RegionData> neighbors = rd.getNeighbors();
-                RegionData to = neighbors.get(rand.nextInt(neighbors.size()));
+                List<Region> neighbors = rd.getNeighbors();
+                Region to = neighbors.get(rand.nextInt(neighbors.size()));
                 ret.add(new AttackTransferMove(rd, to, count));
             }
         }

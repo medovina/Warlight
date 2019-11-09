@@ -24,7 +24,7 @@ import conquest.engine.robot.HumanRobot;
 import conquest.game.*;
 import conquest.game.move.AttackTransferMove;
 import conquest.game.move.PlaceArmiesMove;
-import conquest.game.world.Region;
+import conquest.game.world.WorldRegion;
 import conquest.view.GUI;
 
 public class Engine {
@@ -119,7 +119,7 @@ public class Engine {
             for (int p = 1 ; p <= 2 ; ++p) {
                 sendUpdateMapInfo(p);
                 long start = System.currentTimeMillis();
-                Region region = robot(p).getStartingRegion(game);
+                WorldRegion region = robot(p).getStartingRegion(game);
                 if (timeout(robot(p), start)) {
                     System.err.println("bot failed to return starting region in time!");
                     region = null;
@@ -140,7 +140,7 @@ public class Engine {
         }
     }
     
-    private Region getRandomStartingRegion()
+    private WorldRegion getRandomStartingRegion()
     {
         return game.pickableRegions.get(game.random.nextInt(game.pickableRegions.size()));
     }
@@ -160,14 +160,14 @@ public class Engine {
     //inform the player about how his visible map looks now
     private void sendUpdateMapInfo(int player)
     {
-        ArrayList<RegionData> visibleRegions;
+        ArrayList<Region> visibleRegions;
         if (game.config.fullyObservableGame) {
             visibleRegions = game.getMap().regions;
         } else {
             visibleRegions = game.getMap().visibleRegionsForPlayer(player);
         }
         String updateMapString = "update_map";
-        for(RegionData region : visibleRegions)
+        for(Region region : visibleRegions)
         {
             int id = region.getId();
             int owner = region.getOwner();

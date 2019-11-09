@@ -18,24 +18,24 @@
 package conquest.game;
 import java.util.ArrayList;
 
-import conquest.game.world.Continent;
+import conquest.game.world.WorldContinent;
 
-public class ContinentData {
+public class Continent {
     
-    private Continent continent;
+    private WorldContinent worldContinent;
     private int id;
     private int armiesReward;
-    private ArrayList<RegionData> regions;
+    private ArrayList<Region> regions;
     
-    public ContinentData(Continent continent, int id, int armiesReward)
+    public Continent(WorldContinent continent, int id, int armiesReward)
     {
-        this.continent = continent;
+        this.worldContinent = continent;
         this.id = id;
         this.armiesReward = armiesReward;
-        regions = new ArrayList<RegionData>();
+        regions = new ArrayList<Region>();
     }
     
-    public void addRegion(RegionData region)
+    public void addRegion(Region region)
     {
         if(!regions.contains(region))
             regions.add(region);
@@ -47,7 +47,7 @@ public class ContinentData {
     public int owner()
     {
         int player = regions.get(0).getOwner();
-        for(RegionData region : regions)
+        for(Region region : regions)
         {
             if (player != region.getOwner())
                 return 0;
@@ -72,12 +72,12 @@ public class ContinentData {
     /**
      * @return A list with the Regions that are part of this continent
      */
-    public ArrayList<RegionData> getRegions() {
+    public ArrayList<Region> getRegions() {
         return regions;
     }
 
-    public Continent getContinent() {
-        return continent;
+    public WorldContinent getWorldContinent() {
+        return worldContinent;
     }
     
 }

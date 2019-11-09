@@ -13,8 +13,8 @@ import conquest.engine.Config;
 import conquest.engine.RunGame;
 import conquest.game.*;
 import conquest.game.move.*;
-import conquest.game.world.Continent;
-import conquest.game.world.Region;
+import conquest.game.world.WorldContinent;
+import conquest.game.world.WorldRegion;
 import conquest.utils.Util;
 
 public class AggressiveBot implements Bot 
@@ -39,14 +39,14 @@ public class AggressiveBot implements Bot
     // ================
     
     @Override
-    public Region chooseRegion(GameState state) {
-        ArrayList<Region> choosable = state.getPickableRegions();
+    public WorldRegion chooseRegion(GameState state) {
+        ArrayList<WorldRegion> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
-        Region best = null;
+        WorldRegion best = null;
         
-        for (Region r : choosable) {
-            int p = getPreferredContinentPriority(r.continent);
+        for (WorldRegion r : choosable) {
+            int p = getPreferredContinentPriority(r.worldContinent);
             if (p < min) {
                 min = p;
                 best = r;
@@ -56,7 +56,7 @@ public class AggressiveBot implements Bot
         return best;
     }
     
-    public int getPreferredContinentPriority(Continent continent) {
+    public int getPreferredContinentPriority(WorldContinent continent) {
         switch (continent) {
         case Australia:     return 1;
         case South_America: return 2;
@@ -80,13 +80,13 @@ public class AggressiveBot implements Bot
         List<PlaceArmiesMove> result = new ArrayList<PlaceArmiesMove>();
         
         // CLONE REGIONS OWNED BY ME
-        List<RegionData> mine = state.regionsOwnedBy(me);
+        List<Region> mine = state.regionsOwnedBy(me);
         
         // SORT THEM IN DECREASING ORDER BY SCORE
-        Collections.sort(mine, new Comparator<RegionData>() {
+        Collections.sort(mine, new Comparator<Region>() {
 
             @Override
-            public int compare(RegionData o1, RegionData o2) {
+            public int compare(Region o1, Region o2) {
                 int regionScore1 = getRegionScore(o1);
                 int regionScore2 = getRegionScore(o2);
                 return regionScore2 - regionScore1;
@@ -106,7 +106,7 @@ public class AggressiveBot implements Bot
         
         while (armiesLeft > 0) {
             int count = Math.min(3, armiesLeft);
-            result.add(new PlaceArmiesMove(mine.get(index).getRegion(), count));
+            result.add(new PlaceArmiesMove(mine.get(index).getWorldRegion(), count));
             armiesLeft -= count;
             ++index;
             if (index >= mine.size()) index = 0;
@@ -115,10 +115,10 @@ public class AggressiveBot implements Bot
         return result;
     }
     
-    private int getRegionScore(RegionData o1) {
+    private int getRegionScore(Region o1) {
         int result = 0;
         
-        for (RegionData reg : o1.getNeighbors()) {
+        for (Region reg : o1.getNeighbors()) {
             result += (reg.isOwnedBy(0) ? 1 : 0) * 5;
             result += (reg.isOwnedBy(state.opp()) ? 1 : 0) * 2;
         }
@@ -136,13 +136,13 @@ public class AggressiveBot implements Bot
         
         int me = state.me();
         List<AttackTransferMove> result = new ArrayList<AttackTransferMove>();
-        Collection<RegionData> regions = state.regionsOwnedBy(me);
+        Collection<Region> regions = state.regionsOwnedBy(me);
         
         // CAPTURE ALL REGIONS WE CAN
-        for (RegionData from : regions) {
+        for (Region from : regions) {
             int available = from.getArmies() - 1;  // 1 army must stay behind
             
-            for (RegionData to : from.getNeighbors()) {
+            for (Region to : from.getNeighbors()) {
                 // DO NOT ATTACK OWN REGIONS
                 if (to.isOwnedBy(me)) continue;
                 
@@ -158,7 +158,7 @@ public class AggressiveBot implements Bot
         }
         
         // MOVE LEFT OVERS CLOSER TO THE FRONT
-        for (RegionData from : regions) {
+        for (Region from : regions) {
             if (hasOnlyMyNeighbours(from) && from.getArmies() > 1) {
                 result.add(moveToFront(from));
             }
@@ -167,14 +167,14 @@ public class AggressiveBot implements Bot
         return result;
     }
     
-    private boolean hasOnlyMyNeighbours(RegionData from) {
-        for (RegionData region : from.getNeighbors()) {            
+    private boolean hasOnlyMyNeighbours(Region from) {
+        for (Region region : from.getNeighbors()) {            
             if (!region.isOwnedBy(state.me())) return false;
         }
         return true;
     }
 
-    private int getRequiredSoldiersToConquerRegion(RegionData from, RegionData to, double winProbability) {
+    private int getRequiredSoldiersToConquerRegion(Region from, Region to, double winProbability) {
         int attackers = from.getArmies() - 1;
         int defenders = to.getArmies();
         
@@ -188,20 +188,20 @@ public class AggressiveBot implements Bot
         return Integer.MAX_VALUE;
     }
         
-    private AttackTransferMove transfer(RegionData from, RegionData to) {
-        AttackTransferMove result = new AttackTransferMove(from.getRegion(), to.getRegion(), from.getArmies()-1);
+    private AttackTransferMove transfer(Region from, Region to) {
+        AttackTransferMove result = new AttackTransferMove(from.getWorldRegion(), to.getWorldRegion(), from.getArmies()-1);
         return result;
     }
     
-    private Region moveToFrontRegion;
+    private WorldRegion moveToFrontRegion;
     
-    private AttackTransferMove moveToFront(RegionData from) {
+    private AttackTransferMove moveToFront(Region from) {
         RegionBFS<BFSNode> bfs = new RegionBFS<BFSNode>();
         moveToFrontRegion = null;
-        bfs.run(from.getRegion(), new BFSVisitor<BFSNode>() {
+        bfs.run(from.getWorldRegion(), new BFSVisitor<BFSNode>() {
 
             @Override
-            public BFSVisitResult<BFSNode> visit(Region region, int level, BFSNode parent, BFSNode thisNode) {
+            public BFSVisitResult<BFSNode> visit(WorldRegion region, int level, BFSNode parent, BFSNode thisNode) {
                 //System.err.println((parent == null ? "START" : parent.level + ":" + parent.region) + " --> " + level + ":" + region);
                 if (!hasOnlyMyNeighbours(state.region(region))) {
                     moveToFrontRegion = region;
@@ -214,11 +214,11 @@ public class AggressiveBot implements Bot
         
         if (moveToFrontRegion != null) {
             //List<Region> path = fw.getPath(from.getRegion(), moveToFrontRegion);
-            List<Region> path = bfs.getAllPaths(moveToFrontRegion).get(0);
-            Region moveTo = path.get(1);
+            List<WorldRegion> path = bfs.getAllPaths(moveToFrontRegion).get(0);
+            WorldRegion moveTo = path.get(1);
             
             boolean first = true;
-            for (Region region : path) {
+            for (WorldRegion region : path) {
                 if (first) first = false;
                 else System.err.print(" --> ");
                 System.err.print(region);

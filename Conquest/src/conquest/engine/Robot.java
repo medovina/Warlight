@@ -23,7 +23,7 @@ import conquest.engine.replay.GameLog;
 import conquest.game.*;
 import conquest.game.move.*;
 import conquest.view.GUI;
-import conquest.game.world.Region;
+import conquest.game.world.WorldRegion;
 
 public interface Robot {
     
@@ -63,7 +63,7 @@ public interface Robot {
 
     public void setup(RobotConfig config);
     
-    public Region getStartingRegion(GameState state);
+    public WorldRegion getStartingRegion(GameState state);
     
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state);
     

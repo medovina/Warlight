@@ -28,7 +28,7 @@ import conquest.engine.io.handler.IHandler;
 import conquest.engine.replay.GameLog;
 import conquest.game.GameState;
 import conquest.game.move.*;
-import conquest.game.world.Region;
+import conquest.game.world.WorldRegion;
 
 public class IORobot implements Robot
 {
@@ -68,10 +68,10 @@ public class IORobot implements Robot
     }
         
     @Override
-    public Region getStartingRegion(GameState state)
+    public WorldRegion getStartingRegion(GameState state)
     {
         String output = "pick_starting_region";
-        for(Region region : state.getPickableRegions())
+        for(WorldRegion region : state.getPickableRegions())
             output = output.concat(" " + region.id);
         
         handler.writeLine(output);

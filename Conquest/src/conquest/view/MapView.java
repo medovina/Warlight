@@ -9,7 +9,7 @@ import java.util.Comparator;
 import javax.swing.JLabel;
 
 import conquest.game.Team;
-import conquest.game.world.Continent;
+import conquest.game.world.WorldContinent;
 
 class MapView extends JLabel {
     GUI gui;
@@ -18,9 +18,9 @@ class MapView extends JLabel {
     
     public MapView(GUI gui) { this.gui = gui; }
     
-    class CompareByName implements Comparator<Continent> {
+    class CompareByName implements Comparator<WorldContinent> {
         @Override
-        public int compare(Continent o1, Continent o2) {
+        public int compare(WorldContinent o1, WorldContinent o2) {
             return o1.mapName.compareTo(o2.mapName);
         }
     }
@@ -32,13 +32,13 @@ class MapView extends JLabel {
         Font font = new Font("default", Font.BOLD, 14);
         g.setFont(font);
         
-        Continent[] a = Continent.values().clone();
+        WorldContinent[] a = WorldContinent.values().clone();
         Arrays.sort(a, new CompareByName());
         
         for (int i = 0 ; i < a.length ; ++i) {
             int y = 487 + 19 * i;
 
-            Continent c = a[i];
+            WorldContinent c = a[i];
             Team owner = gui.continentOwner[c.id];
             if (owner != null) {
                 g.setColor(TeamView.getHighlightColor(owner));

@@ -2,7 +2,7 @@ package conquest.game.world;
 
 import java.util.*;
 
-public enum Continent {
+public enum WorldContinent {
     
     North_America("North America", 1, 5),
     South_America("South America", 2, 2),
@@ -21,22 +21,22 @@ public enum Continent {
     public final int continentFlag;
     public final String mapName;
     
-    private List<Region> regions = null;
+    private List<WorldRegion> regions = null;
     
-    private Continent(String mapName, int id, int reward) {
+    private WorldContinent(String mapName, int id, int reward) {
         this.mapName = mapName;
         this.id = id;
         this.reward = reward;    
         this.continentFlag = 1 << (id-1);
     }
     
-    public List<Region> getRegions() {
+    public List<WorldRegion> getRegions() {
         if (regions == null) {
             synchronized(this) {
                 if (regions == null) {
-                    List<Region> regions = new ArrayList<Region>();
-                    for (Region regionName : Region.values()) {
-                        if (regionName.continent == this) {
+                    List<WorldRegion> regions = new ArrayList<WorldRegion>();
+                    for (WorldRegion regionName : WorldRegion.values()) {
+                        if (regionName.worldContinent == this) {
                             regions.add(regionName);
                         }
                     }
@@ -47,24 +47,24 @@ public enum Continent {
         return regions;
     }
     
-    private static Map<Integer, Continent> id2Continent = null;
+    private static Map<Integer, WorldContinent> id2Continent = null;
     
-    public static Continent forId(int id) {
+    public static WorldContinent forId(int id) {
         if (id2Continent == null) {
-            id2Continent = new HashMap<Integer, Continent>();
-            for (Continent continent : Continent.values()) {
+            id2Continent = new HashMap<Integer, WorldContinent>();
+            for (WorldContinent continent : WorldContinent.values()) {
                 id2Continent.put(continent.id, continent);
             }
         }
         return id2Continent.get(id);
     }
     
-    private static Map<Integer, Continent> flagToContinent = null;
+    private static Map<Integer, WorldContinent> flagToContinent = null;
     
-    public static Continent fromFlag(int continentFlag) {
+    public static WorldContinent fromFlag(int continentFlag) {
         if (flagToContinent == null) {
-            flagToContinent = new HashMap<Integer, Continent>();
-            for (Continent continent : Continent.values()) {
+            flagToContinent = new HashMap<Integer, WorldContinent>();
+            for (WorldContinent continent : WorldContinent.values()) {
                 flagToContinent.put(continent.continentFlag, continent);
             }
         }

@@ -11,14 +11,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import conquest.game.Team;
-import conquest.game.world.Region;
+import conquest.game.world.WorldRegion;
 
 public class RegionInfo extends JPanel implements MouseListener {
     private GUI gui;
     private int diam;
     private JLabel txt;
     private JLabel name;
-    private Region region;
+    private WorldRegion region;
     private int armies = 0;
     private Team team;
     private Color highlight;
@@ -109,14 +109,14 @@ public class RegionInfo extends JPanel implements MouseListener {
         this.name.setText(gui.showIds ? region.id + ":" + region.mapName : region.mapName);
     }
     
-    public void setRegion(Region region) {
+    public void setRegion(WorldRegion region) {
         this.region = region;
         drawName();
         this.revalidate();
         this.repaint();
     }
     
-    public Region getRegion() {
+    public WorldRegion getRegion() {
         return region;
     }
     

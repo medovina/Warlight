@@ -13,14 +13,14 @@ public class GameState implements Cloneable {
     int round;
     int turn;
     Phase phase;
-    public ArrayList<Region> pickableRegions;
+    public ArrayList<WorldRegion> pickableRegions;
     public Random random;
     GUI gui;
     
     public static final int nrOfStartingRegions = 3;
     
     public GameState(GameConfig config, GameMap map, String[] playerNames,
-                     int round, int turn, Phase phase, ArrayList<Region> pickableRegions) {
+                     int round, int turn, Phase phase, ArrayList<WorldRegion> pickableRegions) {
         this.config = config;
         this.map = map;
         this.playerNames = playerNames; 
@@ -38,7 +38,7 @@ public class GameState implements Cloneable {
     }
     
     public GameState(GameConfig config, GameMap map, String[] playerNames,
-                     ArrayList<Region> pickableRegions) {
+                     ArrayList<WorldRegion> pickableRegions) {
         this(
             config != null ? config : new GameConfig(),
             map != null ? map : makeInitMap(),
@@ -64,7 +64,7 @@ public class GameState implements Cloneable {
         // than in the original game.
         
         return new GameState(config, map.clone(), playerNames, round, turn, phase,
-                                new ArrayList<Region>(pickableRegions));
+                                new ArrayList<WorldRegion>(pickableRegions));
     }
     
     public GameMap getMap() { return map; }
@@ -124,19 +124,19 @@ public class GameState implements Cloneable {
         return round > 0 && (round > config.maxGameRounds || winningPlayer() > 0);
     }
 
-    public RegionData region(Region region) {
+    public Region region(WorldRegion region) {
         return getMap().getRegion(region.id);
     }
 
-    public ArrayList<RegionData> regionsOwnedBy(int player) {
+    public ArrayList<Region> regionsOwnedBy(int player) {
         return getMap().ownedRegionsByPlayer(player);
     }
         
-    public ArrayList<Region> getPickableRegions() {
+    public ArrayList<WorldRegion> getPickableRegions() {
         return pickableRegions;
     }
 
-    public void setPickableRegions(ArrayList<Region> regions) {
+    public void setPickableRegions(ArrayList<WorldRegion> regions) {
         this.pickableRegions = regions;
     }
     
@@ -147,7 +147,7 @@ public class GameState implements Cloneable {
         if (player == 1 && round <= 1)
             armies /= 2;
         
-        for(ContinentData cd : map.getContinents())
+        for(Continent cd : map.getContinents())
             if (cd.owner() == player)
                 armies += cd.getArmiesReward();
         
@@ -158,47 +158,47 @@ public class GameState implements Cloneable {
     {
         GameMap map = new GameMap();
         
-        Map<Continent, ContinentData> continents = new TreeMap<Continent, ContinentData>(new Comparator<Continent>() {
+        Map<WorldContinent, Continent> continents = new TreeMap<WorldContinent, Continent>(new Comparator<WorldContinent>() {
             @Override
-            public int compare(Continent o1, Continent o2) {
+            public int compare(WorldContinent o1, WorldContinent o2) {
                 return o1.id - o2.id;
             }           
         });
         
-        for (Continent continent : Continent.values()) {
-            ContinentData continentData = new ContinentData(continent, continent.id, continent.reward);
-            continents.put(continent, continentData);
+        for (WorldContinent worldContinent : WorldContinent.values()) {
+            Continent continent = new Continent(worldContinent, worldContinent.id, worldContinent.reward);
+            continents.put(worldContinent, continent);
         }
         
-        Map<Region, RegionData> regions = new TreeMap<Region, RegionData>(new Comparator<Region>() {
+        Map<WorldRegion, Region> regions = new TreeMap<WorldRegion, Region>(new Comparator<WorldRegion>() {
             @Override
-            public int compare(Region o1, Region o2) {
+            public int compare(WorldRegion o1, WorldRegion o2) {
                 return o1.id - o2.id;
             }
         });
         
-        for (Region region : Region.values()) {
-            RegionData regionData = new RegionData(region, region.id, continents.get(region.continent));
-            regions.put(region, regionData);
+        for (WorldRegion worldRegion : WorldRegion.values()) {
+            Region region = new Region(worldRegion, worldRegion.id, continents.get(worldRegion.worldContinent));
+            regions.put(worldRegion, region);
         }
         
-        for (Region regionName : Region.values()) {
-            RegionData region = regions.get(regionName);
-            for (Region neighbour : regionName.getForwardNeighbours()) {
+        for (WorldRegion regionName : WorldRegion.values()) {
+            Region region = regions.get(regionName);
+            for (WorldRegion neighbour : regionName.getForwardNeighbours()) {
                 region.addNeighbor(regions.get(neighbour));
             }
         }
         
-        for (RegionData region : regions.values()) {
+        for (Region region : regions.values()) {
             map.add(region);
         }
         
-        for (ContinentData continent : continents.values()) {
+        for (Continent continent : continents.values()) {
             map.add(continent);
         }
 
         // Make every region neutral with 2 armies to start with
-        for(RegionData region : map.regions)
+        for(Region region : map.regions)
         {
             region.setOwner(0);
             region.setArmies(2);
@@ -208,11 +208,11 @@ public class GameState implements Cloneable {
     }
     
     void initStartingRegions() {
-        pickableRegions = new ArrayList<Region>();
+        pickableRegions = new ArrayList<WorldRegion>();
         int regionsAdded = 0;
         
         //pick semi random regions to start with
-        for(Continent continent : Continent.values())
+        for(WorldContinent continent : WorldContinent.values())
         {
             int nrOfRegions = continent.getRegions().size();
             while(regionsAdded < 2)
@@ -220,7 +220,7 @@ public class GameState implements Cloneable {
                 //get one random subregion from continent
                 int randomRegionId = random.nextInt(nrOfRegions);
                 
-                Region randomRegion = continent.getRegions().get(randomRegionId);
+                WorldRegion randomRegion = continent.getRegions().get(randomRegionId);
                 if(!pickableRegions.contains(randomRegion))
                 {
                     pickableRegions.add(randomRegion);
@@ -231,14 +231,14 @@ public class GameState implements Cloneable {
         }
     }
     
-    public void chooseRegion(Region region) {
+    public void chooseRegion(WorldRegion region) {
         if (phase != Phase.STARTING_REGIONS)
             throw new Error("cannot choose regions after game has begun");
         
         if (!pickableRegions.contains(region))
             throw new Error("starting region is not pickable");
         
-        map.getRegionData(region).setOwner(turn);
+        map.getRegion(region).setOwner(turn);
         pickableRegions.remove(region);
         turn = 3 - turn;
         
@@ -257,7 +257,7 @@ public class GameState implements Cloneable {
                 
         for(PlaceArmiesMove move : moves)
         {
-            RegionData region = map.getRegionData(move.getRegion());
+            Region region = map.getRegion(move.getRegion());
             int armies = move.getArmies();
             
             if (!region.isOwnedBy(turn))
@@ -375,8 +375,8 @@ public class GameState implements Cloneable {
     //see wiki.warlight.net/index.php/Combat_Basics
     private void doAttack(AttackTransferMove move)
     {
-        RegionData fromRegion = map.getRegionData(move.getFromRegion());
-        RegionData toRegion = map.getRegionData(move.getToRegion());
+        Region fromRegion = map.getRegion(move.getFromRegion());
+        Region toRegion = map.getRegion(move.getToRegion());
         int attackingArmies;
         int defendingArmies = toRegion.getArmies();
         
@@ -422,12 +422,12 @@ public class GameState implements Cloneable {
 
     void validateAttackTransfers(List<AttackTransferMove> moves)
     {
-        int[] totalFrom = new int[Region.LAST_ID + 1];
+        int[] totalFrom = new int[WorldRegion.LAST_ID + 1];
         
         for (int i = 0 ; i < moves.size() ; ++i) {
             AttackTransferMove move = moves.get(i);
-            RegionData fromRegion = map.getRegionData(move.getFromRegion());
-            RegionData toRegion = map.getRegionData(move.getToRegion());
+            Region fromRegion = map.getRegion(move.getFromRegion());
+            Region toRegion = map.getRegion(move.getToRegion());
 
             if (!fromRegion.isOwnedBy(turn))
                 move.setIllegalMove(fromRegion.getId() + " attack/transfer not owned");
@@ -463,8 +463,8 @@ public class GameState implements Cloneable {
             if(!move.getIllegalMove().equals("")) //the move is illegal
                 continue;
             
-            RegionData fromRegion = map.getRegionData(move.getFromRegion());
-            RegionData toRegion = map.getRegionData(move.getToRegion());
+            Region fromRegion = map.getRegion(move.getFromRegion());
+            Region toRegion = map.getRegion(move.getToRegion());
             
             move.setArmies(Math.min(move.getArmies(), fromRegion.getArmies() - 1));
 

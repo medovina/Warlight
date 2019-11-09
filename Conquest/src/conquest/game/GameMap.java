@@ -19,25 +19,25 @@ package conquest.game;
 
 import java.util.ArrayList;
 
-import conquest.game.world.Continent;
-import conquest.game.world.Region;
+import conquest.game.world.WorldContinent;
+import conquest.game.world.WorldRegion;
 
 public class GameMap implements Cloneable {
     
-    public ArrayList<RegionData> regions;  // maps (id - 1) -> RegionData
-    public ArrayList<ContinentData> continents;  // maps (id - 1) -> ContinentData
+    public ArrayList<Region> regions;  // maps (id - 1) -> Region
+    public ArrayList<Continent> continents;  // maps (id - 1) -> Continent
     
     public GameMap()
     {
-        this.regions = new ArrayList<RegionData>();
-        this.continents = new ArrayList<ContinentData>();
+        this.regions = new ArrayList<Region>();
+        this.continents = new ArrayList<Continent>();
     }
     
     /**
      * add a Region to the map
      * @param region : Region to be added
      */
-    public void add(RegionData region)
+    public void add(Region region)
     {
         if (region.getId() != regions.size() + 1)
             throw new Error("regions out of order");
@@ -48,7 +48,7 @@ public class GameMap implements Cloneable {
      * add a Continent to the map
      * @param continent : Continent to be added
      */
-    public void add(ContinentData continent)
+    public void add(Continent continent)
     {
         if (continent.getId() != continents.size() + 1)
             throw new Error("continents out of order");
@@ -61,21 +61,21 @@ public class GameMap implements Cloneable {
     @Override
     public GameMap clone() {
         GameMap newMap = new GameMap();
-        for(ContinentData sr : continents) //copy continents
+        for(Continent sr : continents) //copy continents
         {
-            ContinentData newContinent = new ContinentData(Continent.forId(sr.getId()), sr.getId(), sr.getArmiesReward());
+            Continent newContinent = new Continent(WorldContinent.forId(sr.getId()), sr.getId(), sr.getArmiesReward());
             newMap.add(newContinent);
         }
-        for(RegionData r : regions) //copy regions
+        for(Region r : regions) //copy regions
         {
-            RegionData newRegion = new RegionData(Region.forId(r.getId()), r.getId(),
-                    newMap.getContinent(r.getContinentData().getId()), r.getOwner(), r.getArmies());
+            Region newRegion = new Region(WorldRegion.forId(r.getId()), r.getId(),
+                    newMap.getContinent(r.getContinent().getId()), r.getOwner(), r.getArmies());
             newMap.add(newRegion);
         }
-        for(RegionData r : regions) //add neighbors to copied regions
+        for(Region r : regions) //add neighbors to copied regions
         {
-            RegionData newRegion = newMap.getRegion(r.getId());
-            for(RegionData neighbor : r.getNeighbors())
+            Region newRegion = newMap.getRegion(r.getId());
+            for(Region neighbor : r.getNeighbors())
                 newRegion.addNeighbor(newMap.getRegion(neighbor.getId()));
         }
         return newMap;
@@ -84,14 +84,14 @@ public class GameMap implements Cloneable {
     /**
      * @return : the list of all Regions in this map
      */
-    public ArrayList<RegionData> getRegions() {
+    public ArrayList<Region> getRegions() {
         return regions;
     }
     
     /**
      * @return : the list of all Continents in this map
      */
-    public ArrayList<ContinentData> getContinents() {
+    public ArrayList<Continent> getContinents() {
         return continents;
     }
     
@@ -99,7 +99,7 @@ public class GameMap implements Cloneable {
      * @param id : a Region id number
      * @return : the matching Region object
      */
-    public RegionData getRegion(int id)
+    public Region getRegion(int id)
     {
         if (1 <= id && id <= regions.size())
             return regions.get(id - 1);
@@ -108,7 +108,7 @@ public class GameMap implements Cloneable {
         return null;
     }
     
-    public RegionData getRegionData(Region r) {
+    public Region getRegion(WorldRegion r) {
         return getRegion(r.id);
     }
     
@@ -116,7 +116,7 @@ public class GameMap implements Cloneable {
      * @param id : a Continent id number
      * @return : the matching Continent object
      */
-    public ContinentData getContinent(int id)
+    public Continent getContinent(int id)
     {
         if (1 <= id && id <= continents.size())
             return continents.get(id - 1);
@@ -128,7 +128,7 @@ public class GameMap implements Cloneable {
     public String getMapString()
     {
         String mapString = "";
-        for(RegionData region : regions)
+        for(Region region : regions)
         {
             mapString = mapString.concat(region.getId() + ";" + region.getOwner() + ";" + region.getArmies() + " ");
         }
@@ -138,7 +138,7 @@ public class GameMap implements Cloneable {
     public int numberRegionsOwned(int player) {
         int n = 0;
         
-        for (RegionData r: regions)
+        for (Region r: regions)
             if (r.getOwner() == player)
                 n += 1;
         
@@ -148,7 +148,7 @@ public class GameMap implements Cloneable {
     public int numberArmiesOwned(int player) {
         int n = 0;
         
-        for (RegionData r: regions)
+        for (Region r: regions)
             if (r.getOwner() == player)
                 n += r.getArmies();
         
@@ -156,11 +156,11 @@ public class GameMap implements Cloneable {
     }
 
     //return all regions owned by given player
-    public ArrayList<RegionData> ownedRegionsByPlayer(int player)
+    public ArrayList<Region> ownedRegionsByPlayer(int player)
     {
-        ArrayList<RegionData> ownedRegions = new ArrayList<RegionData>();
+        ArrayList<Region> ownedRegions = new ArrayList<Region>();
         
-        for(RegionData region : this.getRegions())
+        for(Region region : this.getRegions())
             if(region.getOwner() == player)
                 ownedRegions.add(region);
 
@@ -169,15 +169,15 @@ public class GameMap implements Cloneable {
     
     //fog of war
     //return all regions visible to given player
-    public ArrayList<RegionData> visibleRegionsForPlayer(int player)
+    public ArrayList<Region> visibleRegionsForPlayer(int player)
     {
-        ArrayList<RegionData> visibleRegions = new ArrayList<RegionData>();
-        ArrayList<RegionData> ownedRegions = ownedRegionsByPlayer(player);
+        ArrayList<Region> visibleRegions = new ArrayList<Region>();
+        ArrayList<Region> ownedRegions = ownedRegionsByPlayer(player);
         
         visibleRegions.addAll(ownedRegions);
         
-        for(RegionData region : ownedRegions)    
-            for(RegionData neighbor : region.getNeighbors())
+        for(Region region : ownedRegions)    
+            for(Region neighbor : region.getNeighbors())
                 if(!visibleRegions.contains(neighbor))
                     visibleRegions.add(neighbor);
 

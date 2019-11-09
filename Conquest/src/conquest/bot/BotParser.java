@@ -59,7 +59,7 @@ public class BotParser extends Thread {
         this.output = output;
         
         this.bot = bot;
-        this.currentState = new GameState(null, new GameMap(), null, new ArrayList<Region>());
+        this.currentState = new GameState(null, new GameMap(), null, new ArrayList<WorldRegion>());
     }
     
     public static Bot constructBot(String botFQCN) {
@@ -110,14 +110,14 @@ public class BotParser extends Thread {
     //regions from which a player is able to pick his preferred starting regions
     void setPickableStartingRegions(GameState state, String[] mapInput)
     {
-        ArrayList<Region> regions = new ArrayList<Region>();
+        ArrayList<WorldRegion> regions = new ArrayList<WorldRegion>();
         
         for(int i=2; i<mapInput.length; i++)
         {
             int regionId;
             try {
                 regionId = Integer.parseInt(mapInput[i]);
-                Region pickableRegion = Region.forId(regionId);
+                WorldRegion pickableRegion = WorldRegion.forId(regionId);
                 regions.add(pickableRegion);
             }
             catch(Exception e) {
@@ -141,7 +141,7 @@ public class BotParser extends Thread {
                     int continentId = Integer.parseInt(mapInput[i]);
                     i++;
                     int reward = Integer.parseInt(mapInput[i]);
-                    map.add(new ContinentData(Continent.forId(continentId), continentId, reward));
+                    map.add(new Continent(WorldContinent.forId(continentId), continentId, reward));
                 }
                 catch(Exception e) {
                     System.err.println("Unable to parse Continents");
@@ -156,8 +156,8 @@ public class BotParser extends Thread {
                     int regionId = Integer.parseInt(mapInput[i]);
                     i++;
                     int continentId = Integer.parseInt(mapInput[i]);
-                    ContinentData continent = map.getContinent(continentId);
-                    map.add(new RegionData(Region.forId(regionId), regionId, continent));
+                    Continent continent = map.getContinent(continentId);
+                    map.add(new Region(WorldRegion.forId(regionId), regionId, continent));
                 }
                 catch(Exception e) {
                     System.err.println("Unable to parse Regions " + e.getMessage());
@@ -169,12 +169,12 @@ public class BotParser extends Thread {
             for(int i=2; i<mapInput.length; i++)
             {
                 try {
-                    RegionData region = map.getRegion(Integer.parseInt(mapInput[i]));
+                    Region region = map.getRegion(Integer.parseInt(mapInput[i]));
                     i++;
                     String[] neighborIds = mapInput[i].split(",");
                     for(int j=0; j<neighborIds.length; j++)
                     {
-                        RegionData neighbor = map.getRegion(Integer.parseInt(neighborIds[j]));
+                        Region neighbor = map.getRegion(Integer.parseInt(neighborIds[j]));
                         region.addNeighbor(neighbor);
                     }
                 }
@@ -191,7 +191,7 @@ public class BotParser extends Thread {
         for(int i=1; i<mapInput.length; i++)
         {
             try {
-                RegionData region = state.getMap().getRegion(Integer.parseInt(mapInput[i]));
+                Region region = state.getMap().getRegion(Integer.parseInt(mapInput[i]));
                 int owner = Integer.parseInt(mapInput[i+1]);
                 int armies = Integer.parseInt(mapInput[i+2]);
                 
@@ -251,7 +251,7 @@ public class BotParser extends Thread {
                     //pick a region you want to start with
                     currentState.setPhase(Phase.STARTING_REGIONS);
                     setPickableStartingRegions(currentState, parts);
-                    Region startingRegion = bot.chooseRegion(currentState);
+                    WorldRegion startingRegion = bot.chooseRegion(currentState);
                     String output = startingRegion.id + "";
                     
                     log("OUT: " + output);
