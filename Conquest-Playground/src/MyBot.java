@@ -78,7 +78,7 @@ public class MyBot extends GameBot
     public static void runInternal() {
         Config config = new Config();
         
-        config.bot1Init = "internal:conquest.bot.playground.MyBot";
+        config.bot1Init = "internal:MyBot";
         
         config.bot2Init = "internal:conquest.bot.custom.AggressiveBot";
         //config.bot2Init = "human";

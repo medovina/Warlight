@@ -445,7 +445,7 @@ public class ConquestFightConsole {
                 , "-g", "10"      // games-count
                 , "-r", "false"   // reverse-games
                 , "-a", "MyBot"                              // bot1-id
-                , "-b", "internal:conquest.bot.playground.MyBot" // bot1-init
+                , "-b", "internal:MyBot" // bot1-init
                 , "-c", "AggressiveBot"                                 // bot2-id
                 , "-d", "internal:conquest.bot.custom.AggressiveBot"           // bot2-init
                 , "-u", "./results/fights"              // result-dir
