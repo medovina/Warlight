@@ -49,8 +49,14 @@ public class Engine {
     }
     
     boolean timeout(Robot robot, long start) {
-        return !(robot instanceof HumanRobot) &&
-               timeoutMillis > 0 && System.currentTimeMillis() - start > timeoutMillis;
+        long elapsed = System.currentTimeMillis() - start;
+        if (!(robot instanceof HumanRobot) &&
+                timeoutMillis > 0 && elapsed > timeoutMillis + 50 /* grace period */) {
+            System.err.format("bot failed to respond in time!  timeout = %d, elapsed = %d\n",
+                timeoutMillis, elapsed);
+            return true; 
+        }
+        return false;
     }
 
     public void playRound()
