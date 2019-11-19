@@ -1,1 +1,0 @@
-call evaluate.bat BotStarter
