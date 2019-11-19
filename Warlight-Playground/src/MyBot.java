@@ -1,15 +1,15 @@
 import java.io.File;
 import java.util.*;
 
-import conquest.bot.BotParser;
-import conquest.bot.Bot;
-import conquest.bot.fight.FightSimulation.FightAttackersResults;
-import conquest.engine.Config;
-import conquest.engine.RunGame;
-import conquest.game.*;
-import conquest.game.move.*;
-import conquest.game.world.WorldRegion;
-import conquest.utils.Util;
+import warlight.bot.BotParser;
+import warlight.bot.Bot;
+import warlight.bot.fight.FightSimulation.FightAttackersResults;
+import warlight.engine.Config;
+import warlight.engine.RunGame;
+import warlight.game.*;
+import warlight.game.move.*;
+import warlight.game.world.WorldRegion;
+import warlight.utils.Util;
 
 public class MyBot implements Bot
 {
@@ -84,7 +84,7 @@ public class MyBot implements Bot
         
         config.bot1Init = "internal:MyBot";
         
-        config.bot2Init = "internal:conquest.bot.custom.AggressiveBot";
+        config.bot2Init = "internal:warlight.bot.custom.AggressiveBot";
         //config.bot2Init = "human";
         
         config.botCommandTimeoutMillis = 20 * 1000;
@@ -109,7 +109,7 @@ public class MyBot implements Bot
     {
         runInternal();
 
-        //JavaBot.exec(new String[]{"conquest.bot.custom.AggressiveBot", "./AggressiveBot.log"});
+        //JavaBot.exec(new String[]{"warlight.bot.custom.AggressiveBot", "./AggressiveBot.log"});
     }
 
 }

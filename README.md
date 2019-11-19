@@ -10,11 +10,11 @@ The code here is derived from the [original implementation](http://theaigames.co
 
 This repository contains .project and .classpath files that define 4 Eclipse projects (Warlight, Warlight-Bots, Warlight-Playground, Warlight-Tournament).  You can import these into Eclipse using the command Import -> General -> Existing&nbsp;Projects&nbsp;into&nbsp;Workspace.  (It should not be difficult to import the projects into other IDEs such as Intelli/J as well.)
 
-The class `conquest.bot.custom.AggressiveBot` is an example bot that plays the game.  The main() method in this class launches a game where you can play interactively against AggressiveBot.  That's a good way to start learning about the game.
+The class `warlight.bot.custom.AggressiveBot` is an example bot that plays the game.  The main() method in this class launches a game where you can play interactively against AggressiveBot.  That's a good way to start learning about the game.
 
-The class `conquest.bot.playground.MyBot` contains a dummy bot that plays randomly.  The main() method in this class launches a game where MyBot plays against AggressiveBot.  Usually MyBot will lose.  You can use MyBot as a starting point for developing your own game-playing agent.
+The class `warlight.bot.playground.MyBot` contains a dummy bot that plays randomly.  The main() method in this class launches a game where MyBot plays against AggressiveBot.  Usually MyBot will lose.  You can use MyBot as a starting point for developing your own game-playing agent.
 
-The class `conquest.tournament.ConquestFightConsole` can play a series of games between two bots.  If you uncomment the line "`args = getTestArgs_1v1()`" in the main() method there, it will play 10 games of MyBot against AggressiveBot and will report win percentage statistics.  You can use this class to evaluate your bot's performance.
+The class `warlight.tournament.WarlightFightConsole` can play a series of games between two bots.  If you uncomment the line "`args = getTestArgs_1v1()`" in the main() method there, it will play 10 games of MyBot against AggressiveBot and will report win percentage statistics.  You can use this class to evaluate your bot's performance.
 
 ## Game rules
 
@@ -49,7 +49,7 @@ When two bots are playing each other, you can left click the map or press the sp
 
 ## Writing a bot
 
-Use `conquest.bot.playground.MyBot` as a starting point.  Here is [documentation](https://ksvi.mff.cuni.cz/~dingle/2019/ai/warlight_api.html) for the most important classes, fields and methods in the Warlight API.
+Use `warlight.bot.playground.MyBot` as a starting point.  Here is [documentation](https://ksvi.mff.cuni.cz/~dingle/2019/ai/warlight_api.html) for the most important classes, fields and methods in the Warlight API.
 
 ## More notes
 
@@ -71,7 +71,7 @@ The following notes are from Jakub Gemrot and provide more detailed information 
 
 6) slim GameStateCompact representation of the game state that can be used for performance searches (not the best, but quite ok); use GameStateCompact.fromGameState(gameState) you have in your GameBot
 
-7) Warlight-Tournament project can be used to automate matches between bots using command line tools (see ConquestFightConsole and ConquestTableConsole classes); see Warlight-Competition for example how to quickly setup tournament
+7) Warlight-Tournament project can be used to automate matches between bots using command line tools (see WarlightFightConsole and WarlightTableConsole classes); see Warlight-Competition for example how to quickly setup tournament
 batch files (be sure to stop by and read Warlight-Competition/readme.txt)
 
 8) possibility to execute "process" player from within concrete directory, use "dir;process" as bot init command to specify the directory from which you would like the bot process to be executed
@@ -87,7 +87,7 @@ this will spare you the problems with "invalid" main of the bot you want to exec
 
 **Warlight-Bots** -> project providing better support for Java bots; includes OOP as well as compact representation of the game state. AggressiveBot example runnable as is.
 
-**Warlight-Playground** -> stub project for your code; it contains ConquestBost class that is copy-pasted code from AggressiveBot also runnable and an entry point for you to start coding your bot.
+**Warlight-Playground** -> stub project for your code; it contains MyBot class also runnable and an entry point for you to start coding your bot.
 
 **Warlight-Tournament** -> automation of matches
 
