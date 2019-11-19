@@ -1,6 +1,6 @@
 package conquest.engine;
 
-import conquest.Conquest;
+import conquest.Warlight;
 
 /**
  * Class that can be used to quickly run some replay manually.  
@@ -13,7 +13,7 @@ public class RunReplay {
         // Configure with with: "path/to/your/replay.log";
         String replayFile = "./replay.log";
         
-        Conquest.startReplay(replayFile);
+        Warlight.startReplay(replayFile);
     }
     
 }

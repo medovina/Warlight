@@ -24,8 +24,8 @@ public class AggressiveBot implements Bot
     FightDefendersResults dRes;
     
     public AggressiveBot() {
-        aRes = FightAttackersResults.loadFromFile(Util.findFile("Conquest-Bots/FightSimulation-Attackers-A200-D200.obj"));
-        dRes = FightDefendersResults.loadFromFile(Util.findFile("Conquest-Bots/FightSimulation-Defenders-A200-D200.obj"));
+        aRes = FightAttackersResults.loadFromFile(Util.findFile("Warlight-Bots/FightSimulation-Attackers-A200-D200.obj"));
+        dRes = FightDefendersResults.loadFromFile(Util.findFile("Warlight-Bots/FightSimulation-Defenders-A200-D200.obj"));
         System.err.println("---==[ AGGRESSIVE BOT INITIALIZED ]==---");
     }
 
@@ -235,7 +235,7 @@ public class AggressiveBot implements Bot
         Config config = new Config();
         
         config.bot1Init = "internal:conquest.bot.custom.AggressiveBot";
-        //config.bot1Init = "dir;process:../Conquest-Bots;java -cp ./bin;../Conquest/bin conquest.bot.external.JavaBot conquest.bot.custom.AggressiveBot ./AggressiveBot.log";
+        //config.bot1Init = "dir;process:../Warlight-Bots;java -cp ./bin;../Warlight/bin conquest.bot.external.JavaBot conquest.bot.custom.AggressiveBot ./AggressiveBot.log";
         //config.bot2Init = "internal:conquest.bot.BotStarter";
         config.bot2Init = "human";
         

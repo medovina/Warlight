@@ -8,7 +8,7 @@ The code here is derived from the [original implementation](http://theaigames.co
 
 ## Quick start
 
-This repository contains .project and .classpath files that define 4 Eclipse projects (Conquest, Conquest-Bots, Conquest-Playground, Conquest-Tournament).  You can import these into Eclipse using the command Import -> General -> Existing&nbsp;Projects&nbsp;into&nbsp;Workspace.  (It should not be difficult to import the projects into other IDEs such as Intelli/J as well.)
+This repository contains .project and .classpath files that define 4 Eclipse projects (Warlight, Warlight-Bots, Warlight-Playground, Warlight-Tournament).  You can import these into Eclipse using the command Import -> General -> Existing&nbsp;Projects&nbsp;into&nbsp;Workspace.  (It should not be difficult to import the projects into other IDEs such as Intelli/J as well.)
 
 The class `conquest.bot.custom.AggressiveBot` is an example bot that plays the game.  The main() method in this class launches a game where you can play interactively against AggressiveBot.  That's a good way to start learning about the game.
 
@@ -71,8 +71,8 @@ The following notes are from Jakub Gemrot and provide more detailed information 
 
 6) slim GameStateCompact representation of the game state that can be used for performance searches (not the best, but quite ok); use GameStateCompact.fromGameState(gameState) you have in your GameBot
 
-7) Conquest-Tournament project can be used to automate matches between bots using command line tools (see ConquestFightConsole and ConquestTableConsole classes); see Conquest-Competition for example how to quickly setup tournament
-batch files (be sure to stop by and read Conquest-Competition/readme.txt)
+7) Warlight-Tournament project can be used to automate matches between bots using command line tools (see ConquestFightConsole and ConquestTableConsole classes); see Warlight-Competition for example how to quickly setup tournament
+batch files (be sure to stop by and read Warlight-Competition/readme.txt)
 
 8) possibility to execute "process" player from within concrete directory, use "dir;process" as bot init command to specify the directory from which you would like the bot process to be executed
 
@@ -83,13 +83,13 @@ this will spare you the problems with "invalid" main of the bot you want to exec
 
 ## PROJECT STRUCTURE
 
-**Conquest** -> simulator and visualizator of Warlight AI Challenge
+**Warlight** -> simulator and visualizator of Warlight AI Challenge
 
-**Conquest-Bots** -> project providing better support for Java bots; includes OOP as well as compact representation of the game state. AggressiveBot example runnable as is.
+**Warlight-Bots** -> project providing better support for Java bots; includes OOP as well as compact representation of the game state. AggressiveBot example runnable as is.
 
-**Conquest-Playground** -> stub project for your code; it contains ConquestBost class that is copy-pasted code from AggressiveBot also runnable and an entry point for you to start coding your bot.
+**Warlight-Playground** -> stub project for your code; it contains ConquestBost class that is copy-pasted code from AggressiveBot also runnable and an entry point for you to start coding your bot.
 
-**Conquest-Tournament** -> automation of matches
+**Warlight-Tournament** -> automation of matches
 
-**Conquest-Competition** -> folder stub for perfoming table-type tournaments
+**Warlight-Competition** -> folder stub for perfoming table-type tournaments
 

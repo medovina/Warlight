@@ -56,7 +56,7 @@ public class ConquestTableConsole {
         if (headerOutput) return;
         System.out.println();
         System.out.println("==============");
-        System.out.println("Conquest Table");
+        System.out.println("Warlight Table");
         System.out.println("==============");
         System.out.println();
         headerOutput = true;

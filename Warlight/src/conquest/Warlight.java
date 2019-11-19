@@ -5,7 +5,7 @@ import java.io.File;
 import conquest.engine.Config;
 import conquest.engine.RunGame;
 
-public class Conquest {
+public class Warlight {
     
     /**
      * Example how to start internal bots...
@@ -70,7 +70,7 @@ public class Conquest {
         System.out.println("Invalid arguments passed. Expected 1, 5 or 6 arguemnts");
         System.out.println();
         System.out.println("To start the game (5 or 6 arguments):");
-        System.out.println("java ... conquest.Conquest <max rounds:int> <bot command timeout:long> <bot1:init string> <bot2:init string> <visualization:boolean> [ <replay file:string> ]");
+        System.out.println("java ... conquest.Warlight <max rounds:int> <bot command timeout:long> <bot1:init string> <bot2:init string> <visualization:boolean> [ <replay file:string> ]");
         System.out.println("    -- possible bot init strings:");
         System.out.println("        -- internal:fqcn ~ to start bot directly on Java classpath");
         System.out.println("        -- process:command ~ to execute the bot from command line");
@@ -78,7 +78,7 @@ public class Conquest {
         System.out.println("        -- human ~ human player");
         System.out.println();
         System.out.println("To replay the game (1 argument):");
-        System.out.println("java ... conquest.Conquest <replay file:string>");
+        System.out.println("java ... conquest.Warlight <replay file:string>");
         System.out.println();        
         System.exit(1);
     }

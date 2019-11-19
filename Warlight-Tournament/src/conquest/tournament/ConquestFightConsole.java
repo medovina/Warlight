@@ -130,7 +130,7 @@ public class ConquestFightConsole {
         if (headerOutput) return;
         System.out.println();
         System.out.println("==============");
-        System.out.println("Conquest Fight");
+        System.out.println("Warlight Fight");
         System.out.println("==============");
         System.out.println();
         headerOutput = true;

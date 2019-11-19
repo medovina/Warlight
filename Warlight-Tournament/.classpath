@@ -2,7 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Conquest"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Conquest-Bots"/>
+	<classpathentry kind="lib" path="lib/jsap-2.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Warlight"/>
+	<classpathentry kind="src" path="/Warlight-Playground"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

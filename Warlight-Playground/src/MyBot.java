@@ -19,7 +19,7 @@ public class MyBot implements Bot
     
     public MyBot() {
         attackResults = FightAttackersResults.loadFromFile(Util.findFile(
-                "Conquest-Bots/FightSimulation-Attackers-A200-D200.obj"));
+                "Warlight-Bots/FightSimulation-Attackers-A200-D200.obj"));
     }
     
     // Code your bot here.

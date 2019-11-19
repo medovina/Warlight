@@ -54,7 +54,7 @@ public class JavaBot {
     
     private static void fail(String msg) {        
         System.out.println("================");
-        System.out.println("Conquest JavaBot");
+        System.out.println("Warlight JavaBot");
         System.out.println("================");
         System.out.println();
         System.out.println(msg);
