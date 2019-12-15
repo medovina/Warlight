@@ -1,0 +1,3 @@
+#!/bin/bash
+
+jar cf warlight.jar -C Warlight/target/classes . -C Warlight-Bots/target/classes . -C Warlight-Tournament/target/classes .

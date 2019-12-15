@@ -30,7 +30,7 @@ public class WarlightFight {
         System.out.println("[" + name + "] " + msg);
     }
     
-    public void fight(String bot1Name, String bot1Init, String bot2Name, String bot2Init) {        
+    public TotalResults fight(String bot1Name, String bot1Init, String bot2Name, String bot2Init) {        
         bot1Name = Sanitize.idify(bot1Name);
         bot2Name = Sanitize.idify(bot2Name);
         
@@ -46,8 +46,9 @@ public class WarlightFight {
         WarlightFightRound[] rounds = WarlightFightRoundGenerator.generateFightRounds(fightConfig.seed, fightConfig.config, fightConfig.games);
         
         GameResult[] results = new GameResult[rounds.length];
-        
-        replayDirFile.mkdirs();
+
+        if (replayDirFile != null)
+            replayDirFile.mkdirs();
                         
         for (int i = 0; i < rounds.length; ++i) {
             long start = System.currentTimeMillis();
@@ -77,40 +78,43 @@ public class WarlightFight {
         
         log(gameId, "FIGHT FINISHED!");
         
-        outputResults(rounds, results);        
+        return outputResults(rounds, results);        
     }
 
-    private void outputResults(WarlightFightRound[] rounds, GameResult[] results) {
+    private TotalResults outputResults(WarlightFightRound[] rounds, GameResult[] results) {
         String bot1Name = rounds[0].getConfig().player1Name;
         String bot2Name = rounds[0].getConfig().player2Name;
         
-        String fileName;
-        
-        if (bot1Name.compareTo(bot2Name) < 0) {
-            fileName = bot1Name + "-vs-" + bot2Name + ".csv";
-        } else {
-            fileName = bot2Name + "-vs-" + bot1Name + ".csv";
+        if (resultDirFile != null) {
+            String fileName;
+            if (bot1Name.compareTo(bot2Name) < 0) {
+                fileName = bot1Name + "-vs-" + bot2Name + ".csv";
+            } else {
+                fileName = bot2Name + "-vs-" + bot1Name + ".csv";
+            }
+            outputResults(new File(resultDirFile, fileName), rounds, results);
         }
+
+        if (tableFile != null)
+            outputResults(tableFile, rounds, results);
         
-        outputResults(new File(resultDirFile, fileName), rounds, results);
-        
-        outputResults(tableFile, rounds, results);
-        
-        int victories1 = 0, victories2 = 0;
+        TotalResults res = new TotalResults();
         for (int i = 0 ; i < results.length ; ++i) {
             GameResult r = results[i];
             System.out.format("game %d: %s won in %d rounds (%d regions, %d armies)\n",
                     i + 1, r.getWinnerName(), r.round, r.getWinnerRegions(),r.getWinnerArmies());
             switch (r.winner) {
-            case PLAYER_1: victories1 += 1; break;
-            case PLAYER_2: victories2 += 1; break;
+            case PLAYER_1: res.victories1 += 1; break;
+            case PLAYER_2: res.victories2 += 1; break;
             default: break;
             }
         }
         
         System.out.format("total victories: %s = %d (%.1f%%), %s = %d (%.1f%%)\n",
-            bot1Name, victories1, 100.0 * victories1 / results.length, 
-            bot2Name, victories2, 100.0 * victories2 / results.length);
+            bot1Name, res.victories1, 100.0 * res.victories1 / results.length, 
+            bot2Name, res.victories2, 100.0 * res.victories2 / results.length);
+
+        return res;
     }
 
     
