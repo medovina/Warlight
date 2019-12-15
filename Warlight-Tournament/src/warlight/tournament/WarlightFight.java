@@ -57,12 +57,14 @@ public class WarlightFight {
             
             log(gameId, "ROUND " + (i+1) + " / " + rounds.length);
             
-            // SET REPLAY FILE
-            int roundNumber = 0;
-            while (true) {
-                rounds[i].getConfig().replayLog = new File(replayDirFile, bot1Name + "-vs-" + bot2Name + "-Round-" + roundNumber + ".replay");
-                if (!rounds[i].getConfig().replayLog.exists()) break;
-                ++roundNumber;
+            if (replayDirFile != null) {
+                // SET REPLAY FILE
+                int roundNumber = 0;
+                while (true) {
+                    rounds[i].getConfig().replayLog = new File(replayDirFile, bot1Name + "-vs-" + bot2Name + "-Round-" + roundNumber + ".replay");
+                    if (!rounds[i].getConfig().replayLog.exists()) break;
+                    ++roundNumber;
+                }
             }
             
             GameResult result = rounds[i].run();
