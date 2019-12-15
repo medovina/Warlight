@@ -26,7 +26,6 @@ public class AggressiveBot implements Bot
     public AggressiveBot() {
         aRes = FightAttackersResults.loadFromFile(Util.findFile("Warlight-Bots/FightSimulation-Attackers-A200-D200.obj"));
         dRes = FightDefendersResults.loadFromFile(Util.findFile("Warlight-Bots/FightSimulation-Defenders-A200-D200.obj"));
-        System.err.println("---==[ AGGRESSIVE BOT INITIALIZED ]==---");
     }
 
     @Override
@@ -201,7 +200,6 @@ public class AggressiveBot implements Bot
 
             @Override
             public BFSVisitResult<BFSNode> visit(WorldRegion region, int level, BFSNode parent, BFSNode thisNode) {
-                //System.err.println((parent == null ? "START" : parent.level + ":" + parent.region) + " --> " + level + ":" + region);
                 if (!hasOnlyMyNeighbours(state.region(region))) {
                     moveToFrontRegion = region;
                     return new BFSVisitResult<BFSNode>(BFSVisitResultType.TERMINATE, thisNode == null ? new BFSNode() : thisNode);
@@ -215,14 +213,6 @@ public class AggressiveBot implements Bot
             //List<Region> path = fw.getPath(from.getRegion(), moveToFrontRegion);
             List<WorldRegion> path = bfs.getAllPaths(moveToFrontRegion).get(0);
             WorldRegion moveTo = path.get(1);
-            
-            boolean first = true;
-            for (WorldRegion region : path) {
-                if (first) first = false;
-                else System.err.print(" --> ");
-                System.err.print(region);
-            }
-            System.err.println();
             
             return transfer(from, state.region(moveTo));
         }

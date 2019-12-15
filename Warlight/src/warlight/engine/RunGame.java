@@ -138,7 +138,6 @@ public class RunGame
         //play the game
         while(!game.isDone())
         {
-            System.out.println("Round " + game.getRoundNumber());
             if (log != null) {
                 log.logComment(0, "Round " + game.getRoundNumber());
             }

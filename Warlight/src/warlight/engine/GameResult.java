@@ -63,9 +63,9 @@ public class GameResult {
     }
     
     public String getHumanString() {
-        return "Winner: " + getWinner() + "[" + getWinnerName() + "] in round " + round +
+        return "Winner: " + getWinner() + " [" + getWinnerName() + "] in round " + round +
                "\nPlayer1: " + player1Regions + " regions / " + player1Armies +
-               " armies\nPlayer2: " +player2Regions + " regions / " + player2Armies + " armies";
+               " armies; Player2: " +player2Regions + " regions / " + player2Armies + " armies";
     }
     
     public String getCSVHeader() {
