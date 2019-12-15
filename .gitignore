@@ -1,3 +1,7 @@
+.classpath
+.project
+.settings
 bin
 replay.log
 results
+target
