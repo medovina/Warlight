@@ -50,7 +50,7 @@ public class Engine {
     boolean timeout(Robot robot, long start) {
         long elapsed = System.currentTimeMillis() - start;
         if (!(robot instanceof HumanRobot) &&
-                timeoutMillis > 0 && elapsed > timeoutMillis + 50 /* grace period */) {
+                timeoutMillis > 0 && elapsed > timeoutMillis + 150 /* grace period */) {
             System.err.format("bot failed to respond in time!  timeout = %d, elapsed = %d\n",
                 timeoutMillis, elapsed);
             return true; 

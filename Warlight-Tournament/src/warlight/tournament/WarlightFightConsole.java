@@ -441,7 +441,7 @@ public class WarlightFightConsole {
     public static String[] getTestArgs_1v1() {
         return new String[] {
                   "-s", "20"     // seed
-                , "-o", "GAME;x;x;5000;false;false;200;false;-1;true;5;100;CONTINUAL_1_1_A60_D70"   // game-config
+                , "-o", "GAME;x;x;200;false;false;200;false;-1;true;5;100;CONTINUAL_1_1_A60_D70"   // game-config
                 , "-g", "10"      // games-count
                 , "-r", "false"   // reverse-games
                 , "-a", "MyBot"                              // bot1-id
