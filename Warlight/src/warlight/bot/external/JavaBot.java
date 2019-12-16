@@ -49,7 +49,7 @@ public class JavaBot {
     }
 
     private Bot constructBot() {
-        return BotParser.constructBot(botFQCN);
+        return BotParser.constructBot(null, botFQCN);
     }
     
     private static void fail(String msg) {        

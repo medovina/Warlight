@@ -20,6 +20,7 @@ package warlight.engine;
 import java.io.File;
 import java.io.IOException;
 
+import warlight.bot.BotLoader;
 import warlight.engine.Robot.RobotConfig;
 import warlight.engine.replay.FileGameLog;
 import warlight.engine.replay.GameLog;
@@ -83,8 +84,8 @@ public class RunGame
             String[] playerNames = new String[2];
             Robot[] robots = new Robot[2];
             
-            robots[0] = setupRobot(1, config.bot1Init);
-            robots[1] = setupRobot(2, config.bot2Init);
+            robots[0] = setupRobot(1, config.botLoader, config.bot1Init);
+            robots[1] = setupRobot(2, config.botLoader, config.bot2Init);
                     
             playerNames[0] = config.player1Name;
             playerNames[1] = config.player2Name;
@@ -153,7 +154,7 @@ public class RunGame
         return result;
     }
 
-    private Robot setupRobot(int player, String botInit) throws IOException {
+    private Robot setupRobot(int player, BotLoader botLoader, String botInit) throws IOException {
         if (botInit.startsWith("dir;process:")) {
             String cmd = botInit.substring(12);
             int semicolon = cmd.indexOf(";");
@@ -169,7 +170,7 @@ public class RunGame
         }
         if (botInit.startsWith("internal:")) {
             String botFQCN = botInit.substring(9);
-            return new InternalRobot(player, botFQCN);
+            return new InternalRobot(player, botLoader, botFQCN);
         }
         if (botInit.startsWith("human")) {
             config.visualize = true;

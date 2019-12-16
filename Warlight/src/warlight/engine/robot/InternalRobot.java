@@ -57,10 +57,10 @@ public class InternalRobot implements Robot {
 
     private String botFQCN;
     
-    public InternalRobot(int player, String botFQCN) throws IOException {
+    public InternalRobot(int player, BotLoader botLoader, String botFQCN) throws IOException {
         this.botFQCN = botFQCN;
         
-        bot = BotParser.constructBot(botFQCN);
+        bot = BotParser.constructBot(botLoader, botFQCN);
         System.out.println(player + " -> " + botFQCN);
         
         humanHijack = new HumanRobot();

@@ -62,10 +62,13 @@ public class BotParser extends Thread {
         this.currentState = new GameState(null, null, null, new ArrayList<Region>());
     }
     
-    public static Bot constructBot(String botFQCN) {
+    public static Bot constructBot(BotLoader botLoader, String botFQCN) {
         Class<?> botClass;
         try {
-            botClass = Class.forName(botFQCN);
+            if (botLoader != null)
+                botClass = botLoader.load(botFQCN);
+            else
+                botClass = Class.forName(botFQCN);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Failed to locate bot class: " + botFQCN, e);
         }
@@ -84,11 +87,6 @@ public class BotParser extends Thread {
         }
         Bot bot = (Bot) botObj;
         return bot;
-    }
-    
-    public static BotParser runInternal(String botFQCN, InputStream input, PrintStream output) {
-        Bot bot = constructBot(botFQCN);
-        return runInternal(bot, input, output);
     }
     
     public static BotParser runInternal(Bot bot, InputStream input, PrintStream output) {

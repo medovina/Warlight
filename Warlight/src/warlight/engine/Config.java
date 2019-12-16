@@ -2,6 +2,7 @@ package warlight.engine;
 
 import java.io.File;
 
+import warlight.bot.BotLoader;
 import warlight.game.GameConfig;
 
 public class Config implements Cloneable {
@@ -19,6 +20,8 @@ public class Config implements Cloneable {
     
     public String bot1Init;
     public String bot2Init;
+
+    public BotLoader botLoader;
     
     public long botCommandTimeoutMillis = 2000;
     
@@ -48,6 +51,7 @@ public class Config implements Cloneable {
         result.replayLog = replayLog;
         result.bot1Init = bot1Init;
         result.bot2Init = bot2Init;
+        result.botLoader = botLoader;
         
         return result;
     }

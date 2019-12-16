@@ -104,12 +104,4 @@ public class MyBot implements Bot
         parser.setLogFile(new File("./MyBot.log"));
         parser.run();
     }
-
-    public static void main(String[] args)
-    {
-        runInternal();
-
-        //JavaBot.exec(new String[]{"warlight.bot.custom.AggressiveBot", "./AggressiveBot.log"});
-    }
-
 }
