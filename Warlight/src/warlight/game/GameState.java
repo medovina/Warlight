@@ -20,7 +20,8 @@ public class GameState implements Cloneable {
     public static final int nrOfStartingRegions = 3;
     
     public GameState(GameConfig config, GameMap map, String[] playerNames,
-                     int round, int turn, Phase phase, ArrayList<Region> pickableRegions) {
+                     int round, int turn, Phase phase, ArrayList<Region> pickableRegions,
+                     Random random) {
         this.config = config;
         this.map = map;
         this.playerNames = playerNames; 
@@ -28,13 +29,7 @@ public class GameState implements Cloneable {
         this.turn = turn;
         this.phase = phase;
         this.pickableRegions = pickableRegions;
-        
-        if (config.seed < 0) {
-            config.seed = new Random().nextInt();
-            while (config.seed < 0)
-                config.seed += Integer.MAX_VALUE;
-        }
-        this.random = new Random(config.seed);
+        this.random = random;
     }
     
     public GameState(GameConfig config, GameMap map, String[] playerNames,
@@ -43,7 +38,8 @@ public class GameState implements Cloneable {
             config != null ? config : new GameConfig(),
             map != null ? map : makeInitMap(),
             playerNames != null ? playerNames : new String[] { "Player 1", "Player 2" },
-            0, 1, Phase.STARTING_REGIONS, pickableRegions);
+            0, 1, Phase.STARTING_REGIONS, pickableRegions,
+            (config == null || config.seed < 0) ? new Random() : new Random(config.seed));
 
         if (pickableRegions == null)
             initStartingRegions();
@@ -59,16 +55,29 @@ public class GameState implements Cloneable {
     
     @Override
     public GameState clone() {
-        // Unfortunately java.util.Random is not cloneable.  So a cloned game will have its
-        // own random number generator, and actions applied to it may have different results
-        // than in the original game.
-
         GameMap newMap = map.clone();
         ArrayList<Region> newPickable = new ArrayList<Region>();
         for (Region r : pickableRegions)
             newPickable.add(newMap.getRegion(r.getId()));
         
-        return new GameState(config, newMap, playerNames, round, turn, phase, newPickable);
+        // If you make several clones, each will have a distinct random number sequence.
+        return new GameState(config, newMap, playerNames, round, turn, phase, newPickable,
+                             new Random(random.nextInt()));
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[GameState ");
+        if (isDone())
+            sb.append("p" + winningPlayer() + " victory in " + round + " rounds");
+        else
+            for (int player = 1 ; player <= 2 ; ++player) {
+                sb.append("p" + player + ": ");
+                for (Region r : regionsOwnedBy(player))
+                    sb.append(r.getWorldRegion().abbrev + "=" + r.getArmies() + " ");
+            }
+        sb.append("]");
+        return sb.toString();
     }
     
     public GameMap getMap() { return map; }

@@ -16,4 +16,9 @@ public class ChooseAction implements Action {
     public void apply(GameState state) {
         state.chooseRegion(state.region(region));
     }
+
+    @Override
+    public String toString() {
+        return String.format("[ChooseAction %s]", region.mapName);
+    }
 }
