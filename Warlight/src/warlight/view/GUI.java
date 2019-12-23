@@ -23,7 +23,7 @@ import warlight.view.TriButton.ClickListener;
 public class GUI extends JFrame implements MouseListener, KeyListener
 {
     private static final long serialVersionUID = 2116436198852146401L;
-    private static final String RESOURCE_IMAGE_FILE = "resources/images/warlight-map.png";
+    private static final String RESOURCE_IMAGE_FILE = "/images/warlight-map.png";
     private static final int WIDTH = 1239;
     private static final int HEIGHT = 664;
     
