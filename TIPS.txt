@@ -1,5 +1,0 @@
-Fight analysis (from the theoretical point of view)
-http://stats.stackexchange.com/questions/91814/probability-enemy-territory-captured-in-x-turns
--- warning, they are assuming RISK game (that you can kill 2 enemies during one round of the fight)
-
-Complete simulation is encoded within FightSimulationExact (using BigDecimal) and FightSimulation (using double) classes.

@@ -86,7 +86,7 @@ public class FightSimulationExact {
         
     }
         
-    public static class FightExactResult extends FightResult implements Serializable {
+    public static class FightExactResult extends FightResult {
         
         /**
          * AUTO-GENERATED 

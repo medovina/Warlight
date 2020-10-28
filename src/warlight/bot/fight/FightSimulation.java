@@ -61,7 +61,7 @@ public class FightSimulation {
         
     }
     
-    public static class FightAttackersResults extends FightResults implements Serializable {
+    public static class FightAttackersResults extends FightResults {
         
         /**
          * AUTO-GENERATED 
@@ -155,7 +155,7 @@ public class FightSimulation {
         
     }
     
-    public static class FightDefendersResults extends FightResults implements Serializable {
+    public static class FightDefendersResults extends FightResults {
         
         /**
          * AUTO-GENERATED 
