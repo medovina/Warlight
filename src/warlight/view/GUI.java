@@ -18,7 +18,6 @@ import warlight.game.move.AttackTransferMove;
 import warlight.game.move.PlaceArmiesMove;
 import warlight.game.world.WorldContinent;
 import warlight.game.world.WorldRegion;
-import warlight.view.TriButton.ClickListener;
 
 public class GUI extends JFrame implements MouseListener, KeyListener
 {
@@ -99,12 +98,23 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     private JLayeredPane mainLayer;
     
     public boolean showIds = false;
+
+    private CountDownLatch chooseRegionAction;
+    private Region chosenRegion;
     
+    private CountDownLatch placeArmiesAction;
+    private int armiesLeft;
+    private List<Region> armyRegions;
+    private Button placeArmiesFinishedButton;
+
+    private Team moving = null;
+    private Map<Integer, Move> moves;  // maps encoded (fromId, toId) to Move
+    private Region moveFrom;    
+    private CountDownLatch moveArmiesAction;
+    private Button moveArmiesFinishedButton;
+
     public GUI(GameState game)
     {
-        System.out.println("GUI: Click to advance to next round.");
-        System.out.println("GUI: Hold right mouse button to QUICKLY advance through many rounds.");
-        
         this.game = game;
         
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -622,10 +632,6 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     // CHOOSE INITIAL REGIONS
     // ======================
     
-    private CountDownLatch chooseRegionAction;
-    
-    private Region chosenRegion;
-    
     Button doneButton() {
         Button b = new Button("DONE");
         b.setForeground(Color.WHITE);
@@ -666,16 +672,6 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     // PLACE ARMIES
     // ============
     
-    private CountDownLatch placeArmiesAction;
-    
-    private int armiesLeft;
-    
-    private List<Region> armyRegions;
-    
-    private List<TriButton> armyRegionButtons;
-    
-    private Button placeArmiesFinishedButton;
-        
     public List<PlaceArmiesMove> placeArmiesHuman(Team team) {
         this.requestFocusInWindow();
         
@@ -697,30 +693,6 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         
         actionTxt.setText(botName(game.me()) + ": place " + armiesLeft +
                           (armiesLeft == 1 ? "army" : " armies"));
-        
-        armyRegionButtons = new ArrayList<TriButton>();
-        
-        int ch1 = 1;
-        int ch2 = 4;
-        int ch3 = 10;
-        
-        for (Region region : armyRegions) {
-            int[] regionPos = positions[region.getId()-1];
-            
-            TriButton button = new TriButton(mainLayer, regionPos[0], regionPos[1] + 30, ch1, ch2, ch3);
-            
-            armyRegionButtons.add(button);
-                        
-            final Region targetRegion = region;
-            
-            button.clickListener = new ClickListener() {
-                @Override
-                public void clicked(int change) {
-                    placeArmyRegionClicked(targetRegion, change);
-                    GUI.this.requestFocusInWindow();
-                }
-            };
-        }
         
         if (placeArmiesFinishedButton == null) {
             placeArmiesFinishedButton = doneButton();
@@ -744,9 +716,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
             throw new RuntimeException("Interrupted while awaiting user action.");
         }
         
-        for (TriButton button : armyRegionButtons) {
-            button.dispose();
-        }
+        placeArmiesAction = null;
         mainLayer.remove(placeArmiesFinishedButton);
         
         List<PlaceArmiesMove> result = new ArrayList<PlaceArmiesMove>();
@@ -811,13 +781,6 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         }
     }
     
-    private Team moving = null;
-    private Map<Integer, Move> moves;  // maps encoded (fromId, toId) to Move
-    private Region moveFrom;    
-    
-    private CountDownLatch moveArmiesAction;
-    private Button moveArmiesFinishedButton;
-        
     static int encode(int fromId, int toId) {
         return fromId * (WorldRegion.LAST_ID + 1) + toId;
     }
@@ -887,6 +850,14 @@ public class GUI extends JFrame implements MouseListener, KeyListener
             if (game.pickableRegions.contains(region)) {
                 chosenRegion = region;
                 chooseRegionAction.countDown();
+            }
+            return;
+        }
+
+        if (placeArmiesAction != null) {
+            if (armyRegions.contains(region)) {
+                placeArmyRegionClicked(region, left ? 1 : -1);
+                GUI.this.requestFocusInWindow();
             }
             return;
         }
