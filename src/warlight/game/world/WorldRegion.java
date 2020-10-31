@@ -11,7 +11,8 @@ public enum WorldRegion {
     
     // NORTH AMERICA
     Alaska("Alaska", "AK", 1, WorldContinent.North_America, true, 2, 4, 30), 
-    Northwest_Territory("Northwest Terr.", "NT", 2, WorldContinent.North_America, false, 3, 4, 5),
+    Northwest_Territory("Northwest Terr./Northwest Territories", "NT",
+                        2, WorldContinent.North_America, false, 3, 4, 5),
     Greenland("Greenland", "GR", 3, WorldContinent.North_America, true, 5, 6, 14),
     Alberta("Alberta", "AL", 4, WorldContinent.North_America, false, 5, 7),
     Ontario("Ontario", "ON", 5, WorldContinent.North_America, false, 6, 7, 8), 
@@ -31,9 +32,9 @@ public enum WorldRegion {
     Great_Britain("Great Britain", "GB", 15, WorldContinent.Europe, false, 16, 18 ,19), 
     Scandinavia("Scandinavia", "SC", 16, WorldContinent.Europe, false, 17), 
     Ukraine("Ukraine", "UK", 17, WorldContinent.Europe, true, 19, 20, 27, 32, 36), 
-    Western_Europe("West. Eur", "WE", 18, WorldContinent.Europe, true, 19, 20, 21), 
-    Northern_Europe("North. Eur", "NE", 19, WorldContinent.Europe, false, 20), 
-    Southern_Europe("South. Eur", "SE", 20, WorldContinent.Europe, true, 21, 22, 36),
+    Western_Europe("West. Eur/Western Europe", "WE", 18, WorldContinent.Europe, true, 19, 20, 21), 
+    Northern_Europe("North. Eur/Northern Europe", "NE", 19, WorldContinent.Europe, false, 20), 
+    Southern_Europe("South. Eur/Southern Europe", "SE", 20, WorldContinent.Europe, true, 21, 22, 36),
     
     // AFRIKA
     North_Africa("North Africa", "NA", 21, WorldContinent.Africa, true, 22, 23, 24), 
@@ -60,8 +61,8 @@ public enum WorldRegion {
     // AUSTRALIA
     Indonesia("Indonesia", "IS", 39, WorldContinent.Australia, true, 40, 41), 
     New_Guinea("New Guinea", "NG", 40, WorldContinent.Australia, false, 41, 42), 
-    Western_Australia("West. Australia", "WS", 41, WorldContinent.Australia, false, 42), 
-    Eastern_Australia("East. Australia", "ES", 42, WorldContinent.Australia, false);
+    Western_Australia("West. Australia/Western Australia", "WS", 41, WorldContinent.Australia, false, 42), 
+    Eastern_Australia("East. Australia/Eastern Australia", "ES", 42, WorldContinent.Australia, false);
     
     public static final int LAST_ID = 42;
             
@@ -70,7 +71,7 @@ public enum WorldRegion {
      */
     public final int id;
     public final WorldContinent worldContinent;
-    public final String mapName;
+    private final String mapName;
     public final String abbrev;
     /**
      * Whether this region makes the border for the continent.
@@ -100,6 +101,16 @@ public enum WorldRegion {
         this.worldContinent = superRegion;
         this.continentBorder = continentBorder;
         this.forwardNeighbourIds = forwardNeighbourIds;
+    }
+
+    public String getMapName() {
+        int i = mapName.indexOf('/');
+        return i == -1 ? mapName : mapName.substring(0, i);
+    }
+    
+    public String getFullName() {
+        int i = mapName.indexOf('/');
+        return i == -1 ? mapName : mapName.substring(i + 1);
     }
     
     /**

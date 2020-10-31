@@ -46,7 +46,7 @@ public class Engine {
     Robot robot(int i) {
         return robots[i - 1];
     }
-    
+
     boolean timeout(Robot robot, long start) {
         long elapsed = System.currentTimeMillis() - start;
         if (!(robot instanceof HumanRobot) &&
@@ -111,7 +111,7 @@ public class Engine {
     public void distributeStartingRegions()
     {
         if (gui != null) {
-            gui.pickableRegions();
+            gui.showPickableRegions();
         }
         
         for (int i = 1 ; i <= GameState.nrOfStartingRegions ; ++i)

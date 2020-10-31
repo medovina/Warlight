@@ -53,7 +53,7 @@ public class HumanRobot implements Robot {
     }
     
     public String getRobotPlayerName() {
-        return "Human";
+        return "You";
     }
 
 }

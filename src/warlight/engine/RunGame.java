@@ -101,7 +101,7 @@ public class RunGame
 
         GUI gui;
         if (config.visualize) {
-            gui = new GUI(game);
+            gui = new GUI(game, robots);
             if (config.visualizeContinual != null) {
                 gui.setContinual(config.visualizeContinual);
             }
@@ -125,10 +125,6 @@ public class RunGame
             robots[i - 1].setup(robotCfg);
         }
         
-        if (gui != null) {
-            gui.setPlayerNames(robots[0].getRobotPlayerName(), robots[1].getRobotPlayerName());
-        }        
-                
         //send the bots the info they need to start
         for (int i = 0 ; i < 2 ; ++i)
             robots[i].writeInfo("settings your_player_number " + (i + 1));
@@ -219,31 +215,4 @@ public class RunGame
         
         return result;
     }
-    
-    public static void main(String args[])
-    {    
-        Config config = new Config();
-        
-        config.bot1Init = "internal:warlight.bot.BotStarter";
-        //config.bot1Init = "human";
-        config.bot2Init = "internal:warlight.bot.BotStarter";
-        //config.bot2Init = "process:java -cp bin warlight.bot.BotStarter";
-        //config.bot2Init = "dir;process:c:/my_bot/;java -cp bin warlight.bot.BotStarter";
-        
-        config.botCommandTimeoutMillis = 24*60*60*1000;
-        
-        config.game.maxGameRounds = 100;
-        
-        // visualize the map, if turned off, the simulation would run headless 
-        config.visualize = true;
-        
-        config.replayLog = new File("./replay.log");
-        
-        RunGame run = new RunGame(config);
-        run.go();
-        
-        System.exit(0);
-    }
-    
-
 }

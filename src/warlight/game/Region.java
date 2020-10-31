@@ -92,7 +92,7 @@ public class Region {
     }
 
     public String mapName() {
-        return worldRegion.mapName;
+        return worldRegion.getMapName();
     }
     
     /**
