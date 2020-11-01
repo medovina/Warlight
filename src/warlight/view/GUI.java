@@ -88,9 +88,6 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     
     private Robot[] bots;
     
-    private RegionInfo p1;
-    private RegionInfo p2;
-    
     public Team[] continentOwner = new Team[WorldContinent.LAST_ID + 1];
     
     private Arrow mainArrow;
@@ -104,6 +101,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     
     private CountDownLatch placeArmiesAction;
     private int armiesLeft;
+    int armiesPlaced;
     private List<Region> armyRegions;
     private Button placeArmiesFinishedButton;
 
@@ -133,29 +131,29 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         this.add(mainLayer);
 
         //Map image
-        JLabel labelForImage = new MapView(this);
+        JLabel labelForImage = new MapView(this, game);
         labelForImage.setBounds(0, 0, WIDTH, HEIGHT);
         URL iconURL = this.getClass().getResource(RESOURCE_IMAGE_FILE);
         ImageIcon icon = new ImageIcon(iconURL);
         labelForImage.setIcon(icon);
         mainLayer.add(labelForImage, JLayeredPane.DEFAULT_LAYER);
 
-        int boxWidth = 300;
+        final int BoxWidth = 450, BoxHeight = 18;
         
         //Current round number
-        roundNumTxt = new JLabel("Round 0", JLabel.CENTER);
-        roundNumTxt.setBounds(WIDTH / 2 - boxWidth / 2, 20, boxWidth, 15);
+        roundNumTxt = new JLabel("Territory Distribution", JLabel.CENTER);
+        roundNumTxt.setBounds(WIDTH / 2 - BoxWidth / 2, 20, BoxWidth, BoxHeight);
         roundNumTxt.setBackground(Color.gray);
         roundNumTxt.setOpaque(true);
         roundNumTxt.setForeground(Color.WHITE);
         mainLayer.add(roundNumTxt, JLayeredPane.DRAG_LAYER);
         
         actionTxt = new JLabel("ACTION", JLabel.CENTER);
-        actionTxt.setBounds(WIDTH / 2 - boxWidth / 2, 35, boxWidth, 15);
+        actionTxt.setBounds(WIDTH / 2 - BoxWidth / 2, 20 + BoxHeight, BoxWidth, BoxHeight);
         actionTxt.setBackground(Color.gray);
         actionTxt.setOpaque(true);
         actionTxt.setForeground(Color.WHITE);
-            actionTxt.setPreferredSize(actionTxt.getSize());
+         actionTxt.setPreferredSize(actionTxt.getSize());
         mainLayer.add(actionTxt, JLayeredPane.DRAG_LAYER);
                 
         this.regions = new RegionInfo[42];
@@ -166,23 +164,6 @@ public class GUI extends JFrame implements MouseListener, KeyListener
             this.regions[idx].setRegion(game.getRegion(idx+1));            
             mainLayer.add(this.regions[idx], JLayeredPane.PALETTE_LAYER);
         }
-        
-        //Legend
-        p1 = new RegionInfo(this);
-        p1.setLocation(45,50);
-        p1.setTeam(Team.PLAYER_1);
-        String name = bot(1).getRobotPlayerName();
-        p1.setNameLabel(name);
-        p1.setText(name);
-        mainLayer.add(p1, JLayeredPane.PALETTE_LAYER);
-        
-        p2 = new RegionInfo(this);
-        p2.setLocation(45,85);
-        p2.setTeam(Team.PLAYER_2);
-        name = bot(2).getRobotPlayerName();
-        p2.setNameLabel(name);
-        p2.setText(name);
-        mainLayer.add(p2, JLayeredPane.PALETTE_LAYER);
         
         notification = new GUINotif(mainLayer, 1015, 45, 200, 50);        
         
@@ -196,7 +177,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         this.setVisible(true);
                 
     }
-    
+
     RegionInfo regionInfo(Region region) {
         return regions[region.getId() - 1];
     }
@@ -322,67 +303,13 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         notification.show(txt, 1500);
     }
     
-    // =============
-    // ENGINE EVENTS
-    // =============
-    
     private void updateStats() {
-        
-        int plr1Regions = 0;
-        int plr2Regions = 0;
-        
-        int plr1Armies = 0;
-        int plr2Armies = 0;
-        
-        int plr1Income = 5;
-        int plr2Income = 5;
-        
-        for (RegionInfo region : this.regions) {
-            switch(region.getTeam()) {
-            case PLAYER_1:
-                ++plr1Regions;
-                plr1Armies += region.getArmies();
-                break;
-            case PLAYER_2:
-                ++plr2Regions;
-                plr2Armies += region.getArmies();
-                break;
-            case NEUTRAL:
-                break;
-            }
-        }
-        
-        for (WorldContinent continent : WorldContinent.values()) {
-            boolean plr1 = true;
-            boolean plr2 = true;
-            for (WorldRegion region : continent.getRegions()) {
-                RegionInfo info = regions[region.id-1];
-                if (info.getTeam() == Team.PLAYER_1) plr2 = false;
-                if (info.getTeam() == Team.PLAYER_2) plr1 = false;
-                if (info.getTeam() == Team.NEUTRAL) {
-                    plr1 = false;
-                    plr2 = false;
-                }
-                if (!plr1 && !plr2) break;
-            }
-            if (plr1) {
-                plr1Income += continent.reward;
-                continentOwner[continent.id] = Team.PLAYER_1;
-            } else if (plr2) {
-                plr2Income += continent.reward;
-                continentOwner[continent.id] = Team.PLAYER_2;
-            } else
-                continentOwner[continent.id] = null;
-        }
-        
-        p1.setText("[" + plr1Regions + " / " + plr1Armies + " / +" + plr1Income + "]");
-        p2.setText("[" + plr2Regions + " / " + plr2Armies + " / +" + plr2Income + "]");
         repaint();
     }
     
     public void newRound(int roundNum) {
         roundNumTxt.setText("Round " + Integer.toString(roundNum));
-        actionTxt.setText("NEW ROUND");
+        actionTxt.setText("New round begins");
         nextRound = false;
 
         //Wait for user to request next round
@@ -481,8 +408,9 @@ public class GUI extends JFrame implements MouseListener, KeyListener
             total += move.getArmies();
         }
         
-        actionTxt.setText(botName(player) + " places " + total + " armies");
+        actionTxt.setText(playerName(player) + " places " + total + " armies");
         
+        repaint();
         waitForClick();
         
         for (PlaceArmiesMove move : placeArmiesMoves) {
@@ -499,21 +427,27 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         updateStats();
     }    
 
+    String armies(int n) {
+        return n > 1 ? n + " armies " : "1 army ";
+    }
+
     public void transfer(AttackTransferMove move) {
         this.requestFocusInWindow();
         
+        int armies = move.getArmies();
         String toName = move.getToRegion().getFullName();
+
         String text;
         if (bot(game.me()) instanceof HumanRobot)
             text = "You transfer ";
         else
-            text = botName(game.me()) + " transfers ";
-        actionTxt.setText(text + "to " + toName);
+            text = playerName(game.me()) + " transfers ";
+
+        actionTxt.setText(text + armies(armies) + " to " + toName);
         Team player = getTeam(game.me());
         
         RegionInfo fromRegion = this.regions[move.getFromRegion().id - 1];
         RegionInfo toRegion = this.regions[move.getToRegion().id - 1];
-        int armies = move.getArmies();
         
         fromRegion.armiesPlus = -armies;
         fromRegion.setHighlight(true);
@@ -549,7 +483,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         return bots[player - 1];
     }
 
-    String botName(int player) {
+    String playerName(int player) {
         return bot(player).getRobotPlayerName();
     }
     
@@ -566,18 +500,18 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         this.requestFocusInWindow();
         
         String toName = move.getToRegion().getFullName();
+        int armies = move.getArmies();
 
         String text;
         if (bot(game.me()) instanceof HumanRobot)
             text = "You attack ";
         else
-            text = botName(game.me()) + " attacks ";
-        actionTxt.setText(text + toName);
+            text = playerName(game.me()) + " attacks ";
+        actionTxt.setText(text + toName + " with " + armies(armies));
         
         Team attacker = getTeam(game.me());
         RegionInfo fromRegion = this.regions[move.getFromRegion().id - 1];
         RegionInfo toRegion = this.regions[move.getToRegion().id - 1];
-        int armies = move.getArmies();
         
         fromRegion.armiesPlus = -armies;
         fromRegion.setHighlight(true);
@@ -602,25 +536,20 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         RegionInfo toRegionInfo = this.regions[toRegion.getId() - 1];
         Team attacker = getTeam(fromRegion.getOwner());
         
-        boolean success;
+        boolean success = fromRegion.getOwner() == toRegion.getOwner();
         
-        if (fromRegion.getOwner() == toRegion.getOwner()) {
-            success = true;
-            actionTxt.setText(
-                "Attack succeeded! [A:" + (attackersDestroyed > 0 ? "-" : "") + attackersDestroyed +
-                      " | D:" + (defendersDestroyed > 0 ? "-" : "") + defendersDestroyed + "]");
+        String outcome = String.format("Attack %s! (Attackers lost %d, defenders lost %d)",
+            success ? "succeeded" : "failed", attackersDestroyed, defendersDestroyed);
+        actionTxt.setText(outcome);
+
+        if (success) {
             fromRegionInfo.setArmies(fromRegionInfo.getArmies() + fromRegionInfo.armiesPlus);
             toRegionInfo.setTeam(getTeam(toRegion.getOwner()));
             toRegionInfo.setArmies((-fromRegionInfo.armiesPlus) - attackersDestroyed);
         } else {
-            success = false;
-            actionTxt.setText(
-                "Attack failed! [A:" + (attackersDestroyed > 0 ? "-" : "") + attackersDestroyed +
-                    " | D:" + (defendersDestroyed > 0 ? "-" : "") + defendersDestroyed + "]");
             fromRegionInfo.setArmies(fromRegionInfo.getArmies() - attackersDestroyed);
             toRegionInfo.setArmies(toRegionInfo.getArmies() - defendersDestroyed);
         }
-                    
         
         fromRegionInfo.armiesPlus = 0;
         fromRegionInfo.setText("" + fromRegionInfo.getArmies());
@@ -656,11 +585,11 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     // ======================
     
     Button doneButton() {
-        Button b = new Button("DONE");
+        Button b = new Button("Done");
         b.setForeground(Color.WHITE);
         b.setBackground(Color.BLACK);
         b.setSize(60, 30);
-        b.setLocation(WIDTH / 2 - 30, HEIGHT - 100);
+        b.setLocation(WIDTH / 2 - 30, 60);
         return b;
     }
     
@@ -669,7 +598,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         
         chooseRegionAction = new CountDownLatch(1);
         
-        actionTxt.setText("Choose a starting region");
+        actionTxt.setText("Choose a starting territory");
         
         for (Region region : game.pickableRegions) {
             RegionInfo ri = this.regions[region.getId()-1];
@@ -708,14 +637,23 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         return placeArmiesHuman(availableRegions);
     }
     
+    void setPlaceArmiesText(int armiesLeft) {
+        if (armiesLeft > 0)
+            actionTxt.setText(
+                "Place " + armiesLeft + (armiesLeft == 1 ? " army" : " armies") +
+                " on your territories");
+        else
+            actionTxt.setText("");
+    }
+
     public List<PlaceArmiesMove> placeArmiesHuman(List<Region> availableRegions) {
         this.armyRegions = availableRegions;
         armiesLeft = game.armiesPerTurn(game.me());
+        armiesPlaced = 0;
                 
         placeArmiesAction = new CountDownLatch(1);
         
-        actionTxt.setText("Place " + armiesLeft +
-                          (armiesLeft == 1 ? "army" : " armies"));
+        setPlaceArmiesText(armiesLeft);
         
         if (placeArmiesFinishedButton == null) {
             placeArmiesFinishedButton = doneButton();
@@ -758,6 +696,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
             }
         }
         
+        armiesPlaced = 0;
         return result;
     }
     
@@ -773,6 +712,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         if (change == 0) return;
         
         info.armiesPlus += change;
+        armiesPlaced += change;
         armiesLeft -= change;
         
         if (info.armiesPlus > 0) {
@@ -783,10 +723,10 @@ public class GUI extends JFrame implements MouseListener, KeyListener
             info.setHighlight(false);
         }
         
-        actionTxt.setText("Place " + armiesLeft +
-                (armiesLeft == 1 ? " army" : " armies"));
+        setPlaceArmiesText(armiesLeft);
         
         placeArmiesFinishedButton.setVisible(armiesLeft == 0);
+        repaint();
     }
 
     // ===========
@@ -906,7 +846,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         moving = team;
         moveFrom = null;
         
-        actionTxt.setText("Move or attack with armies");
+        actionTxt.setText("Move and/or attack");
             
         moveArmiesAction = new CountDownLatch(1);
         

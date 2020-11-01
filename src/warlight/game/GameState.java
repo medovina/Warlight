@@ -158,10 +158,10 @@ public class GameState implements Cloneable {
     }
     
     //calculate how many armies a player is able to place on the map each round
-    public int armiesPerTurn(int player)
+    public int armiesPerTurn(int player, boolean first)
     {
         int armies = config.startingArmies;
-        if (player == 1 && round <= 1)
+        if (first)
             armies /= 2;
         
         for(Continent cd : map.getContinents())
@@ -171,6 +171,14 @@ public class GameState implements Cloneable {
         return armies;
     }
     
+    public int armiesPerTurn(int player) {
+        return armiesPerTurn(player, player == 1 && round <= 1);
+    }
+
+    public int armiesEachTurn(int player) {
+        return armiesPerTurn(player, false);
+    }
+
     public static GameMap makeInitMap()
     {
         GameMap map = new GameMap();
