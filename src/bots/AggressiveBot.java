@@ -3,26 +3,15 @@ package bots;
 import java.util.*;
 
 import bot.Bot;
-import bot.fight.FightSimulation.FightAttackersResults;
-import bot.fight.FightSimulation.FightDefendersResults;
 import bots.map.RegionBFS;
 import bots.map.RegionBFS.*;
 import game.*;
 import game.move.*;
 import game.world.WorldRegion;
-import utils.Util;
 
 public class AggressiveBot implements Bot 
 {
     GameState state;
-
-    FightAttackersResults aRes;
-    FightDefendersResults dRes;
-    
-    public AggressiveBot() {
-        aRes = FightAttackersResults.loadFromFile(Util.findFile("FightSimulation-Attackers-A200-D200.obj"));
-        dRes = FightDefendersResults.loadFromFile(Util.findFile("FightSimulation-Defenders-A200-D200.obj"));
-    }
 
     @Override
     public void init(long timeoutMillis) {
@@ -169,17 +158,8 @@ public class AggressiveBot implements Bot
     }
 
     private int getRequiredSoldiersToConquerRegion(Region from, Region to, double winProbability) {
-        int attackers = from.getArmies() - 1;
-        int defenders = to.getArmies();
-        
-        for (int a = defenders; a <= attackers; ++a) {
-            double chance = aRes.getAttackersWinChance(a, defenders);
-            if (chance >= winProbability) {
-                return a;
-            }
-        }
-        
-        return Integer.MAX_VALUE;
+        int req = (int) Math.round(to.getArmies() * 1.25 + 1);
+        return req <= from.getArmies() - 1 ? req : Integer.MAX_VALUE;
     }
         
     private AttackTransferMove transfer(Region from, Region to) {

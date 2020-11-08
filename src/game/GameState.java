@@ -329,14 +329,6 @@ public class GameState implements Cloneable {
         }
         
         protected void postProcessFightResult(int attackingArmies, int defendingArmies) {      
-            if(attackersDestroyed >= attackingArmies)
-            {
-                if (defendersDestroyed >= defendingArmies)
-                    defendersDestroyed = defendingArmies - 1;
-                
-                attackersDestroyed = attackingArmies;
-            }   
-            
             if (defendersDestroyed >= defendingArmies) { //attack success
                 winner = FightSide.ATTACKER;
             } else {
@@ -345,58 +337,19 @@ public class GameState implements Cloneable {
         }
     }
 
-    static FightResult doOriginalAttack(Random random, int attackingArmies, int defendingArmies,
-                                        double defenderDestroyedChance, double attackerDestroyedChance) {
-        FightResult result = new FightResult();
-        
-        for(int t=1; t<=attackingArmies; t++) //calculate how much defending armies are destroyed
-        {
-            double rand = random.nextDouble();
-            if(rand < defenderDestroyedChance) //60% chance to destroy one defending army
-                result.defendersDestroyed++;
-        }
-        for(int t=1; t<=defendingArmies; t++) //calculate how much attacking armies are destroyed
-        {
-            double rand = random.nextDouble();
-            if(rand < attackerDestroyedChance) //70% chance to destroy one attacking army
-                result.attackersDestroyed++;
-        }
-        result.postProcessFightResult(attackingArmies, defendingArmies);
-        return result;
-    }
-    
-    static FightResult doContinualAttack(Random random,
-            int attackingArmies, int defendingArmies,
-            double defenderDestroyedChance, double attackerDestroyedChance) {
-        
+    static FightResult doContinualAttack(Random random, int attackingArmies, int defendingArmies) {
         FightResult result = new FightResult();
         
         while (result.attackersDestroyed < attackingArmies && result.defendersDestroyed < defendingArmies) {
-            // ATTACKERS STRIKE
-            double rand = random.nextDouble();
-            if (rand < defenderDestroyedChance) ++result.defendersDestroyed;
-            
-            // DEFENDERS STRIKE
-            rand = random.nextDouble();
-            if (rand < attackerDestroyedChance) ++result.attackersDestroyed;
+            if (random.nextDouble() < 0.45)
+                ++result.defendersDestroyed;
+            else ++result.attackersDestroyed;
         }
         
         result.postProcessFightResult(attackingArmies, defendingArmies);
         return result;
     }
 
-    static FightResult doAttack_ORIGINAL_A60_D70(
-            Random random, int attackingArmies, int defendingArmies) {
-        
-        return doOriginalAttack(random, attackingArmies, defendingArmies, 0.6, 0.7);
-    }
-    
-    static FightResult doAttack_CONTINUAL_1_1_A60_D70(
-            Random random, int attackingArmies, int defendingArmies) {
-        
-        return doContinualAttack(random, attackingArmies, defendingArmies, 0.6, 0.7);
-    }
-    
     //see wiki.warlight.net/index.php/Combat_Basics
     private void doAttack(AttackTransferMove move)
     {
@@ -415,16 +368,7 @@ public class GameState implements Cloneable {
         else
             attackingArmies = fromRegion.getArmies()-1;
         
-        FightResult result = null;
-        
-        switch (config.fight) {
-        case ORIGINAL_A60_D70:
-            result = doAttack_ORIGINAL_A60_D70(random, attackingArmies, defendingArmies);
-            break;
-        case CONTINUAL_1_1_A60_D70:
-            result = doAttack_CONTINUAL_1_1_A60_D70(random, attackingArmies, defendingArmies);
-            break;
-        }
+        FightResult result = doContinualAttack(random, attackingArmies, defendingArmies);
         
         switch (result.winner) {
         case ATTACKER: //attack success
