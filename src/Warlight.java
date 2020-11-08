@@ -13,17 +13,22 @@ public class Warlight {
     static void usage() {
         out.println("usage: warlight [<bot1-classname>] [<bot2-classname>] [<option>...]");
         out.println("options:");
+        out.println("  -seed <num> : random seed");
         out.println("  -sim <count> : simulate a series of games without visualization");
     }
 
     public static void main(String[] args) {
         List<String> bots = new ArrayList<String>();
+        int seed = -1;
         int sim = 0;
 
         for (int i = 0 ; i < args.length ; ++i) {
             String s = args[i];
             if (s.startsWith("-"))
                 switch (s) {
+                    case "-seed":
+                        seed = Integer.parseInt(args[++i]);
+                        break;
                     case "-sim":
                         sim = Integer.parseInt(args[++i]);
                         break;
@@ -45,6 +50,7 @@ public class Warlight {
             WarlightFightConfig fc = new WarlightFightConfig();
             fc.config = config;
             fc.games = sim;
+            fc.seed = seed > 0 ? seed : 0;
             WarlightFight fight = new WarlightFight(fc, null, null, null);
             fight.fight(Util.className(bots.get(0)), internalBot(bots.get(0)),
                         Util.className(bots.get(1)), internalBot(bots.get(1)));
@@ -59,8 +65,8 @@ public class Warlight {
             }
             
             config.visualize = true;
-            RunGame run = new RunGame(config);
-            run.go();
+            config.game.seed = seed;
+            new RunGame(config).go();
         }
         
         System.exit(0);

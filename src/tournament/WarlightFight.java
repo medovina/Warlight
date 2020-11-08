@@ -35,7 +35,9 @@ public class WarlightFight {
         fightConfig.config.player2Name = bot2Name;
         fightConfig.config.bot2Init = bot2Init;
         
-        WarlightFightRound[] rounds = WarlightFightRoundGenerator.generateFightRounds(fightConfig.seed, fightConfig.config, fightConfig.games);
+        WarlightFightRound[] rounds =
+            WarlightFightRoundGenerator.generateFightRounds(
+                fightConfig.seed, fightConfig.config, fightConfig.games);
         
         GameResult[] results = new GameResult[rounds.length];
 
@@ -57,8 +59,8 @@ public class WarlightFight {
             results[i] = result;
             
             System.out.format(
-                "game %d: %s won in %d rounds\n",
-                i + 1, result.getWinnerName(), result.round);
+                "seed %d: %s won in %d rounds\n",
+                rounds[i].getConfig().game.seed, result.getWinnerName(), result.round);
         }
         
         return outputResults(rounds, results);        

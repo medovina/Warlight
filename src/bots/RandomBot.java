@@ -9,7 +9,7 @@ import game.world.WorldRegion;
 
 public class RandomBot implements Bot
 {
-    Random rand = new Random();
+    Random rand = new Random(0);
     
     // Move randomly.
 

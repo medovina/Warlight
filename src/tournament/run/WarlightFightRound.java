@@ -14,8 +14,7 @@ public class WarlightFightRound {
     }
     
     public synchronized GameResult run() {
-        RunGame game = new RunGame(config);
-        return game.go();
+        return new RunGame(config).go();
     }
 
     public Config getConfig() {

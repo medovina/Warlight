@@ -205,7 +205,7 @@ public class RunGame
             result.winner = null;
         }
         
-        result.round = game.getRoundNumber()-1;
+        result.round = game.getRoundNumber();
         
         return result;
     }
