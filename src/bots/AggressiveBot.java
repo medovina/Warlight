@@ -1,12 +1,12 @@
-package bot.custom;
+package bots;
 
 import java.util.*;
 
 import bot.Bot;
 import bot.fight.FightSimulation.FightAttackersResults;
 import bot.fight.FightSimulation.FightDefendersResults;
-import bot.map.RegionBFS;
-import bot.map.RegionBFS.*;
+import bots.map.RegionBFS;
+import bots.map.RegionBFS.*;
 import game.*;
 import game.move.*;
 import game.world.WorldRegion;

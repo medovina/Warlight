@@ -1,4 +1,4 @@
-package bot.map;
+package bots.map;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import bot.map.RegionBFS.BFSNode;
+import bots.map.RegionBFS.BFSNode;
 import game.GameMap;
 import game.world.WorldRegion;
 

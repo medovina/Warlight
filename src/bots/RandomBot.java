@@ -1,4 +1,4 @@
-package bot.custom;
+package bots;
 
 import java.util.*;
 

@@ -447,7 +447,7 @@ public class WarlightFightConsole {
                 , "-a", "MyBot"                              // bot1-id
                 , "-b", "internal:MyBot" // bot1-init
                 , "-c", "AggressiveBot"                                 // bot2-id
-                , "-d", "internal:bot.custom.AggressiveBot"           // bot2-init
+                , "-d", "internal:bots.AggressiveBot"           // bot2-init
                 , "-u", "./results/fights"              // result-dir
                 , "-y", "./results/replays"           // replay-dir
                 , "-t", "./results/all-results.csv"   // single results file
