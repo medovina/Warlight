@@ -23,7 +23,7 @@ public class Config implements Cloneable {
 
     public BotLoader botLoader;
     
-    public long botCommandTimeoutMillis = 2000;
+    public long botCommandTimeoutMillis = 60_000;
     
     public boolean visualize = true;
     

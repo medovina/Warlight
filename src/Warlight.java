@@ -1,19 +1,28 @@
-import java.io.File;
+import java.util.*;
 
 import engine.Config;
 import engine.RunGame;
 
 public class Warlight {
+    static String internalBot(String name) { return "internal:" + name; }
+
     public static void main(String[] args) {
+        List<String> bots = new ArrayList<String>();
+
+        for (int i = 0 ; i < args.length ; ++i)
+            bots.add(args[i]);
+
         Config config = new Config();
         
-        config.bot1Init = "internal:bots.AggressiveBot";
-        config.bot2Init = "human";
+        if (bots.size() < 2) {
+            config.bot1Init = "human";
+            config.bot2Init = internalBot(bots.isEmpty() ? "bots.AggressiveBot" : bots.get(0));
+        } else {
+            config.bot1Init = internalBot(bots.get(0));
+            config.bot2Init = internalBot(bots.get(1));
+        }
         
-        config.botCommandTimeoutMillis = 24*60*60*1000;
         config.visualize = true;
-        
-        config.replayLog = new File("./replay.log");
         
         RunGame run = new RunGame(config);
         run.go();

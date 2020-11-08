@@ -61,7 +61,6 @@ public class InternalRobot implements Robot {
         this.botFQCN = botFQCN;
         
         bot = BotParser.constructBot(botLoader, botFQCN);
-        System.out.println(player + " -> " + botFQCN);
         
         humanHijack = new HumanRobot();
     }

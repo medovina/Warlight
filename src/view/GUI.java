@@ -335,7 +335,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
 
         this.requestFocusInWindow();
         
-        actionTxt.setText("PICKABLE REGIONS");
+        actionTxt.setText("Available territories");
         
         for (Region region : game.pickableRegions) {
             int id = region.getId();
@@ -368,7 +368,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         this.requestFocusInWindow();
         
         if (!humanGame()) {
-            actionTxt.setText("CHOSEN REGIONS");
+            actionTxt.setText("Chosen territories");
             
             updateRegions(regions);
             
@@ -537,7 +537,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         
         boolean success = fromRegion.getOwner() == toRegion.getOwner();
         
-        String outcome = String.format("Attack %s! (Attackers lost %d, defenders lost %d)",
+        String outcome = String.format("Attack %s! (attackers lost %d, defenders lost %d)",
             success ? "succeeded" : "failed", attackersDestroyed, defendersDestroyed);
         actionTxt.setText(outcome);
 

@@ -79,8 +79,6 @@ public class RunGame
                 log = new FileGameLog(config.replayLog);
             }
             
-            System.out.println("starting game " + config.gameId);
-            
             String[] playerNames = new String[2];
             Robot[] robots = new Robot[2];
             
@@ -135,7 +133,6 @@ public class RunGame
         //play the game
         while(!game.isDone())
         {
-            System.out.println("Round " + game.getRoundNumber());
             if (log != null) {
                 log.logComment(0, "Round " + game.getRoundNumber());
             }
