@@ -67,8 +67,13 @@ public class BotParser extends Thread {
         try {
             if (botLoader != null)
                 botClass = botLoader.load(botFQCN);
-            else
-                botClass = Class.forName(botFQCN);
+            else {
+                try {
+                    botClass = Class.forName(botFQCN);
+                } catch (ClassNotFoundException e) {
+                    botClass = Class.forName("bots." + botFQCN);
+                }
+            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Failed to locate bot class: " + botFQCN, e);
         }

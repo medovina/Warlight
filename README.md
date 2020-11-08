@@ -20,22 +20,22 @@ Or, on Windows:
 > .\warlight
 ```
 
-By default, you will play against the example bot `bots.AggressiveBot`.  To play against a different bot, specify its name on the command line:
+By default, you will play against the example bot AggressiveBot.  To play against a different bot, specify its name on the command line:
 
 ```
-$ ./warlight bots.RandomBot
+$ ./warlight RandomBot
 ```
 
 Specify two bot names to watch one of them play the other:
 
 ```
-$ ./warlight bots.AggressiveBot bots.RandomBot
+$ ./warlight AggressiveBot RandomBot
 ```
 
 To run a series of games between two bots with no visualization, specify the '-sim' option with a number of games to play, e.g.
 
 ```
-$ ./warlight bots.AggressiveBot bots.RandomBot -sim 10
+$ ./warlight AggressiveBot RandomBot -sim 10
 ```
 
 ## Game rules
