@@ -1,4 +1,4 @@
-package tournament.run;
+package tournament;
 
 import engine.Config;
 import engine.GameResult;

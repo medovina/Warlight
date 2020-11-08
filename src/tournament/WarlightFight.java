@@ -5,9 +5,6 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 
 import engine.GameResult;
-import tournament.run.WarlightFightRound;
-import tournament.run.WarlightFightRoundGenerator;
-import tournament.utils.Sanitize;
 
 public class WarlightFight {
     

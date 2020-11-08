@@ -1,4 +1,4 @@
-package tournament.utils;
+package tournament;
 
 public class Sanitize {
 
