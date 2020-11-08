@@ -150,11 +150,12 @@ public class RegionInfo extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        gui.regionClicked(this, e.getButton() == MouseEvent.BUTTON1);
     }
 
     @Override
-    public void mousePressed(MouseEvent e) { }
+    public void mousePressed(MouseEvent e) {
+        gui.regionClicked(this, e.getButton() == MouseEvent.BUTTON1);
+    }
 
     @Override
     public void mouseReleased(MouseEvent e) { }

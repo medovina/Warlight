@@ -209,12 +209,6 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            if (moving != null) {
-                moveFrom = null;
-                highlight();
-            } else clicked = true;
-        }
     }
 
     @Override
@@ -227,7 +221,12 @@ public class GUI extends JFrame implements MouseListener, KeyListener
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (SwingUtilities.isRightMouseButton(e)) {
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            if (moving != null) {
+                moveFrom = null;
+                highlight();
+            } else clicked = true;
+        } else if (SwingUtilities.isRightMouseButton(e)) {
             rightClick = true;
         }
     }
