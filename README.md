@@ -10,11 +10,11 @@ The code here is derived from the [original implementation](http://theaigames.co
 
 This repository contains .project and .classpath files that define 4 Eclipse projects (Warlight, Warlight-Bots, Warlight-Playground, Warlight-Tournament).  You can import these into Eclipse using the command Import -> General -> Existing&nbsp;Projects&nbsp;into&nbsp;Workspace.  (It should not be difficult to import the projects into other IDEs such as Intelli/J as well.)
 
-The class `warlight.bot.custom.AggressiveBot` is an example bot that plays the game.  The `main()` method in this class launches a game where you can play interactively against AggressiveBot.  That's a good way to start learning about the game.
+The class `bot.custom.AggressiveBot` is an example bot that plays the game.  The `main()` method in this class launches a game where you can play interactively against AggressiveBot.  That's a good way to start learning about the game.
 
 The class `MyBot` in `Warlight-Playground/src` contains a dummy bot that plays randomly.  The `main()` method in this class launches a game where MyBot plays against AggressiveBot.  Usually MyBot will lose.  You can use MyBot as a starting point for developing your own game-playing agent.
 
-The class `warlight.tournament.WarlightFightConsole` can play a series of games between two bots.  If you uncomment the line "`args = getTestArgs_1v1()`" in the main() method there, it will play 10 games of MyBot against AggressiveBot and will report win percentage statistics.  You can use this class to evaluate your bot's performance.
+The class `tournament.WarlightFightConsole` can play a series of games between two bots.  If you uncomment the line "`args = getTestArgs_1v1()`" in the main() method there, it will play 10 games of MyBot against AggressiveBot and will report win percentage statistics.  You can use this class to evaluate your bot's performance.
 
 ## Game rules
 

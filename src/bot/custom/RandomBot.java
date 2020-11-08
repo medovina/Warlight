@@ -1,3 +1,5 @@
+package bot.custom;
+
 import java.util.*;
 
 import bot.Bot;
@@ -5,15 +7,11 @@ import game.*;
 import game.move.*;
 import game.world.WorldRegion;
 
-public class MyBot implements Bot
+public class RandomBot implements Bot
 {
     Random rand = new Random();
     
-    // Code your bot here.
-    
-    //
-    // This is a dummy implemementation that moves randomly.
-    //
+    // Move randomly.
 
     @Override
     public void init(long timeoutMillis) {
