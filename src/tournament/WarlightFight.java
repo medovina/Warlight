@@ -26,17 +26,9 @@ public class WarlightFight {
         this.replayDirFile = replayDirFile;
     }
     
-    private void log(String name, String msg) {
-        System.out.println("[" + name + "] " + msg);
-    }
-    
     public TotalResults fight(String bot1Name, String bot1Init, String bot2Name, String bot2Init) {        
         bot1Name = Sanitize.idify(bot1Name);
         bot2Name = Sanitize.idify(bot2Name);
-        
-        String gameId = bot1Name + "-vs-" + bot2Name; 
-        
-        log(gameId, "FIGHT! GAMES: " + fightConfig.games);
         
         fightConfig.config.player1Name = bot1Name;
         fightConfig.config.bot1Init = bot1Init;
@@ -51,12 +43,6 @@ public class WarlightFight {
             replayDirFile.mkdirs();
                         
         for (int i = 0; i < rounds.length; ++i) {
-            long start = System.currentTimeMillis();
-            
-            gameId = bot1Name + "-vs-" + bot2Name + "-" + i;
-            
-            log(gameId, "ROUND " + (i+1) + " / " + rounds.length);
-            
             if (replayDirFile != null) {
                 // SET REPLAY FILE
                 int roundNumber = 0;
@@ -68,17 +54,12 @@ public class WarlightFight {
             }
             
             GameResult result = rounds[i].run();
-                        
-            log(gameId, "ROUND " + (i+1) + " / " + rounds.length + " FINISHED: " + result.getHumanString());
-            
             results[i] = result;
             
-            log(gameId, "TIME: " + (System.currentTimeMillis() - start) + "ms");
+            System.out.format(
+                "game %d: %s won in %d rounds\n",
+                i + 1, result.getWinnerName(), result.round);
         }
-        
-        gameId = bot1Name + "-vs-" + bot2Name; 
-        
-        log(gameId, "FIGHT FINISHED!");
         
         return outputResults(rounds, results);        
     }
@@ -103,8 +84,6 @@ public class WarlightFight {
         TotalResults res = new TotalResults();
         for (int i = 0 ; i < results.length ; ++i) {
             GameResult r = results[i];
-            System.out.format("game %d: %s won in %d rounds (%d regions, %d armies)\n",
-                    i + 1, r.getWinnerName(), r.round, r.getWinnerRegions(),r.getWinnerArmies());
             switch (r.winner) {
             case PLAYER_1: res.victories1 += 1; break;
             case PLAYER_2: res.victories2 += 1; break;

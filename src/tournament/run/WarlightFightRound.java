@@ -15,16 +15,10 @@ public class WarlightFightRound {
     
     public synchronized GameResult run() {
         RunGame game = new RunGame(config);
-        
-        GameResult result = game.go();
-            
-        System.out.println("GAME FINISHED - Winner: " + result.winner);
-        
-        return result;        
+        return game.go();
     }
 
     public Config getConfig() {
         return config;
     }
-        
 }

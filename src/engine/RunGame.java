@@ -176,7 +176,6 @@ public class RunGame
 
     private GameResult finish(GameMap map, Robot[] bots) throws InterruptedException
     {
-        System.out.println("GAME FINISHED: stopping bots...");
         for (Robot r : bots)
             try {
                 r.finish();
@@ -207,8 +206,6 @@ public class RunGame
         }
         
         result.round = game.getRoundNumber()-1;
-        
-        System.out.println(result.getHumanString());
         
         return result;
     }

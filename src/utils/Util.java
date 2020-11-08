@@ -3,6 +3,10 @@ package utils;
 import java.io.File;
 
 public class Util {
+    public static String className(String name) {
+        return name.substring(name.lastIndexOf(".") + 1);
+    }
+
     public static File findFile(String path) {
         path = path.replace('/', File.separatorChar);
 

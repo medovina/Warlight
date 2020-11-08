@@ -8,13 +8,35 @@ The code here is derived from the [original implementation](http://theaigames.co
 
 ## Quick start
 
-This repository contains .project and .classpath files that define 4 Eclipse projects (Warlight, Warlight-Bots, Warlight-Playground, Warlight-Tournament).  You can import these into Eclipse using the command Import -> General -> Existing&nbsp;Projects&nbsp;into&nbsp;Workspace.  (It should not be difficult to import the projects into other IDEs such as Intelli/J as well.)
+To play the game from the keyboard on Linux or macOS, run
 
-The class `bots.AggressiveBot` is an example bot that plays the game.  The `main()` method in this class launches a game where you can play interactively against AggressiveBot.  That's a good way to start learning about the game.
+```
+$ ./warlight
+```
 
-The class `MyBot` in `Warlight-Playground/src` contains a dummy bot that plays randomly.  The `main()` method in this class launches a game where MyBot plays against AggressiveBot.  Usually MyBot will lose.  You can use MyBot as a starting point for developing your own game-playing agent.
+Or, on Windows:
 
-The class `tournament.WarlightFightConsole` can play a series of games between two bots.  If you uncomment the line "`args = getTestArgs_1v1()`" in the main() method there, it will play 10 games of MyBot against AggressiveBot and will report win percentage statistics.  You can use this class to evaluate your bot's performance.
+```
+> .\warlight
+```
+
+By default, you will play against the example bot `bots.AggressiveBot`.  To play against a different bot, specify its name on the command line:
+
+```
+$ ./warlight bots.RandomBot
+```
+
+Specify two bot names to watch one of them play the other:
+
+```
+$ ./warlight bots.AggressiveBot bots.RandomBot
+```
+
+To run a series of games between two bots with no visualization, specify the '-sim' option with a number of games to play, e.g.
+
+```
+$ ./warlight bots.AggressiveBot bots.RandomBot -sim 10
+```
 
 ## Game rules
 
@@ -43,53 +65,12 @@ The game is played until one player has no armies remaining; that player has los
 
 ## User interface
 
-When playing as a human against a bot, click the map or press the space bar to advance past informational messages such as "NEW ROUND".  When placing or moving armies, use the left mouse button to add armies to be placed/moved and use the right mouse button to subtract armies.  To move or attack, first click a source region, then repeatedly click a destination region until you have moved as many armies as you like.  Enter all your moves or attacks for a single round before pressing DONE.
+When playing as a human against a bot, click the map or press the space bar to advance past informational messages such as "New Round".  When placing or moving armies, use the left mouse button to add armies to be placed/moved and use the right mouse button to subtract armies.  To move or attack, first click a source region, then repeatedly click a destination region until you have moved as many armies as you like.  Enter all your moves or attacks for a single round before pressing DONE.
 
 When two bots are playing each other, you can left click the map or press the space bar to advance to the next action.  Press 'N' to skip to the next game round.  To fast forward through the game, right click the map and hold the mouse button down.  Alternatively, press 'C' to enter continuous mode, in which the game will periodically advance to the next action automatically.  In this mode, press '+' and '-' to adjust the time delay between actions.
 
 ## Writing a bot
 
-Use the `MyBot` class in the `Warlight-Playground/src` directory as a starting point.  Here is [documentation](https://ksvi.mff.cuni.cz/~dingle/2019/ai/warlight/warlight_api.html) for the most important classes, fields and methods in the Warlight API.
+The class `MyBot` contains a dummy bot that plays randomly, i.e. it is equivalent to RandomBot.  Usually MyBot will lose.  You can use MyBot as a starting point for developing your own game-playing agent.
 
-## More notes
-
-The following notes are from Jakub Gemrot and provide more detailed information about some of the changes he made to the game:
-
-1) possible to play with "internal" players (i.e. bots directly on java classpath), which allows you to perform better Java bot debugging
-
--- you can hijack controls of internal players when the game is visualized (press 'H' to toggle PLR1 hijack, press 'J' to toggle PLR2 hijack)
-
-2) may output replay log into the file
-
-3) may perform replay (parses replay file and replays the match) ~ fully working
-
-4) human player (you can play against your AI!), use "human" as bot init command
-
--- beware, some buttons can be "right clicked" to "reverse the effect" (e.g. when placing armies left click -> plus, right click -> minus or when moving armies left click -> OK, right click -> cancel)
-
-5) better GameState abstraction than plain BotState provided, use GameBot as a base class for your bots
-
-6) slim GameStateCompact representation of the game state that can be used for performance searches (not the best, but quite ok); use GameStateCompact.fromGameState(gameState) you have in your GameBot
-
-7) Warlight-Tournament project can be used to automate matches between bots using command line tools (see WarlightFightConsole and WarlightTableConsole classes); see Warlight-Competition for example how to quickly setup tournament
-batch files (be sure to stop by and read Warlight-Competition/readme.txt)
-
-8) possibility to execute "process" player from within concrete directory, use "dir;process" as bot init command to specify the directory from which you would like the bot process to be executed
-
--- not a big feature but very handy for automation
-
--- if you deal with Java bots, you might want to run your Java bots as "external bots" using "dir;process" indirectly running JavaBot class instead of original bot class (i.e. make JavaBot to instantiate and run your tournament bot);
-this will spare you the problems with "invalid" main of the bot you want to execute (as long as it has parameterless constructor)
-
-## PROJECT STRUCTURE
-
-**Warlight** -> simulator and visualizator of Warlight AI Challenge
-
-**Warlight-Bots** -> project providing better support for Java bots; includes OOP as well as compact representation of the game state. AggressiveBot example runnable as is.
-
-**Warlight-Playground** -> stub project for your code; it contains MyBot class also runnable and an entry point for you to start coding your bot.
-
-**Warlight-Tournament** -> automation of matches
-
-**Warlight-Competition** -> folder stub for perfoming table-type tournaments
-
+Here is [documentation](https://ksvi.mff.cuni.cz/~dingle/2019/ai/warlight/warlight_api.html) for the Warlight API.

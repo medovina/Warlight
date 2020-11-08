@@ -10,6 +10,7 @@ import engine.Robot;
 import game.*;
 import game.move.*;
 import game.world.WorldRegion;
+import utils.Util;
 
 public class InternalRobot implements Robot {
     
@@ -136,8 +137,7 @@ public class InternalRobot implements Robot {
     }
     
     public String getRobotPlayerName() {
-        if (config == null) return botFQCN.substring(1+botFQCN.lastIndexOf("."));
-        return botFQCN.substring(1+botFQCN.lastIndexOf("."));
+        return Util.className(botFQCN);
     }
 
 }
