@@ -637,12 +637,9 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     }
     
     void setPlaceArmiesText(int armiesLeft) {
-        if (armiesLeft > 0)
-            actionTxt.setText(
-                "Place " + armiesLeft + (armiesLeft == 1 ? " army" : " armies") +
-                " on your territories");
-        else
-            actionTxt.setText("");
+        actionTxt.setText(
+            "Place " + armiesLeft + (armiesLeft == 1 ? " army" : " armies") +
+            " on your territories");
     }
 
     public List<PlaceArmiesMove> placeArmiesHuman(List<Region> availableRegions) {

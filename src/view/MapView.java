@@ -45,10 +45,13 @@ class MapView extends JLabel {
         GameMap map = game.getMap();
 
         for (int player = 1 ; player <= 2 ; ++player) {
+            int y = 53 + 35 * (player - 1);
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawOval(26, y, 20, 20);
             g.setColor(TeamView.getColor(player == 1 ? Team.PLAYER_1 : Team.PLAYER_2));
-            g.fillOval(26, 53 + 35 * (player - 1), 20, 20);
+            g.fillOval(27, y + 1, 18, 18);
 
-            g.setColor(Color.BLACK);
+            g.setColor(Color.LIGHT_GRAY);
             g.drawString(gui.playerName(player), 52, 60 + 35 * (player - 1));
             int armies = map.numberArmiesOwned(player);
             if (player == game.me())
