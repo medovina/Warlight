@@ -1,5 +1,6 @@
 import static java.lang.System.out;
 
+import java.io.File;
 import java.util.*;
 
 import engine.Config;
@@ -13,12 +14,14 @@ public class Warlight {
     static void usage() {
         out.println("usage: warlight [<bot1-classname>] [<bot2-classname>] [<option>...]");
         out.println("options:");
+        out.println("  -resultdir <path> : directory for results in CSV format");
         out.println("  -seed <num> : random seed");
         out.println("  -sim <count> : simulate a series of games without visualization");
     }
 
     public static void main(String[] args) {
         List<String> bots = new ArrayList<String>();
+        String resultdir = null;
         int seed = -1;
         int sim = 0;
 
@@ -26,6 +29,9 @@ public class Warlight {
             String s = args[i];
             if (s.startsWith("-"))
                 switch (s) {
+                    case "-resultdir":
+                        resultdir = args[++i];
+                        break;
                     case "-seed":
                         seed = Integer.parseInt(args[++i]);
                         break;
@@ -51,7 +57,11 @@ public class Warlight {
             fc.config = config;
             fc.games = sim;
             fc.seed = seed > 0 ? seed : 0;
-            WarlightFight fight = new WarlightFight(fc, null, null, null);
+            WarlightFight fight = new WarlightFight(fc,
+                resultdir == null ? null : new File(resultdir + "/all-results.csv"),
+                resultdir == null ? null : new File(resultdir + "/fights"),
+                resultdir == null ? null : new File(resultdir + "/replays")
+                );
             fight.fight(Util.className(bots.get(0)), internalBot(bots.get(0)),
                         Util.className(bots.get(1)), internalBot(bots.get(1)));
     
