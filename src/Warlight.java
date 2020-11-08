@@ -17,6 +17,7 @@ public class Warlight {
         out.println("  -resultdir <path> : directory for results in CSV format");
         out.println("  -seed <num> : random seed");
         out.println("  -sim <count> : simulate a series of games without visualization");
+        out.println("  -timeout <num> : bot time limit in ms");
     }
 
     public static void main(String[] args) {
@@ -24,6 +25,7 @@ public class Warlight {
         String resultdir = null;
         int seed = -1;
         int sim = 0;
+        int timeout = -1;
 
         for (int i = 0 ; i < args.length ; ++i) {
             String s = args[i];
@@ -38,6 +40,9 @@ public class Warlight {
                     case "-sim":
                         sim = Integer.parseInt(args[++i]);
                         break;
+                    case "-timeout":
+                        timeout = Integer.parseInt(args[++i]);
+                        break;
                     default:
                         usage();
                         System.exit(1);
@@ -46,6 +51,8 @@ public class Warlight {
         }
 
         Config config = new Config();
+        if (timeout >= 0)
+            config.botCommandTimeoutMillis = timeout;
         
         if (sim > 0) {
             if (bots.size() < 2) {
