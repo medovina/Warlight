@@ -105,7 +105,7 @@ public class RegionInfo extends JPanel implements MouseListener {
     }
     
     public void drawName() {
-        this.name.setText(gui.showIds ? region.getId() + ":" + region.mapName() : region.mapName());
+        this.name.setText(region.mapName());
     }
     
     public void setRegion(Region region) {
