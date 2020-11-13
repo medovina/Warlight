@@ -162,12 +162,7 @@ public class Engine {
     //inform the player about how his visible map looks now
     private void sendUpdateMapInfo(int player)
     {
-        ArrayList<Region> visibleRegions;
-        if (game.config.fullyObservableGame) {
-            visibleRegions = game.getMap().regions;
-        } else {
-            visibleRegions = game.getMap().visibleRegionsForPlayer(player);
-        }
+        ArrayList<Region> visibleRegions = game.getMap().regions;
         String updateMapString = "update_map";
         for(Region region : visibleRegions)
         {
