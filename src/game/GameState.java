@@ -234,25 +234,16 @@ public class GameState implements Cloneable {
     
     void initStartingRegions() {
         pickableRegions = new ArrayList<Region>();
-        int regionsAdded = 0;
         
         //pick semi random regions to start with
         for(WorldContinent continent : WorldContinent.values())
         {
             int nrOfRegions = continent.getRegions().size();
-            while(regionsAdded < 2)
-            {
-                //get one random subregion from continent
-                int randomRegionId = random.nextInt(nrOfRegions);
-                
-                Region randomRegion = region(continent.getRegions().get(randomRegionId));
-                if(!pickableRegions.contains(randomRegion))
-                {
-                    pickableRegions.add(randomRegion);
-                    regionsAdded++;
-                }
-            }
-            regionsAdded = 0;
+            //get one random subregion from continent
+            int randomRegionId = random.nextInt(nrOfRegions);
+            
+            Region randomRegion = region(continent.getRegions().get(randomRegionId));
+            pickableRegions.add(randomRegion);
         }
     }
     
