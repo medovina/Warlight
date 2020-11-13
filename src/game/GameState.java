@@ -304,45 +304,33 @@ public class GameState implements Cloneable {
     
     public static class FightResult {
         public FightSide winner;
-        
         public int attackersDestroyed;
         public int defendersDestroyed;
         
-        public FightResult() {
-            winner = null;
-            attackersDestroyed = 0;         
-            defendersDestroyed = 0;
-        }
-        
-        public FightResult(FightSide winner, int attackersDestroyed, int defendersDestroyed) {
-            this.winner = winner;
-            this.attackersDestroyed = attackersDestroyed;
-            this.defendersDestroyed = defendersDestroyed;
-        }
-        
-        protected void postProcessFightResult(int attackingArmies, int defendingArmies) {      
-            if (defendersDestroyed >= defendingArmies) { //attack success
-                winner = FightSide.ATTACKER;
-            } else {
-                winner = FightSide.DEFENDER;
-            }
+        protected void postProcess(int attackingArmies, int defendingArmies) {
+            if (attackersDestroyed == attackingArmies && defendersDestroyed == defendingArmies)
+                defendersDestroyed -= 1;
+            
+            winner = defendersDestroyed >= defendingArmies ? FightSide.ATTACKER :
+                                                             FightSide.DEFENDER;
         }
     }
 
-    static FightResult doContinualAttack(Random random, int attackingArmies, int defendingArmies) {
+    int prob_round(double d) {
+        double p = d - Math.floor(d);
+        return (int) (random.nextDouble() < p ? Math.ceil(d) : Math.floor(d));
+    }
+
+    FightResult doAttack(int attackingArmies, int defendingArmies) {
         FightResult result = new FightResult();
+
+        result.defendersDestroyed = Math.min(prob_round(attackingArmies * 0.6), defendingArmies);
+        result.attackersDestroyed = Math.min(prob_round(defendingArmies * 0.7), attackingArmies);
         
-        while (result.attackersDestroyed < attackingArmies && result.defendersDestroyed < defendingArmies) {
-            if (random.nextDouble() < 0.45)
-                ++result.defendersDestroyed;
-            else ++result.attackersDestroyed;
-        }
-        
-        result.postProcessFightResult(attackingArmies, defendingArmies);
+        result.postProcess(attackingArmies, defendingArmies);
         return result;
     }
 
-    //see wiki.warlight.net/index.php/Combat_Basics
     private void doAttack(AttackTransferMove move)
     {
         Region fromRegion = region(move.getFromRegion());
@@ -360,7 +348,7 @@ public class GameState implements Cloneable {
         else
             attackingArmies = fromRegion.getArmies()-1;
         
-        FightResult result = doContinualAttack(random, attackingArmies, defendingArmies);
+        FightResult result = doAttack(attackingArmies, defendingArmies);
         
         switch (result.winner) {
         case ATTACKER: //attack success
