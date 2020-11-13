@@ -11,6 +11,27 @@ import utils.Util;
 public class Warlight {
     static String internalBot(String name) { return "internal:" + name; }
 
+    static void simulateGames(Config config, List<String> bots, int seed, int games, String resultdir) {
+        if (bots.size() < 2) {
+            out.println("must specify 2 bot names with -sim");
+            return;
+        }
+        config.visualize = false;
+
+        WarlightFightConfig fc = new WarlightFightConfig();
+        fc.config = config;
+        fc.games = games;
+        fc.seed = seed > 0 ? seed : 0;
+
+        WarlightFight fight = new WarlightFight(fc,
+            resultdir == null ? null : new File(resultdir + "/all-results.csv"),
+            resultdir == null ? null : new File(resultdir + "/fights"),
+            resultdir == null ? null : new File(resultdir + "/replays")
+            );
+        fight.fight(Util.className(bots.get(0)), internalBot(bots.get(0)),
+                    Util.className(bots.get(1)), internalBot(bots.get(1)));
+}
+
     static void usage() {
         out.println("usage: warlight [<bot1-classname>] [<bot2-classname>] [<option>...]");
         out.println("options:");
@@ -18,6 +39,9 @@ public class Warlight {
         out.println("  -seed <num> : random seed");
         out.println("  -sim <count> : simulate a series of games without visualization");
         out.println("  -timeout <num> : bot time limit in ms");
+        out.println();
+        out.println("game configuration options:");
+        out.println("  -warlords : distribute only one territory from each continent");
     }
 
     public static void main(String[] args) {
@@ -25,7 +49,8 @@ public class Warlight {
         String resultdir = null;
         int seed = -1;
         int sim = 0;
-        int timeout = -1;
+
+        Config config = new Config();
 
         for (int i = 0 ; i < args.length ; ++i) {
             String s = args[i];
@@ -41,7 +66,10 @@ public class Warlight {
                         sim = Integer.parseInt(args[++i]);
                         break;
                     case "-timeout":
-                        timeout = Integer.parseInt(args[++i]);
+                        config.botCommandTimeoutMillis = Integer.parseInt(args[++i]);
+                        break;
+                    case "-warlords":
+                        config.game.warlords = true;
                         break;
                     default:
                         usage();
@@ -50,28 +78,8 @@ public class Warlight {
             else bots.add(args[i]);
         }
 
-        Config config = new Config();
-        if (timeout >= 0)
-            config.botCommandTimeoutMillis = timeout;
-        
         if (sim > 0) {
-            if (bots.size() < 2) {
-                out.println("must specify 2 bot names with -sim");
-                return;
-            }
-            config.visualize = false;
-            WarlightFightConfig fc = new WarlightFightConfig();
-            fc.config = config;
-            fc.games = sim;
-            fc.seed = seed > 0 ? seed : 0;
-            WarlightFight fight = new WarlightFight(fc,
-                resultdir == null ? null : new File(resultdir + "/all-results.csv"),
-                resultdir == null ? null : new File(resultdir + "/fights"),
-                resultdir == null ? null : new File(resultdir + "/replays")
-                );
-            fight.fight(Util.className(bots.get(0)), internalBot(bots.get(0)),
-                        Util.className(bots.get(1)), internalBot(bots.get(1)));
-    
+            simulateGames(config, bots, seed, sim, resultdir);
         } else {
             if (bots.size() < 2) {
                 config.bot1Init = "human";

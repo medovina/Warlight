@@ -15,6 +15,8 @@ public class GameConfig implements Cloneable {
     
     public FightMode fight = FightMode.CONTINUAL_1_1_A60_D70;
     
+    public boolean warlords = false;
+
     public static GameConfig fromString(String line) {
         GameConfig result = new GameConfig();
         
@@ -25,17 +27,18 @@ public class GameConfig implements Cloneable {
         result.startingArmies = Integer.parseInt(parts[2]);
         result.maxGameRounds = Integer.parseInt(parts[3]);
         result.fight = FightMode.valueOf(parts[4]);
+        result.warlords = Boolean.parseBoolean(parts[5]);
 
         return result;
     }
 
     public String getCSVHeader() {
-        return "seed;fullyObservable;startingArmies;maxGameRounds;fightMode";         
+        return "seed;fullyObservable;startingArmies;maxGameRounds;fightMode;warlords";         
     }
     
     public String getCSV() {
         return seed + ";" + fullyObservableGame + ";" +
-               startingArmies + ";" + maxGameRounds + ";" + fight;
+               startingArmies + ";" + maxGameRounds + ";" + fight + ";" + warlords;
     }
     
     public String asString() {
