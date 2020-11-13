@@ -41,6 +41,7 @@ public class Warlight {
         out.println("  -timeout <num> : bot time limit in ms");
         out.println();
         out.println("game configuration options:");
+        out.println("  -manual : manual territory distribution");
         out.println("  -warlords : distribute only one territory from each continent");
     }
 
@@ -56,6 +57,9 @@ public class Warlight {
             String s = args[i];
             if (s.startsWith("-"))
                 switch (s) {
+                    case "-manual":
+                        config.game.manualDistribution = true;
+                        break;
                     case "-resultdir":
                         resultdir = args[++i];
                         break;

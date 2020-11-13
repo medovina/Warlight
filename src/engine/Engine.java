@@ -116,22 +116,25 @@ public class Engine {
         
         for (int i = 1 ; i <= GameState.nrOfStartingRegions ; ++i)
             for (int p = 1 ; p <= 2 ; ++p) {
-                sendUpdateMapInfo(p);
-                long start = System.currentTimeMillis();
-                Region region = game.region(robot(p).getStartingRegion(game));
-                if (timeout(robot(p), start)) {
-                    System.err.println("bot failed to return starting region in time!");
-                    region = null;
-                }
-                
-                if (region == null || !game.pickableRegions.contains(region)) {
-                    System.err.println("invalid starting region; choosing one at random");
-                    region = getRandomStartingRegion();
-                }
-        
-                game.chooseRegion(region);
-                if (gui != null)
-                    gui.updateMap();
+                if (game.config.manualDistribution) {
+                    sendUpdateMapInfo(p);
+                    long start = System.currentTimeMillis();
+                    Region region = game.region(robot(p).getStartingRegion(game));
+                    if (timeout(robot(p), start)) {
+                        System.err.println("bot failed to return starting region in time!");
+                        region = null;
+                    }
+                    
+                    if (region == null || !game.pickableRegions.contains(region)) {
+                        System.err.println("invalid starting region; choosing one at random");
+                        region = getRandomStartingRegion();
+                    }
+            
+                    game.chooseRegion(region);
+                    if (gui != null)
+                        gui.updateMap();
+                } else // automatic distribution
+                    game.chooseRegion(getRandomStartingRegion());
             }
         
         if (gui != null) {

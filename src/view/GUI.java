@@ -130,7 +130,7 @@ public class GUI extends JFrame implements MouseListener, KeyListener
         final int BoxWidth = 450, BoxHeight = 18;
         
         //Current round number
-        roundNumText = new JLabel("Territory Distribution", JLabel.CENTER);
+        roundNumText = new JLabel("Round 0", JLabel.CENTER);
         roundNumText.setBounds(WIDTH / 2 - BoxWidth / 2, 20, BoxWidth, BoxHeight);
         roundNumText.setBackground(Color.gray);
         roundNumText.setOpaque(true);
@@ -348,24 +348,22 @@ public class GUI extends JFrame implements MouseListener, KeyListener
     public void regionsChosen(List<Region> regions) {
         this.requestFocusInWindow();
         
-        if (!humanGame()) {
-            actionText.setText("Chosen territories");
-            
-            updateRegions(regions);
-            
-            for (Region data : regions) {
-                int id = data.getId();
-                RegionInfo region = this.regions[id-1];
-                region.setHighlight(region.getTeam() != Team.NEUTRAL);
-            }
+        actionText.setText("Starting territories");
+        
+        updateRegions(regions);
+        
+        for (Region data : regions) {
+            int id = data.getId();
+            RegionInfo region = this.regions[id-1];
+            region.setHighlight(region.getTeam() != Team.NEUTRAL);
+        }
 
-            waitForClick();
-            
-            for (Region region : regions) {
-                int id = region.getId();
-                RegionInfo regionInfo = this.regions[id-1];
-                regionInfo.setHighlight(false);
-            }
+        waitForClick();
+        
+        for (Region region : regions) {
+            int id = region.getId();
+            RegionInfo regionInfo = this.regions[id-1];
+            regionInfo.setHighlight(false);
         }
         
         updateStats();

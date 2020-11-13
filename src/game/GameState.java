@@ -32,11 +32,10 @@ public class GameState implements Cloneable {
         this.random = random;
     }
     
-    public GameState(GameConfig config, GameMap map, String[] playerNames,
-                     ArrayList<Region> pickableRegions) {
+    public GameState(GameConfig config, String[] playerNames, ArrayList<Region> pickableRegions) {
         this(
             config != null ? config : new GameConfig(),
-            map != null ? map : makeInitMap(),
+            makeInitMap(),
             playerNames != null ? playerNames : new String[] { "Player 1", "Player 2" },
             0, 1, Phase.STARTING_REGIONS, pickableRegions,
             (config == null || config.seed < 0) ? new Random() : new Random(config.seed));
@@ -45,8 +44,8 @@ public class GameState implements Cloneable {
             initStartingRegions();
     }
     
-    public GameState() {
-        this(null, null, null, null);
+    public GameState(GameConfig config) {
+        this(config, null, null);
     }
     
     public void setGUI(GUI gui) {
