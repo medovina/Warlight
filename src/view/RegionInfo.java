@@ -1,13 +1,9 @@
 package view;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import game.*;
@@ -15,8 +11,7 @@ import game.*;
 public class RegionInfo extends JPanel implements MouseListener {
     private GUI gui;
     private int diam;
-    private JLabel txt;
-    private JLabel name;
+    private String txt;
     private Region region;
     private int armies = 0;
     private Team team;
@@ -39,43 +34,16 @@ public class RegionInfo extends JPanel implements MouseListener {
         this.setTeam(team);
         
         this.setOpaque(false);
-        this.setBounds(0,0, 100, diam < 30 ? 34 : diam+8);
-        
-        BoxLayout layout = new BoxLayout(this, BoxLayout.PAGE_AXIS);
-        this.setLayout(layout);
-        
-        //Region name
-        this.name = new JLabel("PLR", JLabel.CENTER);
-        this.name.setSize(100, 15);
-        this.name.setPreferredSize(this.name.getSize());
-        this.name.setOpaque(false);
-        this.name.setFont(new Font("default", 0, 12));
-        this.name.setAlignmentX(0.5f);
-        this.name.setForeground(Color.BLACK);
-        this.add(this.name);
-        
-        //Text
-        this.txt = new JLabel("2", JLabel.CENTER);
-        this.txt.setSize(100, 15);
-        this.txt.setPreferredSize(this.txt.getSize());
-        this.txt.setOpaque(false);
-        this.txt.setFont(new Font("default", 0, 12));
-        this.txt.setAlignmentX(0.5f);
-        this.txt.setForeground(Color.BLACK);
-        this.add(this.txt);        
-        
+        this.setBounds(0,0, 40, diam < 30 ? 34 : diam+8);
+                
         //Circle
         this.diam = diam;
         
         addMouseListener(this);
     }
     
-    public void setNameLabel(String s) {
-        this.name.setText(s);
-    }
-    
     public void setText(String s) {
-        this.txt.setText(s);            
+        txt = s;
         this.revalidate();
         this.repaint();
     }
@@ -94,23 +62,12 @@ public class RegionInfo extends JPanel implements MouseListener {
     
     public void setTeam(Team team) {
         this.team = team;
-        if (this.txt != null) {
-            this.txt.setForeground(Color.BLACK);
-        }
-        if (this.name != null) {
-            this.name.setForeground(Color.BLACK);
-        }
         this.revalidate();
         this.repaint();
     }
     
-    public void drawName() {
-        this.name.setText(region.mapName());
-    }
-    
     public void setRegion(Region region) {
         this.region = region;
-        drawName();
         this.revalidate();
         this.repaint();
     }
@@ -142,6 +99,14 @@ public class RegionInfo extends JPanel implements MouseListener {
         } else
             g.setColor(TeamView.getColor(team));
         g.fillOval(width/2 - diam/2, 4, this.diam, this.diam);
+
+        g.setColor(Color.BLACK);
+        Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
+        g.setFont(font);
+
+        FontMetrics fm = g.getFontMetrics();
+        int w = fm.stringWidth(txt);
+        g.drawString(txt, 20 - w / 2, 24);
     }
     
     public Team getTeam() {

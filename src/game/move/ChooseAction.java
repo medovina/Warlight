@@ -19,6 +19,6 @@ public class ChooseAction implements Action {
 
     @Override
     public String toString() {
-        return String.format("[ChooseAction %s]", region.getMapName());
+        return String.format("[ChooseAction %s]", region.getName());
     }
 }
