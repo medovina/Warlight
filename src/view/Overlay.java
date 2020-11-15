@@ -13,13 +13,13 @@ import javax.swing.JPanel;
 import game.*;
 import game.world.WorldContinent;
 
-class TextLayer extends JPanel {
+class Overlay extends JPanel {
     GUI gui;
     GameState game;
 
     private static final long serialVersionUID = 1L;
     
-    public TextLayer(GUI gui, GameState game) {
+    public Overlay(GUI gui, GameState game) {
         this.gui = gui;
         this.game = game;
         setOpaque(false);
@@ -38,6 +38,10 @@ class TextLayer extends JPanel {
         RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
             RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHints(rh);
+
+        gui.drawRegionInfo(g);
+
+        // legend in upper left
 
         Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
         g.setFont(font);
@@ -59,6 +63,8 @@ class TextLayer extends JPanel {
                 armies, game.armiesEachTurn(player));
             g.drawString(s, 52, 54 + 35 * (player - 1));
         }
+
+        // scroll in lower left
 
         font = new Font("default", Font.BOLD, 14);
         g.setFont(font);

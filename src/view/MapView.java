@@ -12,16 +12,17 @@ import java.util.*;
 import javax.swing.*;
 
 import com.kitfox.svg.*;
+import com.kitfox.svg.animation.AnimationElement;
 
 import game.world.WorldRegion;
 
-public class MapImage extends JPanel implements MouseListener {
+public class MapView extends JPanel implements MouseListener {
     private static final long serialVersionUID = 1L;
 
     GUI gui;
     SVGDiagram diagram;
     
-    public MapImage(GUI gui, int width, int height) {
+    public MapView(GUI gui, int width, int height) {
         this.gui = gui;
 
         SVGUniverse universe = new SVGUniverse();
@@ -34,6 +35,9 @@ public class MapImage extends JPanel implements MouseListener {
 
         diagram = universe.getDiagram(uri);
         diagram.setDeviceViewport(new Rectangle(0, 0, width, height));
+
+        SVGRoot root = diagram.getRoot();
+        hideLabels(root);
 
         addMouseListener(this);
 
@@ -62,10 +66,41 @@ public class MapImage extends JPanel implements MouseListener {
         }
     }
 
+    void hideLabels(SVGElement e) {
+        if (e.getId().endsWith("Text")) {
+            try {
+                e.addAttribute("display", AnimationElement.AT_CSS, "none");
+            } catch (SVGElementException ex) { throw new RuntimeException(ex); }
+        }
+        for (SVGElement e1 : e.getChildren(null))
+            hideLabels(e1);
+    }
+
+    int regionFromPoint(Point p) {
+        List<List<SVGElement>> elements = new ArrayList<List<SVGElement>>();
+        try {
+            diagram.pick(p, elements);
+        } catch (SVGException e) { throw new RuntimeException(e); }
+
+        for (List<SVGElement> path : elements) {
+            RenderableElement e = (RenderableElement) path.get(path.size() - 1);
+            String id = e.getId();
+            if (id.startsWith("region")) {
+                return Integer.parseInt(id.substring(6));
+            }
+        }
+
+        return -1;
+    }
+
     @Override
     public void mousePressed(MouseEvent e)
     {
-        gui.mousePressed(e);
+        int id = regionFromPoint(e.getPoint());
+        if (id >= 0)
+            gui.regionClicked(id, e.getButton() == MouseEvent.BUTTON1);
+        else
+            gui.mousePressed(e);
     }
 
     @Override
@@ -87,21 +122,8 @@ public class MapImage extends JPanel implements MouseListener {
 
     @Override
     public String getToolTipText(MouseEvent event) {
-        List<List<SVGElement>> elements = new ArrayList<List<SVGElement>>();
-        try {
-            diagram.pick(event.getPoint(), elements);
-        } catch (SVGException e) { throw new RuntimeException(e); }
-
-        for (List<SVGElement> path : elements) {
-            RenderableElement e = (RenderableElement) path.get(path.size() - 1);
-            String id = e.getId();
-            if (id.startsWith("region")) {
-                int regionId = Integer.parseInt(id.substring(6));
-                return WorldRegion.forId(regionId).getName();
-            }
-        }
-
-        return "";
+        int id = regionFromPoint(event.getPoint());
+        return id == -1 ? "" : WorldRegion.forId(id).getName();
     }
 
     @Override

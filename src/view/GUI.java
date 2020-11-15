@@ -3,6 +3,7 @@ package view;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -91,7 +92,7 @@ public class GUI extends JFrame implements KeyListener
     private Arrow mainArrow;
     
     private JLayeredPane layeredPane;
-    TextLayer textLayer;
+    Overlay overlay;
     
     private CountDownLatch chooseRegionAction;
     private Region chosenRegion;
@@ -117,15 +118,15 @@ public class GUI extends JFrame implements KeyListener
         setTitle("Warlight");
         addKeyListener(this);
         
-        MapImage mapImage = new MapImage(this, WIDTH, HEIGHT);
+        MapView mapImage = new MapView(this, WIDTH, HEIGHT);
         mapImage.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         add(mapImage);
 
         layeredPane = getLayeredPane();
 
-        textLayer = new TextLayer(this, game);
-        textLayer.setBounds(0, 0, WIDTH, HEIGHT);
-        layeredPane.add(textLayer);
+        overlay = new Overlay(this, game);
+        overlay.setBounds(0, 0, WIDTH, HEIGHT);
+        layeredPane.add(overlay);
 
         final int BoxWidth = 450, BoxHeight = 18;
         
@@ -145,13 +146,12 @@ public class GUI extends JFrame implements KeyListener
          actionText.setPreferredSize(actionText.getSize());
         layeredPane.add(actionText, JLayeredPane.DRAG_LAYER);
                 
-        regionInfo = new RegionInfo[42];
+        regionInfo = new RegionInfo[WorldRegion.LAST_ID];
         
-        for (int idx = 0; idx < 42; idx++) {
-            regionInfo[idx] = new RegionInfo(this);
-            regionInfo[idx].setLocation(positions[idx][0] - 50, positions[idx][1]);
+        for (int idx = 0; idx < WorldRegion.LAST_ID; idx++) {
+            regionInfo[idx] = new RegionInfo();
             regionInfo[idx].setRegion(game.getRegion(idx+1));            
-            layeredPane.add(this.regionInfo[idx], JLayeredPane.PALETTE_LAYER);
+            // layeredPane.add(this.regionInfo[idx], JLayeredPane.PALETTE_LAYER);
         }
         
         notification = new GUINotif(layeredPane, 1015, 45, 200, 50);        
@@ -166,6 +166,11 @@ public class GUI extends JFrame implements KeyListener
 
     RegionInfo regionInfo(Region region) {
         return regionInfo[region.getId() - 1];
+    }
+
+    void drawRegionInfo(Graphics g) {
+        for (int i = 0 ; i < WorldRegion.LAST_ID ; ++i)
+            regionInfo[i].draw(g, positions[i][0] - 50, positions[i][1]);
     }
     
     public Team getTeam(int player) {
@@ -265,8 +270,8 @@ public class GUI extends JFrame implements KeyListener
         notification.show(txt, 1500);
     }
     
-    private void updateStats() {
-        textLayer.repaint();
+    private void updateOverlay() {
+        overlay.repaint();
     }
     
     public void newRound(int roundNum) {
@@ -279,24 +284,24 @@ public class GUI extends JFrame implements KeyListener
     }
     
     public void updateMap() {
-        this.requestFocusInWindow();
+        requestFocusInWindow();
         
-        //Update regions info
+        //Update region info
         for(Region region : game.getMap().regions) {
             int id = region.getId();
-            this.regionInfo[id-1].setArmies(region.getArmies());
-            this.regionInfo[id-1].setText(Integer.toString(region.getArmies()));            
-            this.regionInfo[id-1].setTeam(getTeam(region.getOwner()));
+            regionInfo[id-1].setArmies(region.getArmies());
+            regionInfo[id-1].setText(Integer.toString(region.getArmies()));            
+            regionInfo[id-1].setTeam(getTeam(region.getOwner()));
         }
 
-        updateStats();
+        updateOverlay();
     }
 
     public void showPickableRegions() {
         if (humanGame())
             return;
 
-        this.requestFocusInWindow();
+        requestFocusInWindow();
         
         actionText.setText("Available territories");
         
@@ -348,7 +353,7 @@ public class GUI extends JFrame implements KeyListener
             regionInfo.setHighlight(false);
         }
         
-        updateStats();
+        updateOverlay();
     }
     
     public void placeArmies(int player, ArrayList<Region> regions, List<PlaceArmiesMove> placeArmiesMoves) {
@@ -370,7 +375,7 @@ public class GUI extends JFrame implements KeyListener
         
         actionText.setText(playerName(player) + " places " + total + " armies");
         
-        updateStats();
+        updateOverlay();
         waitForClick();
         
         for (PlaceArmiesMove move : placeArmiesMoves) {
@@ -384,7 +389,7 @@ public class GUI extends JFrame implements KeyListener
         
         actionText.setText("---");
         
-        updateStats();
+        updateOverlay();
     }    
 
     String armies(int n) {
@@ -523,7 +528,7 @@ public class GUI extends JFrame implements KeyListener
         mainArrow.setColor(withSaturation(c, success ? 0.5f : 0.2f));
         mainArrow.setNumber(0);
 
-        updateStats();
+        updateOverlay();
         
         waitForClick();        
         
@@ -676,7 +681,7 @@ public class GUI extends JFrame implements KeyListener
         setPlaceArmiesText(armiesLeft);
         
         placeArmiesFinishedButton.setVisible(armiesLeft == 0);
-        updateStats();
+        updateOverlay();
     }
 
     // ===========
@@ -749,13 +754,16 @@ public class GUI extends JFrame implements KeyListener
             for (Region n : moveFrom.getNeighbors())
                 regionInfo(n).setHighlight(RegionInfo.Gray);
         }
+
+        updateOverlay();
     }
     
     boolean isNeighbor(Region r, Region s) {
         return r.getNeighbors().contains(s);
     }
     
-    void regionClicked(RegionInfo ri, boolean left) {
+    void regionClicked(int id, boolean left) {
+        RegionInfo ri = regionInfo[id - 1];
         Region region = ri.getRegion();
         
         if (chooseRegionAction != null) {
