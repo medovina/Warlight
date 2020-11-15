@@ -37,22 +37,22 @@ public class GUI extends JFrame implements KeyListener
         {325, 257},  //8.  Eastern United States
         {285, 311},  //9.  Central America
         {380, 353},  //10. Venezuela
-        {374, 425},  //11. Peru
+        {374, 420},  //11. Peru
         {445, 414},  //12. Brazil
         {404, 491},  //13. Argentina
-        {544, 138},  //14. Iceland
-        {575, 180},  //15. Great Britain
+        {553, 133},  //14. Iceland
+        {606, 186},  //15. Great Britain
         {657, 140},  //16. Scandinavia
         {729, 180},  //17. Ukraine
-        {586, 246},  //18. Western Europe
+        {592, 242},  //18. Western Europe
         {648, 198}, //19. Northern Europe
-        {680, 230}, //20. Southern Europe
+        {680, 225}, //20. Southern Europe
         {606, 319},  //21. North Africa
         {677, 296},  //22. Egypt
         {728, 359},  //23. East Africa
         {684, 388},  //24. Congo
         {687, 456},  //25. South Africa
-        {756, 445},  //26. Madagascar
+        {760, 443},  //26. Madagascar
         {830, 158},  //27. Ural
         {920, 126},  //28. Siberia
         {1002, 130},  //29. Yakutsk
@@ -61,12 +61,12 @@ public class GUI extends JFrame implements KeyListener
         {828, 222},  //32. Kazakhstan
         {925, 259},  //33. China
         {995, 222},  //34. Mongolia
-        {1060, 259}, //35. Japan
+        {1063, 255}, //35. Japan
         {746, 275},  //36. Middle East
         {865, 296},  //37. India
         {938, 328},  //38. Siam
         {980, 382},  //39. Indonesia
-        {1065, 402}, //40. New Guinea
+        {1070, 398}, //40. New Guinea
         {1013, 464},  //41. Western Australia
         {1085, 476}, //42. Eastern Australia
     };
@@ -92,6 +92,7 @@ public class GUI extends JFrame implements KeyListener
     private Arrow mainArrow;
     
     private JLayeredPane layeredPane;
+    MapView mapView;
     Overlay overlay;
     
     private CountDownLatch chooseRegionAction;
@@ -118,9 +119,9 @@ public class GUI extends JFrame implements KeyListener
         setTitle("Warlight");
         addKeyListener(this);
         
-        MapView mapImage = new MapView(this, WIDTH, HEIGHT);
-        mapImage.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        add(mapImage);
+        mapView = new MapView(this, WIDTH, HEIGHT);
+        mapView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        add(mapView);
 
         layeredPane = getLayeredPane();
 
@@ -150,8 +151,7 @@ public class GUI extends JFrame implements KeyListener
         
         for (int idx = 0; idx < WorldRegion.LAST_ID; idx++) {
             regionInfo[idx] = new RegionInfo();
-            regionInfo[idx].setRegion(game.getRegion(idx+1));            
-            // layeredPane.add(this.regionInfo[idx], JLayeredPane.PALETTE_LAYER);
+            mapView.setOwner(idx + 1, 0);
         }
         
         notification = new GUINotif(layeredPane, 1015, 45, 200, 50);        
@@ -291,7 +291,7 @@ public class GUI extends JFrame implements KeyListener
             int id = region.getId();
             regionInfo[id-1].setArmies(region.getArmies());
             regionInfo[id-1].setText(Integer.toString(region.getArmies()));            
-            regionInfo[id-1].setTeam(getTeam(region.getOwner()));
+            mapView.setOwner(id, region.getOwner());
         }
 
         updateOverlay();
@@ -323,12 +323,12 @@ public class GUI extends JFrame implements KeyListener
     public void updateRegions(List<Region> regions) {
         this.requestFocusInWindow();
         
-        for (Region data : regions) {
-            int id = data.getId();
-            RegionInfo region = this.regionInfo[id-1];
-            region.setTeam(getTeam(data.getOwner()));
-            region.setArmies(data.getArmies());
-            region.setText("" + region.getArmies());
+        for (Region region : regions) {
+            int id = region.getId();
+            RegionInfo ri = this.regionInfo[id-1];
+            mapView.setOwner(id, region.getOwner());
+            ri.setArmies(region.getArmies());
+            ri.setText("" + ri.getArmies());
         }
     }
     
@@ -338,22 +338,9 @@ public class GUI extends JFrame implements KeyListener
         actionText.setText("Starting territories");
         
         updateRegions(regions);
-        
-        for (Region data : regions) {
-            int id = data.getId();
-            RegionInfo region = this.regionInfo[id-1];
-            region.setHighlight(region.getTeam() != Team.NEUTRAL);
-        }
-
-        waitForClick();
-        
-        for (Region region : regions) {
-            int id = region.getId();
-            RegionInfo regionInfo = this.regionInfo[id-1];
-            regionInfo.setHighlight(false);
-        }
-        
         updateOverlay();
+        
+        waitForClick();
     }
     
     public void placeArmies(int player, ArrayList<Region> regions, List<PlaceArmiesMove> placeArmiesMoves) {
@@ -509,7 +496,7 @@ public class GUI extends JFrame implements KeyListener
 
         if (success) {
             fromRegionInfo.setArmies(fromRegionInfo.getArmies() + fromRegionInfo.armiesPlus);
-            toRegionInfo.setTeam(getTeam(toRegion.getOwner()));
+            mapView.setOwner(toRegion.getId(), toRegion.getOwner());
             toRegionInfo.setArmies((-fromRegionInfo.armiesPlus) - attackersDestroyed);
         } else {
             fromRegionInfo.setArmies(fromRegionInfo.getArmies() - attackersDestroyed);
@@ -586,13 +573,7 @@ public class GUI extends JFrame implements KeyListener
     public List<PlaceArmiesMove> placeArmiesHuman(Team team) {
         this.requestFocusInWindow();
         
-        List<Region> availableRegions = new ArrayList<Region>();
-        for (int i = 0; i < regionInfo.length; ++i) {
-            RegionInfo info = regionInfo[i];
-            if (info.getTeam() == team) {
-                availableRegions.add(game.getRegion(i + 1));
-            }            
-        }
+        List<Region> availableRegions = game.regionsOwnedBy(game.me());
         return placeArmiesHuman(availableRegions);
     }
     
@@ -745,11 +726,13 @@ public class GUI extends JFrame implements KeyListener
     
     void highlight() {
         if (moveFrom == null)
-            for (RegionInfo ri : regionInfo)
-                ri.setHighlight(ri.getTeam() == moving);
+            for (int id = 1 ; id <= regionInfo.length ; ++id) {
+                Region region = game.getRegion(id);
+                regionInfo[id - 1].setHighlight(region.getOwner() == game.me());
+            }
         else {
-            for (RegionInfo ri : regionInfo)
-                ri.setHighlight(ri.getRegion() == moveFrom ? RegionInfo.Green : null);
+            for (int id = 1 ; id <= regionInfo.length ; ++id)
+                regionInfo[id - 1].setHighlight(id == moveFrom.getId() ? RegionInfo.Green : null);
             
             for (Region n : moveFrom.getNeighbors())
                 regionInfo(n).setHighlight(RegionInfo.Gray);
@@ -763,8 +746,7 @@ public class GUI extends JFrame implements KeyListener
     }
     
     void regionClicked(int id, boolean left) {
-        RegionInfo ri = regionInfo[id - 1];
-        Region region = ri.getRegion();
+        Region region = game.getRegion(id);
         
         if (chooseRegionAction != null) {
             if (game.pickableRegions.contains(region)) {
@@ -794,7 +776,7 @@ public class GUI extends JFrame implements KeyListener
         if (!left)
             return;
         
-        moveFrom = (ri.getTeam() == moving) ? region : null;
+        moveFrom = region.getOwner() == game.me() ? region : null;
         highlight();
     }
 
