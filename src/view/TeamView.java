@@ -8,7 +8,7 @@ public class TeamView {
 
     public static final int[] PLAYER_1_COLOR_RGB = new int[] { 160, 160, 255 };
     public static final int[] PLAYER_2_COLOR_RGB = new int[] { 255, 160, 160 };    
-    public static final int[] NEUTRAL_COLOR_RGB = new int[] { 240, 240, 240 };
+    public static final int[] NEUTRAL_COLOR_RGB = new int[] { 220, 220, 220 };
     
     public static final int[] PLAYER_1_HIGHLIGHT_COLOR_RGB = new int[] { 180, 180, 255 };
     public static final int[] PLAYER_2_HIGHLIGHT_COLOR_RGB = new int[] { 255, 180, 180 };
