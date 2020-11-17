@@ -11,24 +11,17 @@ class Arrow extends JPanel {
     Color color = Color.BLACK;
     int number;
     
-    Polygon arrowHead;
-
     private static final long serialVersionUID = 1L;
     
     public Arrow(int from_x, int from_y, int to_x, int to_y) {
         setOpaque(false);
         setBounds(from_x, from_y, to_x, to_y);
-        
-        arrowHead = new Polygon();  
-        arrowHead.addPoint( 0, 6);
-        arrowHead.addPoint( -8, -6);
-        arrowHead.addPoint( 8, -6);        
     }
     
     public void setFromTo(int from_x, int from_y, int to_x, int to_y) {
         double len = Math.sqrt(Math.pow(from_x - to_x, 2) + Math.pow(from_y - to_y, 2));
-        double from_reduce = (len - 23) / len;
-        double to_reduce = (len - 25) / len;
+        double from_reduce = (len - 15) / len;
+        double to_reduce = (len - 10) / len;
         
         this.from_x = (int) (from_x * from_reduce + to_x * (1 - from_reduce));
         this.from_y = (int) (from_y * from_reduce + to_y * (1 - from_reduce));
@@ -52,22 +45,34 @@ class Arrow extends JPanel {
     protected void paintComponent(Graphics g1) {
         super.paintComponent(g1);
         Graphics2D g = (Graphics2D) g1;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
-        g.setColor(color);
-        g.setStroke(new BasicStroke(6));
-        g.drawLine(from_x, from_y, to_x, to_y);
-        
-        double angle = Math.atan2(to_y - from_y, to_x - from_x);
+        int len = (int) Math.sqrt(Math.pow(from_x - to_x, 2) + Math.pow(from_y - to_y, 2));
+        Polygon arrow = new Polygon();
+        arrow.addPoint(0, -4);
+        arrow.addPoint(len - 10, -4);
+        arrow.addPoint(len - 10, -8);
+        arrow.addPoint(len, 0);
+        arrow.addPoint(len - 10, 8);
+        arrow.addPoint(len - 10, 4);
+        arrow.addPoint(0, 4);
         
         AffineTransform save = g.getTransform();
-        g.translate(to_x, to_y);
-        g.rotate(angle - Math.PI / 2);
-        g.fill(arrowHead);
+        g.translate(from_x, from_y);
+        double angle = Math.atan2(to_y - from_y, to_x - from_x);
+        g.rotate(angle);
+
+        g.setColor(color);
+        g.fill(arrow);
+        g.setColor(Color.BLACK);
+        g.draw(arrow);
+
         g.setTransform(save);
         
         if (number > 0) {
             g.setColor(Color.BLACK);
-            Font font = new Font("default", Font.BOLD, 20);
+            Font font = new Font("default", Font.BOLD, 18);
             g.setFont(font);
             FontMetrics m = g.getFontMetrics(font);
             String text = Integer.toString(number);
@@ -76,9 +81,6 @@ class Arrow extends JPanel {
             
             GlyphVector v = font.createGlyphVector(g.getFontRenderContext(), text);
             Shape shape = v.getOutline();
-            
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             
             g.translate((from_x + to_x) / 2 - dx, (from_y + to_y) / 2 + dy);
             g.setColor(Color.WHITE);
