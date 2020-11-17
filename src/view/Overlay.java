@@ -82,18 +82,19 @@ class Overlay extends JPanel {
         Arrays.sort(a, new CompareByName());
         
         for (int i = 0 ; i < a.length ; ++i) {
-            int y = 485 + 19 * i;
+            int x = 104;
+            int y = 560 + 19 * i;
 
             Continent c = map.getContinent(a[i].id);
             int owner = c.getOwner();
             if (owner > 0) {
                 g.setColor(TeamView.getHighlightColor(Team.getTeam(owner)));
-                g.fillRect(86, y - 13, 135, 17);
+                g.fillRect(x, y - 13, 135, 17);
             }
             
             g.setColor(new Color(47, 79, 79));
-            g.drawString(a[i].mapName, 88, y);
-            g.drawString("" + a[i].reward, 208, y);
+            g.drawString(a[i].mapName, x + 2, y);
+            g.drawString("" + a[i].reward, x + 130, y);
         }
     }
 }

@@ -24,7 +24,7 @@ public class GUI extends JFrame implements KeyListener
 {
     private static final long serialVersionUID = 0;
 
-    private static final int WIDTH = 1240, HEIGHT = 622;
+    private static final int WIDTH = 1426, HEIGHT = 715;
     
     private GameState game;
     
