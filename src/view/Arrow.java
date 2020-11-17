@@ -6,6 +6,8 @@ import java.awt.geom.AffineTransform;
 
 import javax.swing.JPanel;
 
+import utils.Util;
+
 class Arrow extends JPanel {
     int from_x, from_y, to_x, to_y;
     Color color = Color.BLACK;
@@ -45,18 +47,17 @@ class Arrow extends JPanel {
     protected void paintComponent(Graphics g1) {
         super.paintComponent(g1);
         Graphics2D g = (Graphics2D) g1;
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        Util.renderNicely(g);
 
         int len = (int) Math.sqrt(Math.pow(from_x - to_x, 2) + Math.pow(from_y - to_y, 2));
         Polygon arrow = new Polygon();
-        arrow.addPoint(0, -4);
-        arrow.addPoint(len - 10, -4);
-        arrow.addPoint(len - 10, -8);
+        arrow.addPoint(0, -5);
+        arrow.addPoint(len - 12, -5);
+        arrow.addPoint(len - 12, -10);
         arrow.addPoint(len, 0);
-        arrow.addPoint(len - 10, 8);
-        arrow.addPoint(len - 10, 4);
-        arrow.addPoint(0, 4);
+        arrow.addPoint(len - 12, 10);
+        arrow.addPoint(len - 12, 5);
+        arrow.addPoint(0, 5);
         
         AffineTransform save = g.getTransform();
         g.translate(from_x, from_y);

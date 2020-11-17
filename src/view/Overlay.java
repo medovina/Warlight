@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -36,12 +35,10 @@ class Overlay extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
+        Util.renderNicely(g2);
 
         Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
         g.setFont(font);
-        RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2.setRenderingHints(rh);
 
         int width = getWidth();
 
@@ -50,7 +47,7 @@ class Overlay extends JPanel {
         Util.drawCentered(g, "Round " + game.getRoundNumber(), width / 2, Margin);
         Util.drawCentered(g, gui.getMessage(), width / 2, Margin + 17);
 
-        gui.drawRegionInfo(g);
+        gui.drawRegionInfo(g2);
 
         // legend in upper left
 

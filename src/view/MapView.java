@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.*;
@@ -19,6 +18,7 @@ import com.kitfox.svg.xml.StyleAttribute;
 
 import game.Team;
 import game.world.WorldRegion;
+import utils.Util;
 
 public class MapView extends JPanel implements MouseListener {
     private static final long serialVersionUID = 1L;
@@ -75,8 +75,7 @@ public class MapView extends JPanel implements MouseListener {
         super.paintComponent(g);
         try {
             Graphics2D g2 = (Graphics2D) g;
-            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g2.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            Util.renderNicely(g2);
             // System.out.print("rendering...");
             // long start = System.currentTimeMillis();
             diagram.render(g2);

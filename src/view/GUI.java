@@ -1,10 +1,13 @@
 package view;
 
+import java.awt.BasicStroke;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Stroke;
 import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -19,6 +22,7 @@ import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
 import game.world.WorldRegion;
+import utils.Util;
 
 public class GUI extends JFrame implements KeyListener
 {
@@ -102,10 +106,28 @@ public class GUI extends JFrame implements KeyListener
         return regionInfo[region.getId() - 1];
     }
 
-    void drawRegionInfo(Graphics g) {
+    void drawRegionInfo(Graphics2D g) {
         for (int id = 1 ; id <= WorldRegion.NUM_REGIONS ; ++id) {
             Point pos = mapView.regionPositions[id];
-            regionInfo[id - 1].draw(g, pos.x, pos.y);
+            RegionInfo ri = regionInfo[id - 1];
+            int x = pos.x, y = pos.y;
+
+            if (ri.highlight != null) {
+                g.setColor(ri.highlight);
+                Stroke save = g.getStroke();
+                g.setStroke(new BasicStroke(2));
+                g.drawOval(x - 17, y - 23, 38, 38);
+                g.setStroke(save);
+            }
+    
+            g.setColor(Color.BLACK);
+            Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
+            g.setFont(font);
+    
+            String text = "" + ri.armies;
+            if (ri.armiesPlus > 0)
+                text += "+" + ri.armiesPlus;
+            Util.drawCentered(g, text, x + 2, y);
         }
     }
     
@@ -324,6 +346,7 @@ public class GUI extends JFrame implements KeyListener
     }
 
     public void transfer(AttackTransferMove move) {
+        int fromId = move.getFromRegion().id, toId = move.getToRegion().id;
         this.requestFocusInWindow();
         
         int armies = move.getArmies();
@@ -338,17 +361,14 @@ public class GUI extends JFrame implements KeyListener
         message(text + armies(armies) + " to " + toName);
         Team player = getTeam(game.me());
         
-        RegionInfo fromRegion = this.regionInfo[move.getFromRegion().id - 1];
-        RegionInfo toRegion = this.regionInfo[move.getToRegion().id - 1];
+        RegionInfo fromRegionInfo = regionInfo[fromId - 1];
+        RegionInfo toRegionInfo = regionInfo[toId - 1];
         
-        fromRegion.armiesPlus = -armies;
-        fromRegion.setHighlight(true);
+        fromRegionInfo.setHighlight(true);
+        toRegionInfo.setHighlight(true);
         
-        toRegion.armiesPlus = armies;
-        toRegion.setHighlight(true);
-        
-        Point fromPos = mapView.regionPositions[move.getFromRegion().id];
-        Point toPos = mapView.regionPositions[move.getToRegion().id];
+        Point fromPos = mapView.regionPositions[fromId];
+        Point toPos = mapView.regionPositions[toId];
         mainArrow.setFromTo(fromPos.x + 3, fromPos.y - 3, toPos.x + 3, toPos.y - 3);
         mainArrow.setColor(TeamView.getColor(player));
         mainArrow.setNumber(armies);
@@ -356,13 +376,11 @@ public class GUI extends JFrame implements KeyListener
         
         waitForClick();
         
-        fromRegion.setHighlight(false);
-        fromRegion.setArmies(fromRegion.getArmies() + fromRegion.armiesPlus);
-        fromRegion.armiesPlus = 0;
+        fromRegionInfo.setHighlight(false);
+        fromRegionInfo.setArmies(game.getRegion(fromId).getArmies());
         
-        toRegion.setHighlight(false);
-        toRegion.setArmies(toRegion.getArmies() + toRegion.armiesPlus);
-        toRegion.armiesPlus = 0;
+        toRegionInfo.setHighlight(false);
+        toRegionInfo.setArmies(game.getRegion(toId).getArmies());
         
         mainArrow.setVisible(false);
         
@@ -533,8 +551,8 @@ public class GUI extends JFrame implements KeyListener
                 }
             });
         }
-        layeredPane.add(placeArmiesFinishedButton, JLayeredPane.MODAL_LAYER);
         placeArmiesFinishedButton.setVisible(false);
+        layeredPane.add(placeArmiesFinishedButton, JLayeredPane.MODAL_LAYER);
         
         try {
             placeArmiesAction.await();
@@ -748,4 +766,4 @@ public class GUI extends JFrame implements KeyListener
         
         return moveArmies;
     }
-} 
+}
