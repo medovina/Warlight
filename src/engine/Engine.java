@@ -113,8 +113,8 @@ public class Engine {
         if (gui != null) {
             gui.showPickableRegions();
         }
-        
-        for (int i = 1 ; i <= GameState.nrOfStartingRegions ; ++i)
+    
+        for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
             for (int p = 1 ; p <= 2 ; ++p) {
                 if (game.config.manualDistribution) {
                     sendUpdateMapInfo(p);

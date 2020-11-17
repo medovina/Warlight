@@ -17,8 +17,6 @@ public class GameState implements Cloneable {
     public Random random;
     GUI gui;
     
-    public static final int nrOfStartingRegions = 3;
-    
     public GameState(GameConfig config, GameMap map, String[] playerNames,
                      int round, int turn, Phase phase, ArrayList<Region> pickableRegions,
                      Random random) {
@@ -230,6 +228,10 @@ public class GameState implements Cloneable {
 
         return map;
     }
+
+    public int numStartingRegions() {
+        return config.warlords ? 3 : 4;
+    }
     
     void initStartingRegions() {
         pickableRegions = new ArrayList<Region>();
@@ -259,7 +261,7 @@ public class GameState implements Cloneable {
         pickableRegions.remove(region);
         turn = 3 - turn;
         
-        if (map.numberRegionsOwned(turn) == nrOfStartingRegions) {
+        if (map.numberRegionsOwned(turn) == numStartingRegions()) {
             round = 1;
             phase = Phase.PLACE_ARMIES;
         }

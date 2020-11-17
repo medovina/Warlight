@@ -3,7 +3,6 @@ package view;
 import java.awt.*;
 
 public class RegionInfo {
-    private String text;
     private Color highlight;
 
     private int armies = 0;
@@ -12,10 +11,6 @@ public class RegionInfo {
     public static final Color
         Gray = new Color(180, 180, 180),
         Green = new Color(70, 189, 123);
-    
-    public void setText(String s) {
-        text = s;
-    }
     
     public void setHighlight(Color c) {
         this.highlight = c;
@@ -46,6 +41,9 @@ public class RegionInfo {
         Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
         g.setFont(font);
 
+        String text = "" + armies;
+        if (armiesPlus > 0)
+            text += "+" + armiesPlus;
         FontMetrics fm = g.getFontMetrics();
         int w = fm.stringWidth(text);
         g.drawString(text, x + 20 - w / 2, y + 24);

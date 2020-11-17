@@ -290,7 +290,6 @@ public class GUI extends JFrame implements KeyListener
         for(Region region : game.getMap().regions) {
             int id = region.getId();
             regionInfo[id-1].setArmies(region.getArmies());
-            regionInfo[id-1].setText(Integer.toString(region.getArmies()));            
             mapView.setOwner(id, region.getOwner());
         }
 
@@ -328,7 +327,6 @@ public class GUI extends JFrame implements KeyListener
             RegionInfo ri = this.regionInfo[id-1];
             mapView.setOwner(id, region.getOwner());
             ri.setArmies(region.getArmies());
-            ri.setText("" + ri.getArmies());
         }
     }
     
@@ -355,7 +353,6 @@ public class GUI extends JFrame implements KeyListener
             RegionInfo region = this.regionInfo[id-1];    
             region.setArmies(region.getArmies() - move.getArmies());
             region.armiesPlus += move.getArmies();
-            region.setText(region.getArmies() + "+" + region.armiesPlus);
             region.setHighlight(true);
             total += move.getArmies();
         }
@@ -370,7 +367,6 @@ public class GUI extends JFrame implements KeyListener
             RegionInfo region = this.regionInfo[id-1];
             region.setArmies(region.getArmies() + region.armiesPlus);
             region.armiesPlus = 0;
-            region.setText("" + region.getArmies());
             region.setHighlight(false);
         }
         
@@ -418,12 +414,10 @@ public class GUI extends JFrame implements KeyListener
         
         fromRegion.setHighlight(false);
         fromRegion.setArmies(fromRegion.getArmies() + fromRegion.armiesPlus);
-        fromRegion.setText(String.valueOf(fromRegion.getArmies()));
         fromRegion.armiesPlus = 0;
         
         toRegion.setHighlight(false);
         toRegion.setArmies(toRegion.getArmies() + toRegion.armiesPlus);
-        toRegion.setText(String.valueOf(toRegion.getArmies()));
         toRegion.armiesPlus = 0;
         
         mainArrow.setVisible(false);
@@ -465,10 +459,7 @@ public class GUI extends JFrame implements KeyListener
         RegionInfo fromRegion = this.regionInfo[move.getFromRegion().id - 1];
         RegionInfo toRegion = this.regionInfo[move.getToRegion().id - 1];
         
-        fromRegion.armiesPlus = -armies;
         fromRegion.setHighlight(true);
-        
-        toRegion.armiesPlus = armies;
         toRegion.setHighlight(true);
         
         showArrow(mainArrow, move.getFromRegion().id, move.getToRegion().id, attacker, armies);
@@ -494,20 +485,11 @@ public class GUI extends JFrame implements KeyListener
             success ? "succeeded" : "failed", attackersDestroyed, defendersDestroyed);
         actionText.setText(outcome);
 
-        if (success) {
-            fromRegionInfo.setArmies(fromRegionInfo.getArmies() + fromRegionInfo.armiesPlus);
+        fromRegionInfo.setArmies(fromRegion.getArmies());
+        toRegionInfo.setArmies(toRegion.getArmies());
+
+        if (success)
             mapView.setOwner(toRegion.getId(), toRegion.getOwner());
-            toRegionInfo.setArmies((-fromRegionInfo.armiesPlus) - attackersDestroyed);
-        } else {
-            fromRegionInfo.setArmies(fromRegionInfo.getArmies() - attackersDestroyed);
-            toRegionInfo.setArmies(toRegionInfo.getArmies() - defendersDestroyed);
-        }
-        
-        fromRegionInfo.armiesPlus = 0;
-        fromRegionInfo.setText("" + fromRegionInfo.getArmies());
-        
-        toRegionInfo.armiesPlus = 0;
-        toRegionInfo.setText("" + toRegionInfo.getArmies());
         
         fromRegionInfo.setHighlight(true);
         toRegionInfo.setHighlight(true);
@@ -622,7 +604,6 @@ public class GUI extends JFrame implements KeyListener
             RegionInfo info = regionInfo[region.getId()-1];
             if (info.armiesPlus > 0) {
                 info.setArmies(info.getArmies() + info.armiesPlus);
-                info.setText("" + info.getArmies());
                 info.setHighlight(false);
 
                 PlaceArmiesMove command = new PlaceArmiesMove(region, info.armiesPlus);
@@ -652,10 +633,8 @@ public class GUI extends JFrame implements KeyListener
         armiesLeft -= change;
         
         if (info.armiesPlus > 0) {
-            info.setText(info.getArmies() + "+" + info.armiesPlus);
             info.setHighlight(true);
         } else {
-            info.setText(String.valueOf(info.getArmies()));
             info.setHighlight(false);
         }
         
@@ -725,18 +704,14 @@ public class GUI extends JFrame implements KeyListener
     }
     
     void highlight() {
-        if (moveFrom == null)
-            for (int id = 1 ; id <= regionInfo.length ; ++id) {
-                Region region = game.getRegion(id);
-                regionInfo[id - 1].setHighlight(region.getOwner() == game.me());
-            }
-        else {
-            for (int id = 1 ; id <= regionInfo.length ; ++id)
-                regionInfo[id - 1].setHighlight(id == moveFrom.getId() ? RegionInfo.Green : null);
-            
+        int from = moveFrom == null ? 0 : moveFrom.getId();
+
+        for (int id = 1 ; id <= regionInfo.length ; ++id)
+            regionInfo[id - 1].setHighlight(id == from ? RegionInfo.Green : null);
+        
+        if (moveFrom != null)
             for (Region n : moveFrom.getNeighbors())
                 regionInfo(n).setHighlight(RegionInfo.Gray);
-        }
 
         updateOverlay();
     }
