@@ -10,7 +10,6 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
@@ -31,8 +30,7 @@ public class GUI extends JFrame implements KeyListener
     
     private GUINotif notification;
     
-    private JLabel roundNumText;
-    private JLabel actionText;
+    private String message;
     
     private RegionInfo[] regionInfo;
     private boolean clicked = false;
@@ -83,23 +81,6 @@ public class GUI extends JFrame implements KeyListener
         overlay.setBounds(0, 0, WIDTH, HEIGHT);
         layeredPane.add(overlay);
 
-        final int BoxWidth = 450, BoxHeight = 18;
-        
-        roundNumText = new JLabel("Round 0", JLabel.CENTER);
-        roundNumText.setBounds(WIDTH / 2 - BoxWidth / 2, 20, BoxWidth, BoxHeight);
-        roundNumText.setBackground(Color.gray);
-        roundNumText.setOpaque(true);
-        roundNumText.setForeground(Color.WHITE);
-        layeredPane.add(roundNumText, JLayeredPane.DRAG_LAYER);
-        
-        actionText = new JLabel("ACTION", JLabel.CENTER);
-        actionText.setBounds(WIDTH / 2 - BoxWidth / 2, 20 + BoxHeight, BoxWidth, BoxHeight);
-        actionText.setBackground(Color.gray);
-        actionText.setOpaque(true);
-        actionText.setForeground(Color.WHITE);
-         actionText.setPreferredSize(actionText.getSize());
-        layeredPane.add(actionText, JLayeredPane.DRAG_LAYER);
-                
         regionInfo = new RegionInfo[WorldRegion.NUM_REGIONS];
         
         for (int idx = 0; idx < WorldRegion.NUM_REGIONS; idx++) {
@@ -228,10 +209,18 @@ public class GUI extends JFrame implements KeyListener
     private void updateOverlay() {
         overlay.repaint();
     }
+
+    void message(String s) {
+        message = s;
+        updateOverlay();
+    }
+
+    public String getMessage() {
+        return message;
+    }
     
     public void newRound(int roundNum) {
-        roundNumText.setText("Round " + Integer.toString(roundNum));
-        actionText.setText("New round begins");
+        message("New round begins");
         nextRound = false;
 
         //Wait for user to request next round
@@ -257,7 +246,7 @@ public class GUI extends JFrame implements KeyListener
 
         requestFocusInWindow();
         
-        actionText.setText("Available territories");
+        message("Available territories");
         
         for (Region region : game.pickableRegions) {
             int id = region.getId();
@@ -288,7 +277,7 @@ public class GUI extends JFrame implements KeyListener
     public void regionsChosen(List<Region> regions) {
         this.requestFocusInWindow();
         
-        actionText.setText("Starting territories");
+        message("Starting territories");
         
         updateRegions(regions);
         updateOverlay();
@@ -312,7 +301,7 @@ public class GUI extends JFrame implements KeyListener
             total += move.getArmies();
         }
         
-        actionText.setText(playerName(player) + " places " + total + " armies");
+        message(playerName(player) + " places " + total + " armies");
         
         updateOverlay();
         waitForClick();
@@ -325,7 +314,7 @@ public class GUI extends JFrame implements KeyListener
             region.setHighlight(false);
         }
         
-        actionText.setText("---");
+        message("---");
         
         updateOverlay();
     }    
@@ -346,7 +335,7 @@ public class GUI extends JFrame implements KeyListener
         else
             text = playerName(game.me()) + " transfers ";
 
-        actionText.setText(text + armies(armies) + " to " + toName);
+        message(text + armies(armies) + " to " + toName);
         Team player = getTeam(game.me());
         
         RegionInfo fromRegion = this.regionInfo[move.getFromRegion().id - 1];
@@ -377,7 +366,7 @@ public class GUI extends JFrame implements KeyListener
         
         mainArrow.setVisible(false);
         
-        actionText.setText("---");
+        message("---");
     }
     
     Robot bot(int player) {
@@ -408,7 +397,7 @@ public class GUI extends JFrame implements KeyListener
             text = "You attack ";
         else
             text = playerName(game.me()) + " attacks ";
-        actionText.setText(text + toName + " with " + armies(armies));
+        message(text + toName + " with " + armies(armies));
         
         Team attacker = getTeam(game.me());
         RegionInfo fromRegion = this.regionInfo[move.getFromRegion().id - 1];
@@ -438,7 +427,7 @@ public class GUI extends JFrame implements KeyListener
         
         String outcome = String.format("Attack %s! (attackers lost %d, defenders lost %d)",
             success ? "succeeded" : "failed", attackersDestroyed, defendersDestroyed);
-        actionText.setText(outcome);
+        message(outcome);
 
         fromRegionInfo.setArmies(fromRegion.getArmies());
         toRegionInfo.setArmies(toRegion.getArmies());
@@ -460,7 +449,7 @@ public class GUI extends JFrame implements KeyListener
         toRegionInfo.setHighlight(false);
         mainArrow.setVisible(false);
         
-        actionText.setText("---");    
+        message("---");    
     }
     
     // ======================
@@ -481,7 +470,7 @@ public class GUI extends JFrame implements KeyListener
         
         chooseRegionAction = new CountDownLatch(1);
         
-        actionText.setText("Choose a starting territory");
+        message("Choose a starting territory");
         
         for (Region region : game.pickableRegions) {
             RegionInfo ri = this.regionInfo[region.getId()-1];
@@ -515,9 +504,12 @@ public class GUI extends JFrame implements KeyListener
     }
     
     void setPlaceArmiesText(int armiesLeft) {
-        actionText.setText(
-            "Place " + armiesLeft + (armiesLeft == 1 ? " army" : " armies") +
-            " on your territories");
+        if (armiesLeft > 0)
+            message(
+                "Place " + armiesLeft + (armiesLeft == 1 ? " army" : " armies") +
+                " on your territories");
+        else
+            message("");
     }
 
     public List<PlaceArmiesMove> placeArmiesHuman(List<Region> availableRegions) {
@@ -715,7 +707,7 @@ public class GUI extends JFrame implements KeyListener
         moving = team;
         moveFrom = null;
         
-        actionText.setText("Move and/or attack");
+        message("Move and/or attack");
             
         moveArmiesAction = new CountDownLatch(1);
         

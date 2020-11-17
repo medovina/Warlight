@@ -2,6 +2,8 @@ package view;
 
 import java.awt.*;
 
+import utils.Util;
+
 public class RegionInfo {
     private Color highlight;
 
@@ -41,8 +43,6 @@ public class RegionInfo {
         String text = "" + armies;
         if (armiesPlus > 0)
             text += "+" + armiesPlus;
-        FontMetrics fm = g.getFontMetrics();
-        int w = fm.stringWidth(text);
-        g.drawString(text, x + 2 - w / 2, y);
+        Util.drawCentered(g, text, x + 2, y);
     }
 }
