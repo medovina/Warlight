@@ -54,17 +54,15 @@ public class GUI extends JFrame implements KeyListener
     private CountDownLatch chooseRegionAction;
     private Region chosenRegion;
     
-    private CountDownLatch placeArmiesAction;
-    private int armiesLeft;
+    public CountDownLatch placeArmiesAction;
+    public int armiesLeft;
     int armiesPlaced;
     private List<Region> armyRegions;
-    private Button placeArmiesFinishedButton;
 
     private Team moving = null;
     private Map<Integer, Move> moves;  // maps encoded (fromId, toId) to Move
     private Region moveFrom;    
-    private CountDownLatch moveArmiesAction;
-    private Button moveArmiesFinishedButton;
+    public CountDownLatch moveArmiesAction;
 
     public GUI(GameState game, Robot[] bots)
     {
@@ -538,22 +536,7 @@ public class GUI extends JFrame implements KeyListener
         placeArmiesAction = new CountDownLatch(1);
         
         setPlaceArmiesText(armiesLeft);
-        
-        if (placeArmiesFinishedButton == null) {
-            placeArmiesFinishedButton = doneButton();
-            placeArmiesFinishedButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    if (armiesLeft == 0) {
-                        placeArmiesAction.countDown();
-                    }
-                    GUI.this.requestFocusInWindow();
-                }
-            });
-        }
-        placeArmiesFinishedButton.setVisible(false);
-        layeredPane.add(placeArmiesFinishedButton, JLayeredPane.MODAL_LAYER);
-        
+                
         try {
             placeArmiesAction.await();
         } catch (InterruptedException e) {
@@ -561,7 +544,6 @@ public class GUI extends JFrame implements KeyListener
         }
         
         placeArmiesAction = null;
-        layeredPane.remove(placeArmiesFinishedButton);
         
         List<PlaceArmiesMove> result = new ArrayList<PlaceArmiesMove>();
         
@@ -582,6 +564,18 @@ public class GUI extends JFrame implements KeyListener
         return result;
     }
     
+    void doneClicked() {
+        if (placeArmiesAction != null) {
+            if (armiesLeft == 0) {
+                placeArmiesAction.countDown();
+            }
+            GUI.this.requestFocusInWindow();
+        } else if (moveArmiesAction != null) {
+            moveArmiesAction.countDown();
+            GUI.this.requestFocusInWindow();
+        }
+    }
+
     private void placeArmyRegionClicked(Region region, int change) {        
         change = Math.min(armiesLeft, change);
         if (change == 0) return;
@@ -605,7 +599,6 @@ public class GUI extends JFrame implements KeyListener
         
         setPlaceArmiesText(armiesLeft);
         
-        placeArmiesFinishedButton.setVisible(armiesLeft == 0);
         updateOverlay();
     }
 
@@ -731,17 +724,6 @@ public class GUI extends JFrame implements KeyListener
         
         moves = new HashMap<Integer, Move>();
         
-        if (moveArmiesFinishedButton == null) {
-            moveArmiesFinishedButton = doneButton();
-            moveArmiesFinishedButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    moveArmiesAction.countDown();
-                    GUI.this.requestFocusInWindow();
-                }
-            });
-        }
-        layeredPane.add(moveArmiesFinishedButton, JLayeredPane.MODAL_LAYER);
         highlight();
         
         try {
@@ -749,8 +731,7 @@ public class GUI extends JFrame implements KeyListener
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while awaiting user action.");
         }
-        
-        layeredPane.remove(moveArmiesFinishedButton);
+        moveArmiesAction = null;
         
         for (RegionInfo info : regionInfo)
             info.setHighlight(false);

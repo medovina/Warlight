@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.*;
 import java.awt.geom.*;
 import java.io.*;
 import java.net.URI;
@@ -20,7 +19,7 @@ import game.Team;
 import game.world.WorldRegion;
 import utils.Util;
 
-public class MapView extends JPanel implements MouseListener {
+public class MapView extends JPanel {
     private static final long serialVersionUID = 1L;
 
     GUI gui;
@@ -59,15 +58,6 @@ public class MapView extends JPanel implements MouseListener {
                 t.addAttribute("display", AnimationElement.AT_CSS, "none");
             }
         } catch (SVGException e) { throw new RuntimeException(e); }
-
-        addMouseListener(this);
-
-        ToolTipManager m = ToolTipManager.sharedInstance();
-        m.setDismissDelay(10000);
-        m.setInitialDelay(10);
-        m.setReshowDelay(10);
-
-        setToolTipText("");
     }
 
     @Override
@@ -162,49 +152,6 @@ public class MapView extends JPanel implements MouseListener {
         }
 
         return -1;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e)
-    {
-        int id = regionFromPoint(e.getPoint());
-        if (id >= 0)
-            gui.regionClicked(id, e.getButton() == MouseEvent.BUTTON1);
-        else
-            gui.mousePressed(e);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        gui.mouseReleased(e);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-    }
-
-    @Override
-    public String getToolTipText(MouseEvent event) {
-        int id = regionFromPoint(event.getPoint());
-        return id == -1 ? null : WorldRegion.forId(id).getName();
-    }
-
-    @Override
-    public Point getToolTipLocation(MouseEvent e) {
-        int id = regionFromPoint(e.getPoint());
-        if (id == -1)
-            return new Point(0, 0);
-
-        Point p = e.getPoint();
-        return new Point(p.x + 20, p.y + 10);
     }
 
 }
