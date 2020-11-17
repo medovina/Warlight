@@ -195,11 +195,15 @@ public class MapView extends JPanel implements MouseListener {
     @Override
     public String getToolTipText(MouseEvent event) {
         int id = regionFromPoint(event.getPoint());
-        return id == -1 ? "" : WorldRegion.forId(id).getName();
+        return id == -1 ? null : WorldRegion.forId(id).getName();
     }
 
     @Override
     public Point getToolTipLocation(MouseEvent e) {
+        int id = regionFromPoint(e.getPoint());
+        if (id == -1)
+            return new Point(0, 0);
+
         Point p = e.getPoint();
         return new Point(p.x + 20, p.y + 10);
     }
