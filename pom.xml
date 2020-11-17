@@ -21,9 +21,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.weblookandfeel</groupId>
-            <artifactId>svg-salamander</artifactId>
-            <version>1.1.2.2</version>
+            <groupId>com.formdev</groupId>
+            <artifactId>svgSalamander</artifactId>
+            <version>1.1.2.4</version>
         </dependency>    
     </dependencies>
 </project>

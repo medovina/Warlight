@@ -373,7 +373,7 @@ public class GameState implements Cloneable {
 
     void validateAttackTransfers(List<AttackTransferMove> moves)
     {
-        int[] totalFrom = new int[WorldRegion.LAST_ID + 1];
+        int[] totalFrom = new int[WorldRegion.NUM_REGIONS + 1];
         
         for (int i = 0 ; i < moves.size() ; ++i) {
             AttackTransferMove move = moves.get(i);

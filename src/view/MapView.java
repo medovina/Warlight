@@ -25,7 +25,10 @@ public class MapView extends JPanel implements MouseListener {
 
     GUI gui;
     SVGDiagram diagram;
+    AffineTransform viewportTransform;
     Rectangle2D imageBounds;
+    
+    Point[] regionPositions = new Point[WorldRegion.NUM_REGIONS + 1];
     
     public MapView(GUI gui, int width, int height) {
         this.gui = gui;
@@ -39,14 +42,23 @@ public class MapView extends JPanel implements MouseListener {
         }
 
         diagram = universe.getDiagram(uri);
-        diagram.setDeviceViewport(new Rectangle(0, 0, width, height));
+        Rectangle viewport = new Rectangle(0, 0, width, height);
+        diagram.setDeviceViewport(viewport);
 
         SVGRoot root = diagram.getRoot();
+        viewportTransform = root.calcViewportTransform(viewport);
         try {
             imageBounds = root.getBoundingBox();
+            
+            for (int i = 1 ; i <= WorldRegion.NUM_REGIONS ; ++i) {
+                Text t = (Text) diagram.getElement("region" + i + "Text");
+                Point p = new Point(getAttribute(t, "x").getIntValue(),
+                                    getAttribute(t, "y").getIntValue());
+                regionPositions[i] = localToViewport(t, p);
+                // System.out.printf("region %d: x = %d, y = %d",i, regionPositions[i].x, regionPositions[i].y);
+                t.addAttribute("display", AnimationElement.AT_CSS, "none");
+            }
         } catch (SVGException e) { throw new RuntimeException(e); }
-
-        hideLabels(root);
 
         addMouseListener(this);
 
@@ -75,49 +87,65 @@ public class MapView extends JPanel implements MouseListener {
         }
     }
 
+    StyleAttribute getAttribute(SVGElement e, String name) {
+        try {
+            StyleAttribute a = new StyleAttribute(name);
+            if (!e.getStyle(a))
+                throw new RuntimeException(String.format("can't get attribute '%s'", name));
+            return a;
+        } catch (SVGException ex) { throw new RuntimeException(ex); }
+    }
+
+    Point localToViewport(RenderableElement e, Point p) {
+        while (true) {
+            e = (RenderableElement) e.getParent();
+            if (e == null)
+                break;
+            AffineTransform t = e.getXForm();
+            if (t != null)
+                t.transform(p, p);
+        }
+        viewportTransform.transform(p, p);
+        return p;
+    }
+
+    Rectangle getBounds(RenderableElement e) {
+        Rectangle2D bounds;
+        
+        try {
+            bounds = e.getBoundingBox();
+        } catch (SVGException ex) { throw new RuntimeException(ex); }
+        while (true) {
+            e = (RenderableElement) e.getParent();
+            if (e == null)
+                break;
+            AffineTransform t = e.getXForm();
+            if (t != null)
+                bounds = t.createTransformedShape(bounds).getBounds2D();
+        }
+
+        double xScale = getWidth() / imageBounds.getWidth();
+        double yScale = getHeight() / imageBounds.getHeight();
+        return new Rectangle(
+            (int) (xScale * bounds.getX()), (int) (yScale * bounds.getY()),
+            (int) (xScale * bounds.getWidth()), (int) (yScale * bounds.getHeight())
+        );
+    }
+
     void setOwner(int regionId, int player) {
         RenderableElement e = (RenderableElement) diagram.getElement("region" + regionId);
         try {
             Color color = TeamView.getColor(Team.getTeam(player));
             String colorString = String.format(
                 "#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-            StyleAttribute a = new StyleAttribute("fill");
-            if (!e.getStyle(a))
-                throw new RuntimeException("can't get fill attribute");
+            StyleAttribute a = getAttribute(e, "fill");
             if (a.getStringValue().equals(colorString))
                 return;
 
             e.setAttribute("fill", AnimationElement.AT_XML, colorString);
 
-            Rectangle2D bounds = e.getBoundingBox();
-            while (true) {
-                e = (RenderableElement) e.getParent();
-                if (e == null)
-                    break;
-                AffineTransform t = e.getXForm();
-                if (t != null)
-                    bounds = t.createTransformedShape(bounds).getBounds2D();
-            }
-
-            double xScale = getWidth() / imageBounds.getWidth();
-            double yScale = getHeight() / imageBounds.getHeight();
-            Rectangle deviceBounds = new Rectangle(
-                (int) (xScale * bounds.getX()), (int) (yScale * bounds.getY()),
-                (int) (xScale * bounds.getWidth()), (int) (yScale * bounds.getHeight())
-            );
-
-            repaint(deviceBounds);
+            repaint(getBounds(e));
         } catch (SVGException ex) { throw new RuntimeException(ex); }
-    }
-
-    void hideLabels(SVGElement e) {
-        if (e.getId().endsWith("Text")) {
-            try {
-                e.addAttribute("display", AnimationElement.AT_CSS, "none");
-            } catch (SVGElementException ex) { throw new RuntimeException(ex); }
-        }
-        for (SVGElement e1 : e.getChildren(null))
-            hideLabels(e1);
     }
 
     int regionFromPoint(Point p) {

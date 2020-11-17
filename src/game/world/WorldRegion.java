@@ -64,7 +64,7 @@ public enum WorldRegion {
     Western_Australia("Western Australia", "WS", 41, WorldContinent.Australia, false, 42), 
     Eastern_Australia("Eastern Australia", "ES", 42, WorldContinent.Australia, false);
     
-    public static final int LAST_ID = 42;
+    public static final int NUM_REGIONS = 42;
             
     /**
      * Must be 1-based!

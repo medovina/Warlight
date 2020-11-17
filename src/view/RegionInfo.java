@@ -30,11 +30,8 @@ public class RegionInfo {
     
     protected void draw(Graphics g, int x, int y) {
         if (highlight != null) {
-            int thickness = 3;
-            
             g.setColor(highlight);
-            g.drawOval(x + 5 - thickness, y + 4 - thickness,
-                       30 + thickness * 2, 30 + thickness * 2);
+            g.drawOval(x - 16, y - 22, 36, 36);
         }
 
         g.setColor(Color.BLACK);
@@ -46,6 +43,6 @@ public class RegionInfo {
             text += "+" + armiesPlus;
         FontMetrics fm = g.getFontMetrics();
         int w = fm.stringWidth(text);
-        g.drawString(text, x + 20 - w / 2, y + 24);
+        g.drawString(text, x + 2 - w / 2, y);
     }
 }

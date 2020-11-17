@@ -4,6 +4,7 @@ import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -18,58 +19,13 @@ import engine.robot.HumanRobot;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
-import game.world.WorldContinent;
 import game.world.WorldRegion;
 
 public class GUI extends JFrame implements KeyListener
 {
     private static final long serialVersionUID = 0;
+
     private static final int WIDTH = 1240, HEIGHT = 622;
-    
-    public static int[][] positions = new int[][]{
-        {125, 130},  //1.  Alaska
-        {239, 140}, //2.  Northwest Territory
-        {471, 76},  //3.  Greenland
-        {220, 185}, //4.  Alberta
-        {287, 189}, //5.  Ontario
-        {385, 183}, //6.  Quebec
-        {254, 243}, //7.  Western United States
-        {325, 257},  //8.  Eastern United States
-        {285, 311},  //9.  Central America
-        {380, 353},  //10. Venezuela
-        {374, 420},  //11. Peru
-        {445, 414},  //12. Brazil
-        {404, 491},  //13. Argentina
-        {553, 133},  //14. Iceland
-        {606, 186},  //15. Great Britain
-        {657, 140},  //16. Scandinavia
-        {729, 180},  //17. Ukraine
-        {592, 242},  //18. Western Europe
-        {648, 198}, //19. Northern Europe
-        {680, 225}, //20. Southern Europe
-        {606, 319},  //21. North Africa
-        {677, 296},  //22. Egypt
-        {728, 359},  //23. East Africa
-        {684, 388},  //24. Congo
-        {687, 456},  //25. South Africa
-        {760, 443},  //26. Madagascar
-        {830, 158},  //27. Ural
-        {920, 126},  //28. Siberia
-        {1002, 130},  //29. Yakutsk
-        {1100, 130}, //30. Kamchatka
-        {972, 185},  //31. Irkutsk
-        {828, 222},  //32. Kazakhstan
-        {925, 259},  //33. China
-        {995, 222},  //34. Mongolia
-        {1063, 255}, //35. Japan
-        {746, 275},  //36. Middle East
-        {865, 296},  //37. India
-        {938, 328},  //38. Siam
-        {980, 382},  //39. Indonesia
-        {1070, 398}, //40. New Guinea
-        {1013, 464},  //41. Western Australia
-        {1085, 476}, //42. Eastern Australia
-    };
     
     private GameState game;
     
@@ -86,8 +42,6 @@ public class GUI extends JFrame implements KeyListener
     private int continualTime = 1000;
     
     private Robot[] bots;
-    
-    public Team[] continentOwner = new Team[WorldContinent.LAST_ID + 1];
     
     private Arrow mainArrow;
     
@@ -131,7 +85,6 @@ public class GUI extends JFrame implements KeyListener
 
         final int BoxWidth = 450, BoxHeight = 18;
         
-        //Current round number
         roundNumText = new JLabel("Round 0", JLabel.CENTER);
         roundNumText.setBounds(WIDTH / 2 - BoxWidth / 2, 20, BoxWidth, BoxHeight);
         roundNumText.setBackground(Color.gray);
@@ -147,9 +100,9 @@ public class GUI extends JFrame implements KeyListener
          actionText.setPreferredSize(actionText.getSize());
         layeredPane.add(actionText, JLayeredPane.DRAG_LAYER);
                 
-        regionInfo = new RegionInfo[WorldRegion.LAST_ID];
+        regionInfo = new RegionInfo[WorldRegion.NUM_REGIONS];
         
-        for (int idx = 0; idx < WorldRegion.LAST_ID; idx++) {
+        for (int idx = 0; idx < WorldRegion.NUM_REGIONS; idx++) {
             regionInfo[idx] = new RegionInfo();
             mapView.setOwner(idx + 1, 0);
         }
@@ -169,8 +122,10 @@ public class GUI extends JFrame implements KeyListener
     }
 
     void drawRegionInfo(Graphics g) {
-        for (int i = 0 ; i < WorldRegion.LAST_ID ; ++i)
-            regionInfo[i].draw(g, positions[i][0] - 50, positions[i][1]);
+        for (int id = 1 ; id <= WorldRegion.NUM_REGIONS ; ++id) {
+            Point pos = mapView.regionPositions[id];
+            regionInfo[id - 1].draw(g, pos.x, pos.y);
+        }
     }
     
     public Team getTeam(int player) {
@@ -403,9 +358,9 @@ public class GUI extends JFrame implements KeyListener
         toRegion.armiesPlus = armies;
         toRegion.setHighlight(true);
         
-        int[] fromPos = positions[move.getFromRegion().id - 1];
-        int[] toPos = positions[move.getToRegion().id - 1];
-        mainArrow.setFromTo(fromPos[0], fromPos[1] + 20, toPos[0], toPos[1] + 20);
+        Point fromPos = mapView.regionPositions[move.getFromRegion().id];
+        Point toPos = mapView.regionPositions[move.getToRegion().id];
+        mainArrow.setFromTo(fromPos.x + 3, fromPos.y - 3, toPos.x + 3, toPos.y - 3);
         mainArrow.setColor(TeamView.getColor(player));
         mainArrow.setNumber(armies);
         mainArrow.setVisible(true);
@@ -434,9 +389,9 @@ public class GUI extends JFrame implements KeyListener
     }
     
     void showArrow(Arrow arrow, int fromRegionId, int toRegionId, Team team, int armies) {
-        int[] fromPos = positions[fromRegionId - 1];
-        int[] toPos = positions[toRegionId - 1];
-        arrow.setFromTo(fromPos[0] - 30, fromPos[1] + 20, toPos[0] - 30, toPos[1] + 20);
+        Point fromPos = mapView.regionPositions[fromRegionId];
+        Point toPos = mapView.regionPositions[toRegionId];
+        arrow.setFromTo(fromPos.x + 3, fromPos.y - 3, toPos.x + 3, toPos.y - 3);
         arrow.setColor(TeamView.getColor(team));
         arrow.setNumber(armies);
         arrow.setVisible(true);
@@ -660,7 +615,7 @@ public class GUI extends JFrame implements KeyListener
     }
     
     static int encode(int fromId, int toId) {
-        return fromId * (WorldRegion.LAST_ID + 1) + toId;
+        return fromId * (WorldRegion.NUM_REGIONS + 1) + toId;
     }
     
     int totalFrom(Region r) {
