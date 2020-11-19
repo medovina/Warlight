@@ -1,13 +1,9 @@
 package view;
 
-import java.awt.BasicStroke;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Stroke;
 import java.awt.event.*;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
@@ -22,7 +18,6 @@ import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
 import game.world.WorldRegion;
-import utils.Util;
 
 public class GUI extends JFrame implements KeyListener
 {
@@ -34,7 +29,7 @@ public class GUI extends JFrame implements KeyListener
     
     private GUINotif notification;
     
-    private String message;
+    private String message, message2;
     
     private RegionInfo[] regionInfo;
     private boolean clicked = false;
@@ -100,35 +95,14 @@ public class GUI extends JFrame implements KeyListener
         setVisible(true);
     }
 
+    RegionInfo regionInfo(int id) {
+        return regionInfo[id - 1];
+    }
+
     RegionInfo regionInfo(Region region) {
-        return regionInfo[region.getId() - 1];
+        return regionInfo(region.getId());
     }
 
-    void drawRegionInfo(Graphics2D g) {
-        for (int id = 1 ; id <= WorldRegion.NUM_REGIONS ; ++id) {
-            Point pos = mapView.regionPositions[id];
-            RegionInfo ri = regionInfo[id - 1];
-            int x = pos.x, y = pos.y;
-
-            if (ri.highlight != null) {
-                g.setColor(ri.highlight);
-                Stroke save = g.getStroke();
-                g.setStroke(new BasicStroke(2));
-                g.drawOval(x - 17, y - 23, 38, 38);
-                g.setStroke(save);
-            }
-    
-            g.setColor(Color.BLACK);
-            Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
-            g.setFont(font);
-    
-            String text = "" + ri.armies;
-            if (ri.armiesPlus > 0)
-                text += "+" + ri.armiesPlus;
-            Util.drawCentered(g, text, x + 2, y);
-        }
-    }
-    
     public Team getTeam(int player) {
         switch (player) {
         case 0: return Team.NEUTRAL;
@@ -230,13 +204,22 @@ public class GUI extends JFrame implements KeyListener
         overlay.repaint();
     }
 
-    void message(String s) {
+    void message(String s, String t) {
         message = s;
+        message2 = t;
         updateOverlay();
+    }
+
+    void message(String s) {
+        message(s, null);
     }
 
     public String getMessage() {
         return message;
+    }
+    
+    public String getMessage2() {
+        return message2;
     }
     
     public void newRound(int roundNum) {
@@ -441,9 +424,9 @@ public class GUI extends JFrame implements KeyListener
         
         boolean success = fromRegion.getOwner() == toRegion.getOwner();
         
-        String outcome = String.format("Attack %s! (attackers lost %d, defenders lost %d)",
-            success ? "succeeded" : "failed", attackersDestroyed, defendersDestroyed);
-        message(outcome);
+        message("Attack " + (success ? "succeeded!" : "failed!"),
+                String.format("(attackers lost %d, defenders lost %d)", 
+                               attackersDestroyed, defendersDestroyed));
 
         fromRegionInfo.setArmies(fromRegion.getArmies());
         toRegionInfo.setArmies(toRegion.getArmies());
@@ -655,6 +638,7 @@ public class GUI extends JFrame implements KeyListener
                 m.arrow.setNumber(m.armies);
             else {
                 layeredPane.remove(m.arrow);
+                layeredPane.repaint();
                 moves.remove(e);
             }
         }

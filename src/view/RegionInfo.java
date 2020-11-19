@@ -9,8 +9,8 @@ public class RegionInfo {
     public int armiesPlus = 0;
 
     public static final Color
-        Gray = new Color(180, 180, 180),
-        Green = new Color(70, 189, 123);
+        Gray = Color.gray,
+        Green = Color.green.darker().darker();
     
     public void setHighlight(Color c) {
         this.highlight = c;

@@ -21,8 +21,9 @@ class Overlay extends JPanel implements MouseListener {
 
     private static final long serialVersionUID = 1L;
 
-    static final int TopMargin = 18;
+    static final int TopMargin = 16;
     static Color Ocean = new Color(0x21, 0x4a, 0x8a);
+    static Color TextColor = Color.LIGHT_GRAY;
 
     public Overlay(GUI gui, GameState game) {
         this.game = game;
@@ -48,62 +49,55 @@ class Overlay extends JPanel implements MouseListener {
     }
 
     void drawLegend(Graphics g) {
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+
         GameMap map = game.getMap();
-
         for (int player = 1; player <= 2; ++player) {
-            int y = TopMargin - 4 + 35 * (player - 1);
-            g.setColor(Color.LIGHT_GRAY);
-            g.drawOval(26, y, 20, 20);
+            int offset = 40 * (player - 1);
+            int x = getWidth() - 250;
+            int y = TopMargin - 2 + offset;
             g.setColor(TeamView.getColor(player == 1 ? Team.PLAYER_1 : Team.PLAYER_2));
-            g.fillOval(27, y + 1, 18, 18);
+            g.fillOval(x + 1, y + 1, 18, 18);
+            g.setColor(TextColor);
+            g.drawOval(x, y, 20, 20);
 
-            g.setColor(Color.LIGHT_GRAY);
-            g.drawString(gui.playerName(player), 52, TopMargin + 3 + 35 * (player - 1));
+            g.setColor(TextColor);
+            g.drawString(gui.playerName(player), x + 29, y + 7);
             int armies = map.numberArmiesOwned(player);
             if (player == game.me())
                 armies += gui.armiesPlaced;
             String s = String.format("[%d armies, +%d / turn]", armies, game.armiesEachTurn(player));
-            g.drawString(s, 52, TopMargin + 17 + 35 * (player - 1));
+            g.drawString(s, x + 29, y + 23);
         }
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
-        Util.renderNicely(g2);
+    void drawRegionInfo(Graphics2D g) {
+        for (int id = 1 ; id <= WorldRegion.NUM_REGIONS ; ++id) {
+            Point pos = mapView.regionPositions[id];
+            RegionInfo ri = gui.regionInfo(id);
+            int x = pos.x, y = pos.y;
 
-        Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
-        g.setFont(font);
-
-        int width = getWidth();
-
-        g.setColor(Color.WHITE);
-        Util.drawCentered(g, "Round " + game.getRoundNumber(), width / 2, TopMargin);
-        Util.drawCentered(g, gui.getMessage(), width / 2, TopMargin + 17);
-
-        if (gui.placeArmiesAction != null && gui.armiesLeft == 0 || gui.moveArmiesAction != null) {
-            int y = TopMargin + 45;
-            String text = "DONE";
-            FontMetrics fm = g.getFontMetrics();
-            int buttonWidth = fm.stringWidth(text) + 10, buttonHeight = fm.getHeight() + 10;
-            doneBox = new Rectangle(
-                width / 2 - buttonWidth / 2, y - buttonHeight / 2 - fm.getAscent() / 2 + 1,
-                buttonWidth, buttonHeight);
-            g.setColor(Ocean.brighter());
-            g.fillRoundRect(doneBox.x, doneBox.y, doneBox.width, doneBox.height, 6, 6);
-            g.setColor(Color.WHITE);
-            g.drawRoundRect(doneBox.x, doneBox.y, doneBox.width, doneBox.height, 6, 6);
-            Util.drawCentered(g, text, width / 2, y);
-        } else doneBox = null;
-
-        gui.drawRegionInfo(g2);
-
-        drawLegend(g);
-
-        // scroll in lower left
-
-        font = new Font("default", Font.BOLD, 14);
-        g.setFont(font);
+            if (ri.highlight != null) {
+                g.setColor(ri.highlight);
+                Stroke save = g.getStroke();
+                g.setStroke(new BasicStroke(2));
+                g.drawOval(x - 17, y - 23, 38, 38);
+                g.setStroke(save);
+            }
+    
+            g.setColor(Color.BLACK);
+            Font font = new Font(Font.SANS_SERIF, Font.BOLD, 13);
+            g.setFont(font);
+    
+            String text = "" + ri.armies;
+            if (ri.armiesPlus > 0)
+                text += "+" + ri.armiesPlus;
+            Util.drawCentered(g, text, x + 2, y);
+        }
+    }
+    
+    void drawScroll(Graphics g) {
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
         WorldContinent[] a = WorldContinent.values().clone();
         Arrays.sort(a, new CompareByName());
@@ -117,13 +111,52 @@ class Overlay extends JPanel implements MouseListener {
             int owner = c.getOwner();
             if (owner > 0) {
                 g.setColor(TeamView.getHighlightColor(Team.getTeam(owner)));
-                g.fillRect(x, y - 13, 135, 17);
+                g.fillRect(x - 2, y - 13, 145, 17);
             }
 
             g.setColor(new Color(47, 79, 79));
             g.drawString(a[i].mapName, x + 2, y);
             g.drawString("" + a[i].reward, x + 130, y);
         }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        Util.renderNicely(g2);
+
+        drawLegend(g);
+
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+
+        int width = getWidth();
+
+        g.setColor(Color.WHITE);
+        Util.drawCentered(g, gui.getMessage(), width / 2, TopMargin + 5);
+        String s = gui.getMessage2();
+        if (s != null)
+            Util.drawCentered(g, s, width / 2, TopMargin + 22);
+
+        if (gui.placeArmiesAction != null && gui.armiesLeft == 0 || gui.moveArmiesAction != null) {
+            int y = TopMargin + 45;
+            String text = "DONE";
+            FontMetrics fm = g.getFontMetrics();
+            int buttonWidth = fm.stringWidth(text) + 10, buttonHeight = fm.getHeight() + 10;
+            doneBox = new Rectangle(
+                width / 2 - buttonWidth / 2, y - buttonHeight / 2 - fm.getAscent() / 2 + 1,
+                buttonWidth, buttonHeight);
+            g.setColor(Ocean.brighter());
+            g.fillRoundRect(doneBox.x, doneBox.y, doneBox.width, doneBox.height, 6, 6);
+            g.setColor(TextColor);
+            g.drawRoundRect(doneBox.x, doneBox.y, doneBox.width, doneBox.height, 6, 6);
+            Util.drawCentered(g, text, width / 2, y);
+        } else doneBox = null;
+
+        Util.drawCentered(g, "Round " + game.getRoundNumber(), 100, TopMargin + 5);
+
+        drawRegionInfo(g2);
+
+        drawScroll(g);
     }
 
     @Override
