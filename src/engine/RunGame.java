@@ -17,16 +17,13 @@
 
 package engine;
 
-import java.io.File;
 import java.io.IOException;
 
 import bot.BotLoader;
 import engine.Robot.RobotConfig;
 import engine.replay.FileGameLog;
 import engine.replay.GameLog;
-import engine.replay.ReplayHandler;
 import engine.robot.HumanRobot;
-import engine.robot.IORobot;
 import engine.robot.InternalRobot;
 import game.*;
 import view.GUI;
@@ -43,33 +40,6 @@ public class RunGame
         this.config = config;        
     }
     
-    public GameResult goReplay(File replayFile) {
-        try {
-            System.out.println("starting replay " + replayFile.getAbsolutePath());
-            
-            ReplayHandler replay = new ReplayHandler(replayFile);
-            Config replayConfig = replay.getConfig();
-            
-            config.player1Name = replayConfig.player1Name;
-            config.player2Name = replayConfig.player2Name;
-            config.botCommandTimeoutMillis = replayConfig.botCommandTimeoutMillis;
-            config.game = replayConfig.game;
-            
-            String[] playerNames = new String[2];
-            Robot[] robots = new Robot[2];
-            
-            robots[0] = new IORobot(replay);
-            robots[1] = new IORobot(replay);
-                    
-            playerNames[0] = config.player1Name;
-            playerNames[1] = config.player2Name;
-            
-            return go(null, playerNames, robots);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to replay the game.", e);
-        }
-    }
-
     public GameResult go()
     { 
         try {
