@@ -19,40 +19,11 @@ package engine;
 
 import java.util.*;
 
-import engine.replay.GameLog;
 import game.*;
 import game.move.*;
 import game.world.MapRegion;
-import view.GUI;
 
 public interface Robot {
-    
-    public static class RobotConfig {
-        
-        public final int player;
-        
-        public final String playerName;
-        
-        public final long timeoutMillis;
-        
-        public final GameLog gameLog;
-        
-        public final boolean logToConsole;
-        
-        public final GUI gui;
-
-        public RobotConfig(int player, String playerName, long timeoutMillis,
-                           GameLog gameLog, boolean logToConsole, GUI gui) {
-            super();
-            this.player = player;
-            this.playerName = playerName;
-            this.timeoutMillis = timeoutMillis;
-            this.gameLog = gameLog;
-            this.logToConsole = logToConsole;
-            this.gui = gui;
-        }
-        
-    }
     
     public int getRobotPlayer();
     

@@ -7,6 +7,7 @@ import java.util.*;
 
 import bot.*;
 import engine.Robot;
+import engine.RobotConfig;
 import game.*;
 import game.move.*;
 import game.world.MapRegion;
@@ -23,26 +24,6 @@ public class InternalRobot implements Robot {
         
         @Override
         public void keyPressed(KeyEvent e) {
-            if (InternalRobot.this.config.player == 1) {
-                if (Character.toLowerCase(e.getKeyChar()) == 'h') {
-                    hijacked = !hijacked;
-                    if (config.gui != null) {
-                        config.gui.showNotification(
-                            hijacked ? InternalRobot.this.config.player + " hijacked!" : InternalRobot.this.config.player + " resumed!"
-                        );
-                    }
-                }
-            }
-            if (InternalRobot.this.config.player == 2) {
-                if (Character.toLowerCase(e.getKeyChar()) == 'j') {
-                    hijacked = !hijacked;
-                    if (config.gui != null) {
-                        config.gui.showNotification(
-                            hijacked ? InternalRobot.this.config.player + " hijacked!" : InternalRobot.this.config.player + " resumed!"
-                        );
-                    }
-                }
-            }
         }
     }
     
@@ -50,10 +31,6 @@ public class InternalRobot implements Robot {
 
     private RobotConfig config;
     
-    private boolean hijacked = false;
-    
-    private HumanRobot humanHijack;
-
     private MyKeyListener myKeyListener;
 
     private String botFQCN;
@@ -62,15 +39,11 @@ public class InternalRobot implements Robot {
         this.botFQCN = botFQCN;
         
         bot = BotParser.constructBot(botLoader, botFQCN);
-        
-        humanHijack = new HumanRobot();
     }
     
     @Override
     public void setup(RobotConfig config) {
         this.config = config;
-        
-        humanHijack.setup(config);
         
         if (config.gui != null) {
             myKeyListener = new MyKeyListener();
@@ -83,33 +56,23 @@ public class InternalRobot implements Robot {
     @Override
     public MapRegion getStartingRegion(GameState state)
     {
-        if (hijacked) {
-            return humanHijack.getStartingRegion(state);            
-        }
         return bot.chooseRegion(state);
     }
     
     @Override
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state)
     {
-        if (hijacked) {
-            return humanHijack.getPlaceArmiesMoves(state);        
-        }
         return bot.placeArmies(state);
     }
     
     @Override
     public List<AttackTransferMove> getAttackTransferMoves(GameState state)
     {
-        if (hijacked) {
-            return humanHijack.getAttackTransferMoves(state);    
-        }
         return bot.moveArmies(state);
     }
     
     @Override
     public void writeInfo(String info){
-        humanHijack.writeInfo(info);
     }
 
     public boolean isRunning() {
@@ -121,13 +84,6 @@ public class InternalRobot implements Robot {
             config.gui.removeKeyListener(myKeyListener);
         }
         bot = null;
-        if (humanHijack != null) {
-            try {
-                humanHijack.finish();
-            } catch (Exception e) {                
-            }
-            humanHijack = null;
-        }
     }
 
     @Override

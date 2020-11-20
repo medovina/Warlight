@@ -3,6 +3,7 @@ package engine.robot;
 import java.util.List;
 
 import engine.Robot;
+import engine.RobotConfig;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;

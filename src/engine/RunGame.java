@@ -20,7 +20,6 @@ package engine;
 import java.io.IOException;
 
 import bot.BotLoader;
-import engine.Robot.RobotConfig;
 import engine.replay.FileGameLog;
 import engine.replay.GameLog;
 import engine.robot.HumanRobot;
