@@ -1,7 +1,5 @@
 package engine;
 
-import game.Team;
-
 public class GameResult {
     
     public Config config;
@@ -12,7 +10,7 @@ public class GameResult {
     public int player2Regions;
     public int player2Armies;
     
-    public Team winner = null;
+    public int winner = -1;
     
     /**
      * Number of the round the game ended.
@@ -20,41 +18,41 @@ public class GameResult {
     public int round;
 
     public int getWinner() {
-        if (winner == null) return 0;
-        switch (winner) {
-        case NEUTRAL: return 0;
-        case PLAYER_1: return 1;
-        case PLAYER_2: return 2;
-        }
-        return 0;
+        return winner;
     }
     
     public String getWinnerName() {
-        if (winner == null) return "NONE";
         switch (winner) {
-        case NEUTRAL: return "NONE";
-        case PLAYER_1: return config == null ? "Bot1" : config.player1Name;
-        case PLAYER_2: return config == null ? "Bot2" : config.player2Name;
+            case -1:
+            case 0:
+                return "NONE";
+            case 1:
+                return config == null ? "Bot1" : config.player1Name;
+            case 2:
+                return config == null ? "Bot2" : config.player2Name;
         }
         return null;
     }
     
     public String getLoserName() {
-        if (winner == null) return "NONE";
         switch (winner) {
-        case NEUTRAL: return "NONE";
-        case PLAYER_1: return config == null ? "Bot2" : config.player2Name;
-        case PLAYER_2: return config == null ? "Bot1" : config.player1Name;
+            case -1:
+            case 0:
+                return "NONE";
+            case 1:
+                return config == null ? "Bot2" : config.player2Name;
+            case 2:
+                return config == null ? "Bot1" : config.player1Name;
         }
         return null;
     }
     
     public int getWinnerRegions() {
-        return winner == Team.PLAYER_1 ? player1Regions : player2Regions;
+        return winner == 1 ? player1Regions : player2Regions;
     }
     
     public int getWinnerArmies() {
-        return winner == Team.PLAYER_1 ? player1Armies : player2Armies;
+        return winner == 1 ? player1Armies : player2Armies;
     }
 
     public String asString() {
@@ -74,7 +72,7 @@ public class GameResult {
     
     public String getCSV() {
         return getWinnerName() + ";" + getLoserName() + ";" +
-        (winner == null || winner == Team.NEUTRAL ? "NONE" : winner) + ";" +
+        (winner == -1 || winner == 0 ? "NONE" : winner) + ";" +
         getWinner() + ";" + player1Regions + ";" + player1Armies + ";" +
         player2Regions + ";" + player2Armies + ";" + round + ";" + config.getCSV();
     }

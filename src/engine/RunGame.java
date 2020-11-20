@@ -118,7 +118,7 @@ public class RunGame
         
         for (int i = 1 ; i <= 2 ; ++i) {
             RobotConfig robotCfg =
-                    new RobotConfig(i, playerNames[i - 1], i == 1 ? Team.PLAYER_1 : Team.PLAYER_2,
+                    new RobotConfig(i, playerNames[i - 1],
                             config.botCommandTimeoutMillis, log, config.logToConsole, gui);
             robots[i - 1].setup(robotCfg);
         }
@@ -194,17 +194,7 @@ public class RunGame
         result.player2Regions = map.numberRegionsOwned(2);
         result.player2Armies = map.numberArmiesOwned(2);
 
-        switch (game.winningPlayer()) {
-        case 1: 
-            result.winner = Team.PLAYER_1;
-            break;
-        case 2:
-            result.winner = Team.PLAYER_2;
-            break;
-        default:
-            result.winner = null;
-        }
-        
+        result.winner = game.winningPlayer();
         result.round = game.getRoundNumber();
         
         return result;

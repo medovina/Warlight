@@ -56,7 +56,7 @@ class Overlay extends JPanel implements MouseListener {
             int offset = 40 * (player - 1);
             int x = getWidth() - 250;
             int y = TopMargin - 2 + offset;
-            g.setColor(TeamView.getColor(player == 1 ? Team.PLAYER_1 : Team.PLAYER_2));
+            g.setColor(PlayerColors.getColor(player));
             g.fillOval(x + 1, y + 1, 18, 18);
             g.setColor(TextColor);
             g.drawOval(x, y, 20, 20);
@@ -110,7 +110,7 @@ class Overlay extends JPanel implements MouseListener {
             Continent c = map.getContinent(a[i].id);
             int owner = c.getOwner();
             if (owner > 0) {
-                g.setColor(TeamView.getHighlightColor(Team.getTeam(owner)));
+                g.setColor(PlayerColors.getHighlightColor(owner));
                 g.fillRect(x - 2, y - 13, 145, 17);
             }
 

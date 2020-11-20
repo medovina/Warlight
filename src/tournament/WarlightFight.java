@@ -84,8 +84,8 @@ public class WarlightFight {
         for (int i = 0 ; i < results.length ; ++i) {
             GameResult r = results[i];
             switch (r.winner) {
-            case PLAYER_1: res.victories1 += 1; break;
-            case PLAYER_2: res.victories2 += 1; break;
+            case 1: res.victories1 += 1; break;
+            case 2: res.victories2 += 1; break;
             default: break;
             }
         }

@@ -33,8 +33,6 @@ public interface Robot {
         
         public final String playerName;
         
-        public final Team team;
-        
         public final long timeoutMillis;
         
         public final GameLog gameLog;
@@ -43,12 +41,11 @@ public interface Robot {
         
         public final GUI gui;
 
-        public RobotConfig(int player, String playerName, Team team, long timeoutMillis,
+        public RobotConfig(int player, String playerName, long timeoutMillis,
                            GameLog gameLog, boolean logToConsole, GUI gui) {
             super();
             this.player = player;
             this.playerName = playerName;
-            this.team = team;
             this.timeoutMillis = timeoutMillis;
             this.gameLog = gameLog;
             this.logToConsole = logToConsole;

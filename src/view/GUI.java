@@ -54,7 +54,7 @@ public class GUI extends JFrame implements KeyListener
     int armiesPlaced;
     private List<Region> armyRegions;
 
-    private Team moving = null;
+    private int moving = -1;
     private Map<Integer, Move> moves;  // maps encoded (fromId, toId) to Move
     private Region moveFrom;    
     public CountDownLatch moveArmiesAction;
@@ -103,15 +103,6 @@ public class GUI extends JFrame implements KeyListener
         return regionInfo(region.getId());
     }
 
-    public Team getTeam(int player) {
-        switch (player) {
-        case 0: return Team.NEUTRAL;
-        case 1: return Team.PLAYER_1;
-        case 2: return Team.PLAYER_2;
-        default: return null;
-        }
-    }
-    
     public void setContinual(boolean state) {
         continual = state;
     }
@@ -126,7 +117,7 @@ public class GUI extends JFrame implements KeyListener
     
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
-            if (moving != null) {
+            if (moving != -1) {
                 moveFrom = null;
                 highlight();
             } else clicked = true;
@@ -340,7 +331,7 @@ public class GUI extends JFrame implements KeyListener
             text = playerName(game.me()) + " transfers ";
 
         message(text + armies(armies) + " to " + toName);
-        Team player = getTeam(game.me());
+        int player = game.me();
         
         RegionInfo fromRegionInfo = regionInfo[fromId - 1];
         RegionInfo toRegionInfo = regionInfo[toId - 1];
@@ -351,7 +342,7 @@ public class GUI extends JFrame implements KeyListener
         Point fromPos = mapView.regionPositions[fromId];
         Point toPos = mapView.regionPositions[toId];
         mainArrow.setFromTo(fromPos.x + 3, fromPos.y - 3, toPos.x + 3, toPos.y - 3);
-        mainArrow.setColor(TeamView.getColor(player));
+        mainArrow.setColor(PlayerColors.getColor(player));
         mainArrow.setNumber(armies);
         mainArrow.setVisible(true);
         
@@ -376,11 +367,11 @@ public class GUI extends JFrame implements KeyListener
         return bot(player).getRobotPlayerName();
     }
     
-    void showArrow(Arrow arrow, int fromRegionId, int toRegionId, Team team, int armies) {
+    void showArrow(Arrow arrow, int fromRegionId, int toRegionId, int player, int armies) {
         Point fromPos = mapView.regionPositions[fromRegionId];
         Point toPos = mapView.regionPositions[toRegionId];
         arrow.setFromTo(fromPos.x + 3, fromPos.y - 3, toPos.x + 3, toPos.y - 3);
-        arrow.setColor(TeamView.getColor(team));
+        arrow.setColor(PlayerColors.getColor(player));
         arrow.setNumber(armies);
         arrow.setVisible(true);
     }
@@ -398,7 +389,7 @@ public class GUI extends JFrame implements KeyListener
             text = playerName(game.me()) + " attacks ";
         message(text + toName + " with " + armies(armies));
         
-        Team attacker = getTeam(game.me());
+        int attacker = game.me();
         RegionInfo fromRegion = this.regionInfo[move.getFromRegion().id - 1];
         RegionInfo toRegion = this.regionInfo[move.getToRegion().id - 1];
         
@@ -420,7 +411,7 @@ public class GUI extends JFrame implements KeyListener
         
         RegionInfo fromRegionInfo = this.regionInfo[fromRegion.getId() - 1];
         RegionInfo toRegionInfo = this.regionInfo[toRegion.getId() - 1];
-        Team attacker = getTeam(fromRegion.getOwner());
+        int attacker = fromRegion.getOwner();
         
         boolean success = fromRegion.getOwner() == toRegion.getOwner();
         
@@ -436,7 +427,7 @@ public class GUI extends JFrame implements KeyListener
         
         fromRegionInfo.setHighlight(true);
         toRegionInfo.setHighlight(true);
-        Color c = TeamView.getColor(attacker);
+        Color c = PlayerColors.getColor(attacker);
         mainArrow.setColor(withSaturation(c, success ? 0.5f : 0.2f));
         mainArrow.setNumber(0);
 
@@ -495,7 +486,7 @@ public class GUI extends JFrame implements KeyListener
     // PLACE ARMIES
     // ============
     
-    public List<PlaceArmiesMove> placeArmiesHuman(Team team) {
+    public List<PlaceArmiesMove> placeArmiesHuman() {
         this.requestFocusInWindow();
         
         List<Region> availableRegions = game.regionsOwnedBy(game.me());
@@ -681,7 +672,7 @@ public class GUI extends JFrame implements KeyListener
             return;
         }
         
-        if (moving == null) {
+        if (moving == -1) {
             clicked = true;
             return;
         }
@@ -697,9 +688,9 @@ public class GUI extends JFrame implements KeyListener
         highlight();
     }
 
-    public List<AttackTransferMove> moveArmiesHuman(Team team) {
+    public List<AttackTransferMove> moveArmiesHuman() {
         this.requestFocusInWindow();
-        moving = team;
+        moving = game.me();
         moveFrom = null;
         
         message("Move and/or attack");
@@ -727,7 +718,7 @@ public class GUI extends JFrame implements KeyListener
             layeredPane.remove(m.arrow);
         }
         
-        moving = null;
+        moving = -1;
         
         return moveArmies;
     }

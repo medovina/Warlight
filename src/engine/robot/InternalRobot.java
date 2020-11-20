@@ -23,7 +23,7 @@ public class InternalRobot implements Robot {
         
         @Override
         public void keyPressed(KeyEvent e) {
-            if (InternalRobot.this.config.team == Team.PLAYER_1) {
+            if (InternalRobot.this.config.player == 1) {
                 if (Character.toLowerCase(e.getKeyChar()) == 'h') {
                     hijacked = !hijacked;
                     if (config.gui != null) {
@@ -33,7 +33,7 @@ public class InternalRobot implements Robot {
                     }
                 }
             }
-            if (InternalRobot.this.config.team == Team.PLAYER_2) {
+            if (InternalRobot.this.config.player == 2) {
                 if (Character.toLowerCase(e.getKeyChar()) == 'j') {
                     hijacked = !hijacked;
                     if (config.gui != null) {

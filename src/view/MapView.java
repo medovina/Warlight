@@ -15,7 +15,6 @@ import com.kitfox.svg.*;
 import com.kitfox.svg.animation.AnimationElement;
 import com.kitfox.svg.xml.StyleAttribute;
 
-import game.Team;
 import game.world.WorldRegion;
 import utils.Util;
 
@@ -124,7 +123,7 @@ public class MapView extends JPanel {
     void setOwner(int regionId, int player) {
         RenderableElement e = (RenderableElement) diagram.getElement("region" + regionId);
         try {
-            Color color = TeamView.getColor(Team.getTeam(player));
+            Color color = PlayerColors.getColor(player);
             String colorString = String.format(
                 "#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
             StyleAttribute a = getAttribute(e, "fill");

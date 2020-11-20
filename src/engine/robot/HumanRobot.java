@@ -24,12 +24,12 @@ public class HumanRobot implements Robot {
 
     @Override
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state) {
-        return config.gui.placeArmiesHuman(config.team);
+        return config.gui.placeArmiesHuman();
     }
 
     @Override
     public List<AttackTransferMove> getAttackTransferMoves(GameState state) {
-        return config.gui.moveArmiesHuman(config.team);
+        return config.gui.moveArmiesHuman();
     }
 
     @Override
