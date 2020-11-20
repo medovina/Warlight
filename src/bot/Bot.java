@@ -22,7 +22,7 @@ import java.util.List;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public interface Bot {
     public void init(long timeoutMillis);
@@ -32,7 +32,7 @@ public interface Bot {
      * @param state
      * @param timeoutMillis in milliseconds
      */
-    public WorldRegion chooseRegion(GameState state);
+    public MapRegion chooseRegion(GameState state);
     
     /**
      * PLACE ARMIES - distribute armies between your regions.

@@ -15,7 +15,7 @@ import com.kitfox.svg.*;
 import com.kitfox.svg.animation.AnimationElement;
 import com.kitfox.svg.xml.StyleAttribute;
 
-import game.world.WorldRegion;
+import game.world.MapRegion;
 import utils.Util;
 
 public class MapView extends JPanel {
@@ -26,7 +26,7 @@ public class MapView extends JPanel {
     AffineTransform viewportTransform;
     Rectangle2D imageBounds;
     
-    Point[] regionPositions = new Point[WorldRegion.NUM_REGIONS + 1];
+    Point[] regionPositions = new Point[MapRegion.NUM_REGIONS + 1];
     
     public MapView(GUI gui, int width, int height) {
         this.gui = gui;
@@ -48,7 +48,7 @@ public class MapView extends JPanel {
         try {
             imageBounds = root.getBoundingBox();
             
-            for (int i = 1 ; i <= WorldRegion.NUM_REGIONS ; ++i) {
+            for (int i = 1 ; i <= MapRegion.NUM_REGIONS ; ++i) {
                 Text t = (Text) diagram.getElement("region" + i + "Text");
                 Point p = new Point(getAttribute(t, "x").getIntValue(),
                                     getAttribute(t, "y").getIntValue());

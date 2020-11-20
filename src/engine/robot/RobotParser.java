@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import game.move.AttackTransferMove;
 import game.move.Move;
 import game.move.PlaceArmiesMove;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class RobotParser {
     
@@ -63,7 +63,7 @@ public class RobotParser {
 
         if(split[0].equals("place_armies"))        
         {
-            WorldRegion region = parseRegion(split[1], input);
+            MapRegion region = parseRegion(split[1], input);
 
             try { armies = Integer.parseInt(split[2]); }
             catch(Exception e) { errorOut("Number of armies input incorrect", input);}
@@ -74,8 +74,8 @@ public class RobotParser {
         }
         else if(split[0].equals("attack/transfer"))
         {
-            WorldRegion fromRegion = parseRegion(split[1], input);
-            WorldRegion toRegion = parseRegion(split[2], input);
+            MapRegion fromRegion = parseRegion(split[1], input);
+            MapRegion toRegion = parseRegion(split[2], input);
             
             try { armies = Integer.parseInt(split[3]); }
             catch(Exception e) { errorOut("Number of armies input incorrect", input);}
@@ -90,17 +90,17 @@ public class RobotParser {
     }
     
     //parse the region given the id string.
-    private WorldRegion parseRegion(String regionId, String input)
+    private MapRegion parseRegion(String regionId, String input)
     {
         int id = -1;
         
         try { id = Integer.parseInt(regionId); }
         catch(NumberFormatException e) { errorOut("Region id input incorrect", input); return null;}
         
-        return WorldRegion.forId(id);
+        return MapRegion.forId(id);
     }
     
-    public WorldRegion parseStartingRegion(String input)
+    public MapRegion parseStartingRegion(String input)
     {
         return parseRegion(input, input);
     }

@@ -6,7 +6,7 @@ import engine.Robot;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class HumanRobot implements Robot {
     private RobotConfig config;
@@ -18,7 +18,7 @@ public class HumanRobot implements Robot {
     }
 
     @Override
-    public WorldRegion getStartingRegion(GameState state) {
+    public MapRegion getStartingRegion(GameState state) {
         return config.gui.chooseRegionHuman().getWorldRegion();
     }
 

@@ -24,7 +24,7 @@ import java.util.*;
 import engine.Robot;
 import game.*;
 import game.move.*;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class ProcessRobot implements Robot
 {
@@ -60,7 +60,7 @@ public class ProcessRobot implements Robot
     }
     
     @Override
-    public WorldRegion getStartingRegion(GameState state)
+    public MapRegion getStartingRegion(GameState state)
     {
         if (!isRunning()) {
             throw new RuntimeException(botDied());

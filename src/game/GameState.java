@@ -71,7 +71,7 @@ public class GameState implements Cloneable {
             for (int player = 1 ; player <= 2 ; ++player) {
                 sb.append("p" + player + ": ");
                 for (Region r : regionsOwnedBy(player))
-                    sb.append(r.getWorldRegion().abbrev + "=" + r.getArmies() + " ");
+                    sb.append(r.getWorldRegion().getName() + "=" + r.getArmies() + " ");
             }
         sb.append("]");
         return sb.toString();
@@ -138,7 +138,7 @@ public class GameState implements Cloneable {
         return map.getRegion(id);
     }
 
-    public Region region(WorldRegion region) {
+    public Region region(MapRegion region) {
         return map.getRegion(region.id);
     }
 
@@ -180,33 +180,33 @@ public class GameState implements Cloneable {
     {
         GameMap map = new GameMap();
         
-        Map<WorldContinent, Continent> continents = new TreeMap<WorldContinent, Continent>(new Comparator<WorldContinent>() {
+        Map<MapContinent, Continent> continents = new TreeMap<MapContinent, Continent>(new Comparator<MapContinent>() {
             @Override
-            public int compare(WorldContinent o1, WorldContinent o2) {
+            public int compare(MapContinent o1, MapContinent o2) {
                 return o1.id - o2.id;
             }           
         });
         
-        for (WorldContinent worldContinent : WorldContinent.values()) {
+        for (MapContinent worldContinent : MapContinent.values()) {
             Continent continent = new Continent(worldContinent, 0);
             continents.put(worldContinent, continent);
         }
         
-        Map<WorldRegion, Region> regions = new TreeMap<WorldRegion, Region>(new Comparator<WorldRegion>() {
+        Map<MapRegion, Region> regions = new TreeMap<MapRegion, Region>(new Comparator<MapRegion>() {
             @Override
-            public int compare(WorldRegion o1, WorldRegion o2) {
+            public int compare(MapRegion o1, MapRegion o2) {
                 return o1.id - o2.id;
             }
         });
         
-        for (WorldRegion worldRegion : WorldRegion.values()) {
+        for (MapRegion worldRegion : MapRegion.values()) {
             Region region = new Region(worldRegion, continents.get(worldRegion.worldContinent));
             regions.put(worldRegion, region);
         }
         
-        for (WorldRegion regionName : WorldRegion.values()) {
+        for (MapRegion regionName : MapRegion.values()) {
             Region region = regions.get(regionName);
-            for (WorldRegion neighbour : regionName.getForwardNeighbours()) {
+            for (MapRegion neighbour : regionName.getForwardNeighbours()) {
                 region.addNeighbor(regions.get(neighbour));
             }
         }
@@ -237,7 +237,7 @@ public class GameState implements Cloneable {
         pickableRegions = new ArrayList<Region>();
         
         if (config.warlords)
-            for(WorldContinent continent : WorldContinent.values())
+            for(MapContinent continent : MapContinent.values())
             {
                 int nrOfRegions = continent.getRegions().size();
                 //get one random subregion from continent
@@ -373,7 +373,7 @@ public class GameState implements Cloneable {
 
     void validateAttackTransfers(List<AttackTransferMove> moves)
     {
-        int[] totalFrom = new int[WorldRegion.NUM_REGIONS + 1];
+        int[] totalFrom = new int[MapRegion.NUM_REGIONS + 1];
         
         for (int i = 0 ; i < moves.size() ; ++i) {
             AttackTransferMove move = moves.get(i);

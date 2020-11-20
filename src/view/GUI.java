@@ -17,7 +17,7 @@ import engine.robot.HumanRobot;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class GUI extends JFrame implements KeyListener
 {
@@ -78,9 +78,9 @@ public class GUI extends JFrame implements KeyListener
         overlay.setBounds(0, 0, WIDTH, HEIGHT);
         layeredPane.add(overlay);
 
-        regionInfo = new RegionInfo[WorldRegion.NUM_REGIONS];
+        regionInfo = new RegionInfo[MapRegion.NUM_REGIONS];
         
-        for (int idx = 0; idx < WorldRegion.NUM_REGIONS; idx++) {
+        for (int idx = 0; idx < MapRegion.NUM_REGIONS; idx++) {
             regionInfo[idx] = new RegionInfo();
             mapView.setOwner(idx + 1, 0);
         }
@@ -592,7 +592,7 @@ public class GUI extends JFrame implements KeyListener
     }
     
     static int encode(int fromId, int toId) {
-        return fromId * (WorldRegion.NUM_REGIONS + 1) + toId;
+        return fromId * (MapRegion.NUM_REGIONS + 1) + toId;
     }
     
     int totalFrom(Region r) {

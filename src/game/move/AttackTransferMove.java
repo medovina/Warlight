@@ -18,7 +18,7 @@
 package game.move;
 
 import game.Region;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 /**
  * This Move is used in the second part of each round. It represents the attack or transfer of armies from
@@ -27,11 +27,11 @@ import game.world.WorldRegion;
  */
 
 public class AttackTransferMove extends Move {
-    private WorldRegion fromRegion;
-    private WorldRegion toRegion;
+    private MapRegion fromRegion;
+    private MapRegion toRegion;
     private int armies;
     
-    public AttackTransferMove(WorldRegion fromRegion, WorldRegion toRegion, int armies) {
+    public AttackTransferMove(MapRegion fromRegion, MapRegion toRegion, int armies) {
         this.fromRegion = fromRegion; this.toRegion = toRegion; this.armies = armies;
     }
 
@@ -49,14 +49,14 @@ public class AttackTransferMove extends Move {
     /**
      * @return The Region this Move is attacking or transferring from
      */
-    public WorldRegion getFromRegion() {
+    public MapRegion getFromRegion() {
         return fromRegion;
     }
     
     /**
      * @return The Region this Move is attacking or transferring to
      */
-    public WorldRegion getToRegion() {
+    public MapRegion getToRegion() {
         return toRegion;
     }
     

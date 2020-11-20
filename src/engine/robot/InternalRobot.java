@@ -9,7 +9,7 @@ import bot.*;
 import engine.Robot;
 import game.*;
 import game.move.*;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 import utils.Util;
 
 public class InternalRobot implements Robot {
@@ -81,7 +81,7 @@ public class InternalRobot implements Robot {
     }
     
     @Override
-    public WorldRegion getStartingRegion(GameState state)
+    public MapRegion getStartingRegion(GameState state)
     {
         if (hijacked) {
             return humanHijack.getStartingRegion(state);            

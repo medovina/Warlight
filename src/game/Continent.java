@@ -18,14 +18,14 @@
 package game;
 import java.util.ArrayList;
 
-import game.world.WorldContinent;
+import game.world.MapContinent;
 
 public class Continent {
-    private WorldContinent worldContinent;
+    private MapContinent worldContinent;
     private ArrayList<Region> regions;
     private int owner;
     
-    public Continent(WorldContinent continent, int owner)
+    public Continent(MapContinent continent, int owner)
     {
         this.worldContinent = continent;
         this.owner = owner;
@@ -79,7 +79,7 @@ public class Continent {
         return regions;
     }
 
-    public WorldContinent getWorldContinent() {
+    public MapContinent getWorldContinent() {
         return worldContinent;
     }
     

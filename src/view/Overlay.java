@@ -41,9 +41,9 @@ class Overlay extends JPanel implements MouseListener {
         setToolTipText("");
     }
 
-    class CompareByName implements Comparator<WorldContinent> {
+    class CompareByName implements Comparator<MapContinent> {
         @Override
-        public int compare(WorldContinent o1, WorldContinent o2) {
+        public int compare(MapContinent o1, MapContinent o2) {
             return o1.mapName.compareTo(o2.mapName);
         }
     }
@@ -72,7 +72,7 @@ class Overlay extends JPanel implements MouseListener {
     }
 
     void drawRegionInfo(Graphics2D g) {
-        for (int id = 1 ; id <= WorldRegion.NUM_REGIONS ; ++id) {
+        for (int id = 1 ; id <= MapRegion.NUM_REGIONS ; ++id) {
             Point pos = mapView.regionPositions[id];
             RegionInfo ri = gui.regionInfo(id);
             int x = pos.x, y = pos.y;
@@ -99,7 +99,7 @@ class Overlay extends JPanel implements MouseListener {
     void drawScroll(Graphics g) {
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
-        WorldContinent[] a = WorldContinent.values().clone();
+        MapContinent[] a = MapContinent.values().clone();
         Arrays.sort(a, new CompareByName());
 
         GameMap map = game.getMap();
@@ -194,7 +194,7 @@ class Overlay extends JPanel implements MouseListener {
     @Override
     public String getToolTipText(MouseEvent event) {
         int id = mapView.regionFromPoint(event.getPoint());
-        return id == -1 ? null : WorldRegion.forId(id).getName();
+        return id == -1 ? null : MapRegion.forId(id).getName();
     }
 
     @Override

@@ -19,8 +19,8 @@ package game;
 
 import java.util.ArrayList;
 
-import game.world.WorldContinent;
-import game.world.WorldRegion;
+import game.world.MapContinent;
+import game.world.MapRegion;
 
 public class GameMap implements Cloneable {
     
@@ -64,12 +64,12 @@ public class GameMap implements Cloneable {
         for(Continent sr : continents) //copy continents
         {
             Continent newContinent = new Continent(
-                WorldContinent.forId(sr.getId()), sr.getOwner());
+                MapContinent.forId(sr.getId()), sr.getOwner());
             newMap.add(newContinent);
         }
         for(Region r : regions) //copy regions
         {
-            Region newRegion = new Region(WorldRegion.forId(r.getId()),
+            Region newRegion = new Region(MapRegion.forId(r.getId()),
                     newMap.getContinent(r.getContinent().getId()), r.getOwner(), r.getArmies());
             newMap.add(newRegion);
         }
@@ -109,7 +109,7 @@ public class GameMap implements Cloneable {
         return null;
     }
     
-    public Region getRegion(WorldRegion r) {
+    public Region getRegion(MapRegion r) {
         return getRegion(r.id);
     }
     

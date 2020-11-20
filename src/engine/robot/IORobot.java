@@ -28,7 +28,7 @@ import engine.io.handler.IHandler;
 import engine.replay.GameLog;
 import game.*;
 import game.move.*;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class IORobot implements Robot
 {
@@ -68,7 +68,7 @@ public class IORobot implements Robot
     }
         
     @Override
-    public WorldRegion getStartingRegion(GameState state)
+    public MapRegion getStartingRegion(GameState state)
     {
         String output = "pick_starting_region";
         for(Region region : state.getPickableRegions())

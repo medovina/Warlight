@@ -5,7 +5,7 @@ import java.util.*;
 import bot.Bot;
 import game.*;
 import game.move.*;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class RandomBot implements Bot
 {
@@ -20,7 +20,7 @@ public class RandomBot implements Bot
     // Choose a starting region.
     
     @Override
-    public WorldRegion chooseRegion(GameState state) {
+    public MapRegion chooseRegion(GameState state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         return choosable.get(rand.nextInt(choosable.size())).getWorldRegion();
     }

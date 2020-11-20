@@ -18,7 +18,7 @@
 package game.move;
 
 import game.Region;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 /**
  * This Move is used in the first part of each round. It represents what Region is increased
@@ -26,10 +26,10 @@ import game.world.WorldRegion;
  */
 
 public class PlaceArmiesMove extends Move {
-    private WorldRegion region;
+    private MapRegion region;
     private int armies;
     
-    public PlaceArmiesMove(WorldRegion region, int armies) {
+    public PlaceArmiesMove(MapRegion region, int armies) {
         this.region = region; this.armies = armies;
     }
 
@@ -47,7 +47,7 @@ public class PlaceArmiesMove extends Move {
     /**
      * @return The Region this Move will be placing armies on
      */
-    public WorldRegion getRegion() {
+    public MapRegion getRegion() {
         return region;
     }
     

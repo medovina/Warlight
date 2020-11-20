@@ -10,10 +10,10 @@ import java.util.Random;
 
 import bots.map.RegionBFS.BFSNode;
 import game.GameMap;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 /**
- * BFS over {@link WorldRegion}s using visitor pattern via {@link BFSVisitor}.
+ * BFS over {@link MapRegion}s using visitor pattern via {@link BFSVisitor}.
  * 
  * Your visitor needs to have access to {@link GameMap} in order to be useful.
  * 
@@ -28,7 +28,7 @@ public class RegionBFS<NODE extends BFSNode> {
         /**
          * Will be auto-filled...
          */
-        public WorldRegion region;
+        public MapRegion region;
         
         /**
          * Will be auto-filled...
@@ -38,9 +38,9 @@ public class RegionBFS<NODE extends BFSNode> {
         /**
          * Will be auto-filled...
          */
-        public List<WorldRegion> parents = new ArrayList<WorldRegion>();
+        public List<MapRegion> parents = new ArrayList<MapRegion>();
         
-        public void addParent(WorldRegion region) {
+        public void addParent(MapRegion region) {
             this.parents.add(region);
         }
         
@@ -97,16 +97,16 @@ public class RegionBFS<NODE extends BFSNode> {
          * @param thisNode this is non-null if we already visited the region in the past
          * @return
          */
-        public BFSVisitResult<NODE> visit(WorldRegion region, int level, NODE parent, NODE thisNode);
+        public BFSVisitResult<NODE> visit(MapRegion region, int level, NODE parent, NODE thisNode);
         
     }
     
     public RegionBFS() {        
     }
     
-    private Map<WorldRegion, NODE> nodes = new HashMap<WorldRegion, NODE>();
+    private Map<MapRegion, NODE> nodes = new HashMap<MapRegion, NODE>();
     
-    public void run(WorldRegion start, BFSVisitor<NODE> visitor) {
+    public void run(MapRegion start, BFSVisitor<NODE> visitor) {
         
         reset();
         
@@ -126,7 +126,7 @@ public class RegionBFS<NODE extends BFSNode> {
         while (queue.size() > 0) {
             NODE parent = queue.removeFirst();
             
-            for (WorldRegion region : parent.region.getNeighbours()) {
+            for (MapRegion region : parent.region.getNeighbours()) {
                 
                 NODE node = nodes.get(region);
                 
@@ -161,27 +161,27 @@ public class RegionBFS<NODE extends BFSNode> {
         }        
     }
     
-    public List<List<WorldRegion>> getAllPaths(WorldRegion to) {
-        List<List<WorldRegion>> result = new ArrayList<List<WorldRegion>>();
+    public List<List<MapRegion>> getAllPaths(MapRegion to) {
+        List<List<MapRegion>> result = new ArrayList<List<MapRegion>>();
         
         NODE node = getNode(to);
         
         if (node == null) return result;
         
-        List<WorldRegion> firstPath = new ArrayList<WorldRegion>();
+        List<MapRegion> firstPath = new ArrayList<MapRegion>();
         firstPath.add(to);
         result.add(firstPath);
         
         generatePath(result, firstPath, to);
         
-        for (List<WorldRegion> path : result) {
+        for (List<MapRegion> path : result) {
             Collections.reverse(path);
         }
         
         return result;
     }
     
-    private void generatePath(List<List<WorldRegion>> result, List<WorldRegion> currentPath, WorldRegion nodeRegion) {
+    private void generatePath(List<List<MapRegion>> result, List<MapRegion> currentPath, MapRegion nodeRegion) {
         NODE node = getNode(nodeRegion);
         
         if (node.parents.size() == 0) {
@@ -192,12 +192,12 @@ public class RegionBFS<NODE extends BFSNode> {
         
         int pathLen = currentPath.size();
         
-        for (WorldRegion parent : node.parents) {
-            List<WorldRegion> myPath = null;
+        for (MapRegion parent : node.parents) {
+            List<MapRegion> myPath = null;
             if (first) {
                 myPath = currentPath;
             } else {
-                myPath = new ArrayList<WorldRegion>(currentPath.subList(0, pathLen));
+                myPath = new ArrayList<MapRegion>(currentPath.subList(0, pathLen));
                 result.add(myPath);
             }
             myPath.add(parent);
@@ -206,11 +206,11 @@ public class RegionBFS<NODE extends BFSNode> {
         }        
     }
 
-    public Map<WorldRegion, NODE> getNodes() {
+    public Map<MapRegion, NODE> getNodes() {
         return nodes;
     }
     
-    public NODE getNode(WorldRegion region) {
+    public NODE getNode(MapRegion region) {
         return nodes.get(region);
     }
 
@@ -224,7 +224,7 @@ public class RegionBFS<NODE extends BFSNode> {
         BFSVisitor<BFSNode> visitor = new BFSVisitor<BFSNode>() {
 
             @Override
-            public BFSVisitResult<BFSNode> visit(WorldRegion region, int level, BFSNode parent, BFSNode thisNode) {
+            public BFSVisitResult<BFSNode> visit(MapRegion region, int level, BFSNode parent, BFSNode thisNode) {
                 System.out.println((parent == null ? "START" : parent.level + ":" + parent.region) + " --> " + level + ":" + region);
                 // WE CAN IGNORE THE REGION
                 //return BFSVisitResult.IGNORE;
@@ -239,7 +239,7 @@ public class RegionBFS<NODE extends BFSNode> {
         
         RegionBFS<BFSNode> bfs = new RegionBFS<BFSNode>();
         
-        WorldRegion from = WorldRegion.Eastern_Australia;
+        MapRegion from = MapRegion.Eastern_Australia;
         
         System.out.println("BFS from " + from);
         
@@ -249,21 +249,21 @@ public class RegionBFS<NODE extends BFSNode> {
         
         // GET ALL SHORTEST PATH FROM REGION 'from' TO A FEW RANDOM OTHER REGIONS
         for (int i = 0; i < 5; ++i) {
-            WorldRegion to = WorldRegion.values()[new Random().nextInt(WorldRegion.values().length)];
+            MapRegion to = MapRegion.values()[new Random().nextInt(MapRegion.values().length)];
             while (from == to) {
-                to = WorldRegion.values()[new Random().nextInt(WorldRegion.values().length)];
+                to = MapRegion.values()[new Random().nextInt(MapRegion.values().length)];
             }
             
-            List<List<WorldRegion>> allPaths = bfs.getAllPaths(to);
+            List<List<MapRegion>> allPaths = bfs.getAllPaths(to);
             
             System.out.println("PATHS " + from + " --> " + to + ":");
             
             int j = 0;
-            for (List<WorldRegion> path : allPaths) {
+            for (List<MapRegion> path : allPaths) {
                 ++j;
                 System.out.print("  [" + path.size() + "] " + j + ". ");
                 boolean first = true;
-                for (WorldRegion region : path) {
+                for (MapRegion region : path) {
                     if (first) first = false;
                     else System.out.print(" --> ");
                     System.out.print(region);

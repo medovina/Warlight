@@ -18,16 +18,16 @@ package game;
 
 import java.util.ArrayList;
 
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class Region {
-    private WorldRegion worldRegion;
+    private MapRegion worldRegion;
     private ArrayList<Region> neighbors;
     private Continent continent;
     private int armies;
     private int owner;
     
-    public Region(WorldRegion region, Continent continent, int owner, int armies)
+    public Region(MapRegion region, Continent continent, int owner, int armies)
     {
         this.worldRegion = region;
         this.continent = continent;
@@ -38,7 +38,7 @@ public class Region {
         continent.addRegion(this);
     }
     
-    public Region(WorldRegion region,Continent continent) {
+    public Region(MapRegion region,Continent continent) {
         this(region, continent, 0, 0);
     }
     
@@ -123,7 +123,7 @@ public class Region {
         return owner;
     }
     
-    public WorldRegion getWorldRegion() {
+    public MapRegion getWorldRegion() {
         return worldRegion;
     }
 

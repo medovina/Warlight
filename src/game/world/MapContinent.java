@@ -2,7 +2,7 @@ package game.world;
 
 import java.util.*;
 
-public enum WorldContinent {
+public enum MapContinent {
     
     North_America("North America", 1, 5),
     South_America("South America", 2, 2),
@@ -20,20 +20,20 @@ public enum WorldContinent {
     public final int reward;
     public final String mapName;
     
-    private List<WorldRegion> regions = null;
+    private List<MapRegion> regions = null;
     
-    private WorldContinent(String mapName, int id, int reward) {
+    private MapContinent(String mapName, int id, int reward) {
         this.mapName = mapName;
         this.id = id;
         this.reward = reward;    
     }
     
-    public List<WorldRegion> getRegions() {
+    public List<MapRegion> getRegions() {
         if (regions == null) {
             synchronized(this) {
                 if (regions == null) {
-                    List<WorldRegion> regions = new ArrayList<WorldRegion>();
-                    for (WorldRegion regionName : WorldRegion.values()) {
+                    List<MapRegion> regions = new ArrayList<MapRegion>();
+                    for (MapRegion regionName : MapRegion.values()) {
                         if (regionName.worldContinent == this) {
                             regions.add(regionName);
                         }
@@ -45,12 +45,12 @@ public enum WorldContinent {
         return regions;
     }
     
-    private static Map<Integer, WorldContinent> id2Continent = null;
+    private static Map<Integer, MapContinent> id2Continent = null;
     
-    public static WorldContinent forId(int id) {
+    public static MapContinent forId(int id) {
         if (id2Continent == null) {
-            id2Continent = new HashMap<Integer, WorldContinent>();
-            for (WorldContinent continent : WorldContinent.values()) {
+            id2Continent = new HashMap<Integer, MapContinent>();
+            for (MapContinent continent : MapContinent.values()) {
                 id2Continent.put(continent.id, continent);
             }
         }

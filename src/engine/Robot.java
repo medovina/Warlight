@@ -22,7 +22,7 @@ import java.util.*;
 import engine.replay.GameLog;
 import game.*;
 import game.move.*;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 import view.GUI;
 
 public interface Robot {
@@ -60,7 +60,7 @@ public interface Robot {
 
     public void setup(RobotConfig config);
     
-    public WorldRegion getStartingRegion(GameState state);
+    public MapRegion getStartingRegion(GameState state);
     
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state);
     

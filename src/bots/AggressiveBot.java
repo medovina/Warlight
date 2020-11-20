@@ -7,7 +7,7 @@ import bots.map.RegionBFS;
 import bots.map.RegionBFS.*;
 import game.*;
 import game.move.*;
-import game.world.WorldRegion;
+import game.world.MapRegion;
 
 public class AggressiveBot implements Bot 
 {
@@ -22,7 +22,7 @@ public class AggressiveBot implements Bot
     // ================
     
     @Override
-    public WorldRegion chooseRegion(GameState state) {
+    public MapRegion chooseRegion(GameState state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
@@ -167,7 +167,7 @@ public class AggressiveBot implements Bot
         return result;
     }
     
-    private WorldRegion moveToFrontRegion;
+    private MapRegion moveToFrontRegion;
     
     private AttackTransferMove moveToFront(Region from) {
         RegionBFS<BFSNode> bfs = new RegionBFS<BFSNode>();
@@ -175,7 +175,7 @@ public class AggressiveBot implements Bot
         bfs.run(from.getWorldRegion(), new BFSVisitor<BFSNode>() {
 
             @Override
-            public BFSVisitResult<BFSNode> visit(WorldRegion region, int level, BFSNode parent, BFSNode thisNode) {
+            public BFSVisitResult<BFSNode> visit(MapRegion region, int level, BFSNode parent, BFSNode thisNode) {
                 if (!hasOnlyMyNeighbours(state.region(region))) {
                     moveToFrontRegion = region;
                     return new BFSVisitResult<BFSNode>(BFSVisitResultType.TERMINATE, thisNode == null ? new BFSNode() : thisNode);
@@ -187,8 +187,8 @@ public class AggressiveBot implements Bot
         
         if (moveToFrontRegion != null) {
             //List<Region> path = fw.getPath(from.getRegion(), moveToFrontRegion);
-            List<WorldRegion> path = bfs.getAllPaths(moveToFrontRegion).get(0);
-            WorldRegion moveTo = path.get(1);
+            List<MapRegion> path = bfs.getAllPaths(moveToFrontRegion).get(0);
+            MapRegion moveTo = path.get(1);
             
             return transfer(from, state.region(moveTo));
         }
