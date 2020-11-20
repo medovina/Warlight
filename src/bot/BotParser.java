@@ -59,7 +59,7 @@ public class BotParser extends Thread {
         this.output = output;
         
         this.bot = bot;
-        this.currentState = new GameState(null, null, new ArrayList<Region>());
+        this.currentState = new GameState(null, new ArrayList<Region>());
     }
     
     public static Bot constructBot(BotLoader botLoader, String botFQCN) {

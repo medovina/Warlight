@@ -31,15 +31,4 @@ public class HumanRobot implements Robot {
     public List<AttackTransferMove> getAttackTransferMoves(GameState state) {
         return config.gui.moveArmiesHuman();
     }
-
-    @Override
-    public int getRobotPlayer() {
-        if (config == null) return 0;
-        return config.player;
-    }
-    
-    public String getRobotPlayerName() {
-        return "You";
-    }
-
 }

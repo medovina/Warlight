@@ -24,11 +24,6 @@ import game.move.*;
 import game.world.MapRegion;
 
 public interface Robot {
-    
-    public int getRobotPlayer();
-    
-    public String getRobotPlayerName();
-
     public void setup(RobotConfig config);
     
     public MapRegion getStartingRegion(GameState state);

@@ -9,7 +9,6 @@ import view.GUI;
 public class GameState implements Cloneable {
     public GameConfig config;
     GameMap map;
-    String[] playerNames;
     int round;
     int turn;
     Phase phase;
@@ -17,12 +16,11 @@ public class GameState implements Cloneable {
     public Random random;
     GUI gui;
     
-    public GameState(GameConfig config, GameMap map, String[] playerNames,
+    public GameState(GameConfig config, GameMap map,
                      int round, int turn, Phase phase, ArrayList<Region> pickableRegions,
                      Random random) {
         this.config = config;
         this.map = map;
-        this.playerNames = playerNames; 
         this.round = round;
         this.turn = turn;
         this.phase = phase;
@@ -30,11 +28,10 @@ public class GameState implements Cloneable {
         this.random = random;
     }
     
-    public GameState(GameConfig config, String[] playerNames, ArrayList<Region> pickableRegions) {
+    public GameState(GameConfig config, ArrayList<Region> pickableRegions) {
         this(
             config != null ? config : new GameConfig(),
             makeInitMap(),
-            playerNames != null ? playerNames : new String[] { "Player 1", "Player 2" },
             0, 1, Phase.STARTING_REGIONS, pickableRegions,
             (config == null || config.seed < 0) ? new Random() : new Random(config.seed));
 
@@ -43,7 +40,7 @@ public class GameState implements Cloneable {
     }
     
     public GameState(GameConfig config) {
-        this(config, null, null);
+        this(config, null);
     }
     
     public void setGUI(GUI gui) {
@@ -58,7 +55,7 @@ public class GameState implements Cloneable {
             newPickable.add(newMap.getRegion(r.getId()));
         
         // If you make several clones, each will have a distinct random number sequence.
-        return new GameState(config, newMap, playerNames, round, turn, phase, newPickable,
+        return new GameState(config, newMap, round, turn, phase, newPickable,
                              new Random(random.nextInt()));
     }
 
@@ -105,10 +102,6 @@ public class GameState implements Cloneable {
 
     public void setPhase(Phase phase) {
         this.phase = phase;
-    }
-    
-    public String playerName(int i) {
-        return playerNames[i - 1];
     }
     
     public int winningPlayer() {

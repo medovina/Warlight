@@ -12,7 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
-import engine.Robot;
+import engine.*;
 import engine.robot.HumanRobot;
 import game.*;
 import game.move.AttackTransferMove;
@@ -39,6 +39,7 @@ public class GUI extends JFrame implements KeyListener
     private int continualTime = 1000;
     
     private Robot[] bots;
+    private Config config;
     
     private Arrow mainArrow;
     
@@ -59,10 +60,11 @@ public class GUI extends JFrame implements KeyListener
     private Region moveFrom;    
     public CountDownLatch moveArmiesAction;
 
-    public GUI(GameState game, Robot[] bots)
+    public GUI(GameState game, Robot[] bots, Config config)
     {
         this.game = game;
         this.bots = bots;
+        this.config = config;
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setTitle("Warlight");
@@ -364,7 +366,7 @@ public class GUI extends JFrame implements KeyListener
     }
 
     String playerName(int player) {
-        return bot(player).getRobotPlayerName();
+        return config.playerName(player);
     }
     
     void showArrow(Arrow arrow, int fromRegionId, int toRegionId, int player, int armies) {

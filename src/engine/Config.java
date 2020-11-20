@@ -4,18 +4,12 @@ import java.io.File;
 
 import bot.BotLoader;
 import game.GameConfig;
+import utils.Util;
 
 public class Config implements Cloneable {
-    
     public String gameId = "GAME";
     
-    /**
-     * Human-readable name of player 1 to display during visualization or to report into CSV.
-     */
     public String player1Name = "Bot1";
-    /**
-     * Human-readable name of player 2 to display during visualization or to report into CSV.
-     */
     public String player2Name = "Bot2";
     
     public String bot1Init;
@@ -26,9 +20,7 @@ public class Config implements Cloneable {
     public long botCommandTimeoutMillis = 60_000;
     
     public boolean visualize = true;
-    
     public Boolean visualizeContinual = null;
-    
     public Integer visualizeContinualFrameTimeMillis = null;
     
     public boolean logToConsole = true;
@@ -37,6 +29,30 @@ public class Config implements Cloneable {
     
     public GameConfig game = new GameConfig();
     
+    public void setHuman(int player) {
+        if (player == 1) {
+            bot1Init = "human";
+            player1Name = "You";
+        } else {
+            bot2Init = "human";
+            player2Name = "You";
+        }
+    }
+
+    public void setBotClass(int player, String fqcn) {
+        if (player == 1) {
+            bot1Init = "internal:" + fqcn;
+            player1Name = Util.className(fqcn);
+        } else {
+            bot2Init = "internal:" + fqcn;
+            player2Name = Util.className(fqcn);
+        }
+    }
+
+    public String playerName(int i) {
+        return i == 1 ? player1Name : player2Name;
+    }
+
     public String asString() {
         return gameId + ";" + player1Name + ";" + player2Name + ";" +
                botCommandTimeoutMillis + ";" +

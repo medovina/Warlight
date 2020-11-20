@@ -86,11 +86,11 @@ public class Warlight {
             simulateGames(config, bots, seed, sim, resultdir);
         } else {
             if (bots.size() < 2) {
-                config.bot1Init = "human";
-                config.bot2Init = internalBot(bots.isEmpty() ? "bots.AggressiveBot" : bots.get(0));
+                config.setHuman(1);
+                config.setBotClass(2, bots.isEmpty() ? "bots.AggressiveBot" : bots.get(0));
             } else {
-                config.bot1Init = internalBot(bots.get(0));
-                config.bot2Init = internalBot(bots.get(1));
+                config.setBotClass(1, bots.get(0));
+                config.setBotClass(2, bots.get(1));
             }
             
             config.visualize = true;

@@ -9,26 +9,16 @@ import engine.RobotConfig;
 import game.*;
 import game.move.*;
 import game.world.MapRegion;
-import utils.Util;
 
 public class InternalRobot implements Robot {
-    
     private Bot bot;
 
-    private RobotConfig config;
-    
-    private String botFQCN;
-    
     public InternalRobot(int player, BotLoader botLoader, String botFQCN) throws IOException {
-        this.botFQCN = botFQCN;
-        
         bot = BotParser.constructBot(botLoader, botFQCN);
     }
     
     @Override
     public void setup(RobotConfig config) {
-        this.config = config;
-        
         bot.init(config.timeoutMillis);
     }
     
@@ -49,19 +39,4 @@ public class InternalRobot implements Robot {
     {
         return bot.moveArmies(state);
     }
-    
-    public boolean isRunning() {
-        return bot != null;
-    }
-    
-    @Override
-    public int getRobotPlayer() {
-        if (config == null) return 0;
-        return config.player;
-    }
-    
-    public String getRobotPlayerName() {
-        return Util.className(botFQCN);
-    }
-
 }

@@ -63,11 +63,11 @@ public class RunGame
     }
 
     private GameResult go(GameLog log, String[] playerNames, Robot[] robots) throws InterruptedException {
-        game = new GameState(config.game, playerNames, null);
+        game = new GameState(config.game, null);
 
         GUI gui;
         if (config.visualize) {
-            gui = new GUI(game, robots);
+            gui = new GUI(game, robots, config);
             if (config.visualizeContinual != null) {
                 gui.setContinual(config.visualizeContinual);
             }
