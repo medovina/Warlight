@@ -2,21 +2,16 @@ package engine;
 
 import java.io.File;
 
-import bot.BotLoader;
 import game.GameConfig;
 import utils.Util;
 
 public class Config implements Cloneable {
     public String gameId = "GAME";
     
-    public String player1Name = "Bot1";
-    public String player2Name = "Bot2";
+    public String player1Name, player2Name;
     
-    public String bot1Init;
-    public String bot2Init;
+    public String bot1Init, bot2Init;
 
-    public BotLoader botLoader;
-    
     public long botCommandTimeoutMillis = 60_000;
     
     public boolean visualize = true;
@@ -67,7 +62,6 @@ public class Config implements Cloneable {
         result.replayLog = replayLog;
         result.bot1Init = bot1Init;
         result.bot2Init = bot2Init;
-        result.botLoader = botLoader;
         
         return result;
     }

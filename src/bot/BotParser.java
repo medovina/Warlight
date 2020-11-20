@@ -62,17 +62,13 @@ public class BotParser extends Thread {
         this.currentState = new GameState(null, new ArrayList<Region>());
     }
     
-    public static Bot constructBot(BotLoader botLoader, String botFQCN) {
+    public static Bot constructBot(String botFQCN) {
         Class<?> botClass;
         try {
-            if (botLoader != null)
-                botClass = botLoader.load(botFQCN);
-            else {
-                try {
-                    botClass = Class.forName(botFQCN);
-                } catch (ClassNotFoundException e) {
-                    botClass = Class.forName("bots." + botFQCN);
-                }
+            try {
+                botClass = Class.forName(botFQCN);
+            } catch (ClassNotFoundException e) {
+                botClass = Class.forName("bots." + botFQCN);
             }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("Failed to locate bot class: " + botFQCN, e);

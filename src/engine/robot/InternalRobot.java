@@ -13,8 +13,8 @@ import game.world.MapRegion;
 public class InternalRobot implements Robot {
     private Bot bot;
 
-    public InternalRobot(int player, BotLoader botLoader, String botFQCN) throws IOException {
-        bot = BotParser.constructBot(botLoader, botFQCN);
+    public InternalRobot(int player, String botFQCN) throws IOException {
+        bot = BotParser.constructBot(botFQCN);
     }
     
     @Override
