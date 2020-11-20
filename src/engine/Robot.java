@@ -37,15 +37,4 @@ public interface Robot {
     
     public List<AttackTransferMove> getAttackTransferMoves(GameState state);
     
-    /**
-     * Whether this robot is up and running correctly...
-     * @return
-     */
-    public boolean isRunning();
-    
-    /**
-     * Kills the robot.
-     */
-    public void finish();
-
 }

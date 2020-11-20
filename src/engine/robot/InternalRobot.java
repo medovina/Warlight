@@ -1,7 +1,5 @@
 package engine.robot;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.*;
 
@@ -15,24 +13,10 @@ import utils.Util;
 
 public class InternalRobot implements Robot {
     
-    private class MyKeyListener implements KeyListener {
-        @Override
-        public void keyTyped(KeyEvent e) {}
-        
-        @Override
-        public void keyReleased(KeyEvent e) {}
-        
-        @Override
-        public void keyPressed(KeyEvent e) {
-        }
-    }
-    
     private Bot bot;
 
     private RobotConfig config;
     
-    private MyKeyListener myKeyListener;
-
     private String botFQCN;
     
     public InternalRobot(int player, BotLoader botLoader, String botFQCN) throws IOException {
@@ -45,11 +29,6 @@ public class InternalRobot implements Robot {
     public void setup(RobotConfig config) {
         this.config = config;
         
-        if (config.gui != null) {
-            myKeyListener = new MyKeyListener();
-            config.gui.addKeyListener(myKeyListener);
-        }
-
         bot.init(config.timeoutMillis);
     }
     
@@ -75,13 +54,6 @@ public class InternalRobot implements Robot {
         return bot != null;
     }
     
-    public void finish() {
-        if (config.gui != null) {
-            config.gui.removeKeyListener(myKeyListener);
-        }
-        bot = null;
-    }
-
     @Override
     public int getRobotPlayer() {
         if (config == null) return 0;

@@ -11,7 +11,6 @@ import game.world.MapRegion;
 
 public class HumanRobot implements Robot {
     private RobotConfig config;
-    private boolean running = true;;
     
     @Override
     public void setup(RobotConfig config) {
@@ -31,16 +30,6 @@ public class HumanRobot implements Robot {
     @Override
     public List<AttackTransferMove> getAttackTransferMoves(GameState state) {
         return config.gui.moveArmiesHuman();
-    }
-
-    @Override
-    public boolean isRunning() {
-        return running;
-    }
-
-    @Override
-    public void finish() {
-        running = false;
     }
 
     @Override

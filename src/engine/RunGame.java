@@ -127,11 +127,6 @@ public class RunGame
 
     private GameResult finish(GameMap map, Robot[] bots) throws InterruptedException
     {
-        for (Robot r : bots)
-            try {
-                r.finish();
-            } catch (Exception e) { }
-        
         return this.saveGame(map);        
     }
     
