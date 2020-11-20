@@ -28,7 +28,6 @@ import engine.replay.ReplayHandler;
 import engine.robot.HumanRobot;
 import engine.robot.IORobot;
 import engine.robot.InternalRobot;
-import engine.robot.ProcessRobot;
 import game.*;
 import view.GUI;
 
@@ -149,19 +148,6 @@ public class RunGame
     }
 
     private Robot setupRobot(int player, BotLoader botLoader, String botInit) throws IOException {
-        if (botInit.startsWith("dir;process:")) {
-            String cmd = botInit.substring(12);
-            int semicolon = cmd.indexOf(";");
-            if (semicolon < 0) throw new RuntimeException(
-                "Invalid bot torrent (does not contain ';' separating directory and command): " + botInit);
-            String dir = cmd.substring(0, semicolon);
-            String process = cmd.substring(semicolon+1);            
-            return new ProcessRobot(player, dir, process);
-        }
-        if (botInit.startsWith("process:")) {
-            String cmd = botInit.substring(8);
-            return new ProcessRobot(player, cmd);
-        }
         if (botInit.startsWith("internal:")) {
             String botFQCN = botInit.substring(9);
             return new InternalRobot(player, botLoader, botFQCN);
