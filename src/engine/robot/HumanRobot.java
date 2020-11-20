@@ -8,27 +8,31 @@ import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
 import game.world.MapRegion;
+import view.GUI;
 
 public class HumanRobot implements Robot {
-    private RobotConfig config;
+    private GUI gui;
     
+    public HumanRobot(GUI gui) {
+        this.gui = gui;
+    }
+
     @Override
     public void setup(RobotConfig config) {
-        this.config = config;
     }
 
     @Override
     public MapRegion getStartingRegion(GameState state) {
-        return config.gui.chooseRegionHuman().getWorldRegion();
+        return gui.chooseRegionHuman().getWorldRegion();
     }
 
     @Override
     public List<PlaceArmiesMove> getPlaceArmiesMoves(GameState state) {
-        return config.gui.placeArmiesHuman();
+        return gui.placeArmiesHuman();
     }
 
     @Override
     public List<AttackTransferMove> getAttackTransferMoves(GameState state) {
-        return config.gui.moveArmiesHuman();
+        return gui.moveArmiesHuman();
     }
 }

@@ -13,7 +13,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 import engine.*;
-import engine.robot.HumanRobot;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
@@ -38,7 +37,6 @@ public class GUI extends JFrame implements KeyListener
     private boolean continual = false;
     private int continualTime = 1000;
     
-    private Robot[] bots;
     private Config config;
     
     private Arrow mainArrow;
@@ -60,10 +58,9 @@ public class GUI extends JFrame implements KeyListener
     private Region moveFrom;    
     public CountDownLatch moveArmiesAction;
 
-    public GUI(GameState game, Robot[] bots, Config config)
+    public GUI(GameState game, Config config)
     {
         this.game = game;
-        this.bots = bots;
         this.config = config;
         
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -114,7 +111,7 @@ public class GUI extends JFrame implements KeyListener
     }
 
     boolean humanGame() {
-        return bots[0] instanceof HumanRobot || bots[1] instanceof HumanRobot;
+        return config.isHuman(1) || config.isHuman(2);
     }
     
     public void mousePressed(MouseEvent e) {
@@ -327,7 +324,7 @@ public class GUI extends JFrame implements KeyListener
         String toName = move.getToRegion().getName();
 
         String text;
-        if (bot(game.me()) instanceof HumanRobot)
+        if (config.isHuman(game.me()))
             text = "You transfer ";
         else
             text = playerName(game.me()) + " transfers ";
@@ -361,10 +358,6 @@ public class GUI extends JFrame implements KeyListener
         message("---");
     }
     
-    Robot bot(int player) {
-        return bots[player - 1];
-    }
-
     String playerName(int player) {
         return config.playerName(player);
     }
@@ -385,7 +378,7 @@ public class GUI extends JFrame implements KeyListener
         int armies = move.getArmies();
 
         String text;
-        if (bot(game.me()) instanceof HumanRobot)
+        if (config.isHuman(game.me()))
             text = "You attack ";
         else
             text = playerName(game.me()) + " attacks ";

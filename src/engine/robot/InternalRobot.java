@@ -1,6 +1,5 @@
 package engine.robot;
 
-import java.io.IOException;
 import java.util.*;
 
 import bot.*;
@@ -13,7 +12,7 @@ import game.world.MapRegion;
 public class InternalRobot implements Robot {
     private Bot bot;
 
-    public InternalRobot(int player, String botFQCN) throws IOException {
+    public InternalRobot(String botFQCN) {
         bot = BotParser.constructBot(botFQCN);
     }
     

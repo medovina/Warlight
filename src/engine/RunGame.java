@@ -17,8 +17,6 @@
 
 package engine;
 
-import java.io.IOException;
-
 import engine.replay.FileGameLog;
 import engine.replay.GameLog;
 import engine.robot.HumanRobot;
@@ -29,44 +27,25 @@ import view.GUI;
 public class RunGame
 {
     Config config;
-    
     Engine engine;
     GameState game;
     
-    public RunGame(Config config)
-    {
+    public RunGame(Config config) {
         this.config = config;        
     }
     
     public GameResult go()
     { 
-        try {
-            GameLog log = null;
-            if (config.replayLog != null) {
-                log = new FileGameLog(config.replayLog);
-            }
-            
-            String[] playerNames = new String[2];
-            Robot[] robots = new Robot[2];
-            
-            robots[0] = setupRobot(1, config.bot1Init);
-            robots[1] = setupRobot(2, config.bot2Init);
-                    
-            playerNames[0] = config.player1Name;
-            playerNames[1] = config.player2Name;
-                        
-            return go(log, playerNames, robots);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to run/finish the game.", e);
+        GameLog log = null;
+        if (config.replayLog != null) {
+            log = new FileGameLog(config.replayLog);
         }
-    }
-
-    private GameResult go(GameLog log, String[] playerNames, Robot[] robots) throws InterruptedException {
+        
         game = new GameState(config.game, null);
 
         GUI gui;
         if (config.visualize) {
-            gui = new GUI(game, robots, config);
+            gui = new GUI(game, config);
             if (config.visualizeContinual != null) {
                 gui.setContinual(config.visualizeContinual);
             }
@@ -76,6 +55,10 @@ public class RunGame
             game.setGUI(gui);
         } else gui = null;
         
+        Robot[] robots = new Robot[2];
+        robots[0] = setupRobot(config.bot1Init, gui);
+        robots[1] = setupRobot(config.bot2Init, gui);
+                
         //start the engine
         this.engine = new Engine(game, robots, gui, config.botCommandTimeoutMillis);
         
@@ -85,7 +68,7 @@ public class RunGame
         
         for (int i = 1 ; i <= 2 ; ++i) {
             RobotConfig robotCfg =
-                    new RobotConfig(i, playerNames[i - 1],
+                    new RobotConfig(i, config.playerName(i),
                             config.botCommandTimeoutMillis, log, config.logToConsole, gui);
             robots[i - 1].setup(robotCfg);
         }
@@ -111,20 +94,19 @@ public class RunGame
         return result;
     }
 
-    private Robot setupRobot(int player, String botInit) throws IOException {
+    private Robot setupRobot(String botInit, GUI gui) {
         if (botInit.startsWith("internal:")) {
             String botFQCN = botInit.substring(9);
-            return new InternalRobot(player, botFQCN);
+            return new InternalRobot(botFQCN);
         }
         if (botInit.startsWith("human")) {
             config.visualize = true;
-            return new HumanRobot();
+            return new HumanRobot(gui);
         }
-        throw new RuntimeException("Invalid init string for player '" + player +
-                "', must start either with 'process:' or 'internal:' or 'human', passed value was: " + botInit);
+        throw new RuntimeException("Invalid init string: " + botInit);
     }
 
-    private GameResult finish(GameMap map, Robot[] bots) throws InterruptedException
+    private GameResult finish(GameMap map, Robot[] bots)
     {
         return this.saveGame(map);        
     }

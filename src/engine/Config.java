@@ -6,8 +6,6 @@ import game.GameConfig;
 import utils.Util;
 
 public class Config implements Cloneable {
-    public String gameId = "GAME";
-    
     public String player1Name, player2Name;
     
     public String bot1Init, bot2Init;
@@ -34,6 +32,10 @@ public class Config implements Cloneable {
         }
     }
 
+    public boolean isHuman(int player) {
+        return player == 1 ? bot1Init.equals("human") : bot2Init.equals("human");
+    }
+
     public void setBotClass(int player, String fqcn) {
         if (player == 1) {
             bot1Init = "internal:" + fqcn;
@@ -49,7 +51,7 @@ public class Config implements Cloneable {
     }
 
     public String asString() {
-        return gameId + ";" + player1Name + ";" + player2Name + ";" +
+        return player1Name + ";" + player2Name + ";" +
                botCommandTimeoutMillis + ";" +
                visualize + ";" + visualizeContinual + ";" + visualizeContinualFrameTimeMillis + ";" +
                logToConsole + ";" + game.asString();
@@ -67,11 +69,11 @@ public class Config implements Cloneable {
     }
     
     public String getCSVHeader() {
-        return "ID;PlayerName1;PlayerName2;timeoutMillis;" + game.getCSVHeader();
+        return "PlayerName1;PlayerName2;timeoutMillis;" + game.getCSVHeader();
     }
     
     public String getCSV() {
-        return gameId + ";" + player1Name + ";" + player2Name + ";" +
+        return player1Name + ";" + player2Name + ";" +
                botCommandTimeoutMillis + ";" + game.getCSV();
     }
     
@@ -81,17 +83,16 @@ public class Config implements Cloneable {
         
         Config result = new Config();
 
-        result.gameId = parts[0];
-        result.player1Name = parts[1];
-        result.player2Name = parts[2];
-        result.botCommandTimeoutMillis = Integer.parseInt(parts[3]);
-        result.visualize = Boolean.parseBoolean(parts[4]);
-        result.visualizeContinual = (parts[5].toLowerCase().equals("null") ? null : Boolean.parseBoolean(parts[5]));
-        result.visualizeContinualFrameTimeMillis = (parts[6].toLowerCase().equals("null") ? null : Integer.parseInt(parts[6]));
-        result.logToConsole = Boolean.parseBoolean(parts[7]);
+        result.player1Name = parts[0];
+        result.player2Name = parts[1];
+        result.botCommandTimeoutMillis = Integer.parseInt(parts[2]);
+        result.visualize = Boolean.parseBoolean(parts[3]);
+        result.visualizeContinual = (parts[4].toLowerCase().equals("null") ? null : Boolean.parseBoolean(parts[4]));
+        result.visualizeContinualFrameTimeMillis = (parts[5].toLowerCase().equals("null") ? null : Integer.parseInt(parts[5]));
+        result.logToConsole = Boolean.parseBoolean(parts[6]);
         
         int engineConfigStart = 0;
-        for (int i = 0; i < 8; ++i) {
+        for (int i = 0; i < 7; ++i) {
             engineConfigStart = line.indexOf(";", engineConfigStart);
             ++engineConfigStart;
         }
