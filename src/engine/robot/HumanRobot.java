@@ -34,10 +34,6 @@ public class HumanRobot implements Robot {
     }
 
     @Override
-    public void writeInfo(String info) {
-    }
-
-    @Override
     public boolean isRunning() {
         return running;
     }

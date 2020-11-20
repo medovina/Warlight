@@ -75,8 +75,6 @@ public class Engine {
             
             game.placeArmies(placeMoves);
     
-            sendUpdateMapInfo(i);
-            
             if (gui != null && !(robot(i) instanceof HumanRobot)) {
                 List<PlaceArmiesMove> legalMoves = new ArrayList<PlaceArmiesMove>();
     
@@ -96,8 +94,6 @@ public class Engine {
             
             game.attackTransfer(moves);
             
-            sendAllInfo();
-            
             if (game.isDone())
                 break;
         }
@@ -105,7 +101,6 @@ public class Engine {
         if (gui != null) {
             gui.updateMap();
         }
-        nextRound();    
     }
     
     public void distributeStartingRegions()
@@ -117,7 +112,6 @@ public class Engine {
         for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
             for (int p = 1 ; p <= 2 ; ++p) {
                 if (game.config.manualDistribution) {
-                    sendUpdateMapInfo(p);
                     long start = System.currentTimeMillis();
                     Region region = game.region(robot(p).getStartingRegion(game));
                     if (timeout(robot(p), start)) {
@@ -145,33 +139,5 @@ public class Engine {
     private Region getRandomStartingRegion()
     {
         return game.pickableRegions.get(game.random.nextInt(game.pickableRegions.size()));
-    }
-    
-    public void sendAllInfo()
-    {
-        for (int i = 1 ; i <= 2 ; ++i)
-            sendUpdateMapInfo(i);
-    }
-    
-    public void nextRound() {
-        for (int i = 1 ; i <= 2 ; ++i) {
-            robot(i).writeInfo("next_round");
-        }
-    }
-        
-    //inform the player about how his visible map looks now
-    private void sendUpdateMapInfo(int player)
-    {
-        ArrayList<Region> visibleRegions = game.getMap().regions;
-        String updateMapString = "update_map";
-        for(Region region : visibleRegions)
-        {
-            int id = region.getId();
-            int owner = region.getOwner();
-            int armies = region.getArmies();
-            
-            updateMapString = updateMapString.concat(" " + id + " " + owner + " " + armies);
-        }
-        robot(player).writeInfo(updateMapString);
-    }
+    }    
 }

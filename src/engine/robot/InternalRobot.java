@@ -71,10 +71,6 @@ public class InternalRobot implements Robot {
         return bot.moveArmies(state);
     }
     
-    @Override
-    public void writeInfo(String info){
-    }
-
     public boolean isRunning() {
         return bot != null;
     }

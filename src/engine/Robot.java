@@ -37,8 +37,6 @@ public interface Robot {
     
     public List<AttackTransferMove> getAttackTransferMoves(GameState state);
     
-    public void writeInfo(String info);
-
     /**
      * Whether this robot is up and running correctly...
      * @return

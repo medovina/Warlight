@@ -92,11 +92,7 @@ public class RunGame
         }
         
         //send the bots the info they need to start
-        for (int i = 0 ; i < 2 ; ++i)
-            robots[i].writeInfo("settings your_player_number " + (i + 1));
         engine.distributeStartingRegions(); //decide the players' starting regions
-        engine.sendAllInfo();
-        engine.nextRound();   // advance to round 1
         
         //play the game
         while(!game.isDone())
