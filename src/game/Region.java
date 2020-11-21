@@ -22,20 +22,14 @@ public class Region {
     private MapRegion mapRegion;
     private ArrayList<Region> neighbors;
     private Continent continent;
-    private int owner;
     
-    public Region(MapRegion region, Continent continent, int owner)
+    public Region(MapRegion region, Continent continent)
     {
         this.mapRegion = region;
         this.continent = continent;
         this.neighbors = new ArrayList<Region>();
-        this.owner = owner;
         
         continent.addRegion(this);
-    }
-    
-    public Region(MapRegion region,Continent continent) {
-        this(region, continent, 0);
     }
     
     public void addNeighbor(Region neighbor)
@@ -53,22 +47,6 @@ public class Region {
         return neighbors.contains(region);
     }
 
-    /**
-     * @param player
-     * @return True if this region is owned by the given player, false otherwise
-     */
-    public boolean isOwnedBy(int player)
-    {
-        return owner == player;
-    }
-    
-    /**
-     * @param playerName Sets the player that this Region belongs to
-     */
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-    
     /**
      * @return The id of this Region
      */
@@ -94,25 +72,7 @@ public class Region {
         return continent;
     }
     
-    /**
-     * @return The player that owns this region
-     */
-    public int getOwner() {
-        return owner;
-    }
-    
     public MapRegion getMapRegion() {
         return mapRegion;
-    }
-
-    public boolean isVisible(int player) {
-        if (isOwnedBy(player))
-            return true;
-        
-        for (Region s : getNeighbors())
-            if (s.isOwnedBy(player))
-                return true;
-        
-        return false;
     }
 }

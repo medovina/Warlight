@@ -10,6 +10,7 @@ public class Game implements Cloneable {
     World world;
     GameMap map;
     int[] armies;
+    int[] owner;
     int round;
     int turn;
     Phase phase;
@@ -93,6 +94,27 @@ public class Game implements Cloneable {
         armies[region.getId()] = n;
     }
 
+    public int getOwner(Region region) {
+        return owner[region.getId()];
+    }
+
+    public boolean isOwnedBy(Region region, int player) {
+        return owner[region.getId()] == player;
+    }
+
+    void setOwner(Region region, int player) {
+        owner[region.getId()] = player;
+    }
+
+    public int getOwner(Continent continent) {
+        int player = getOwner(continent.getRegions().get(0));
+        for(Region region : continent.getRegions())
+            if (player != getOwner(region))
+                return 0;
+                
+        return player;
+    }
+
     public int getRoundNumber() {
         return round;
     }
@@ -112,7 +134,7 @@ public class Game implements Cloneable {
     public int winningPlayer() {
         if (round == 0) return 0;
         
-        int regions1 = map.numberRegionsOwned(1), regions2 = map.numberRegionsOwned(2);
+        int regions1 = numberRegionsOwned(1), regions2 = numberRegionsOwned(2);
         if (regions1 == 0) return 2;
         if (regions2 == 0) return 1;
         
@@ -141,19 +163,40 @@ public class Game implements Cloneable {
     }
 
     public ArrayList<Region> regionsOwnedBy(int player) {
-        return map.ownedRegionsByPlayer(player);
+        return ownedRegionsByPlayer(player);
     }
 
     public int numberArmiesOwned(int player) {
         int n = 0;
         
         for (Region r: map.getRegions())
-            if (r.getOwner() == player)
+            if (getOwner(r) == player)
                 n += getArmies(r);
         
         return n;
     }
 
+    public int numberRegionsOwned(int player) {
+        int n = 0;
+        
+        for (Region r: map.getRegions())
+            if (getOwner(r) == player)
+                n += 1;
+        
+        return n;
+    }
+
+    public ArrayList<Region> ownedRegionsByPlayer(int player)
+    {
+        ArrayList<Region> ownedRegions = new ArrayList<Region>();
+        
+        for(Region region : map.getRegions())
+            if(getOwner(region) == player)
+                ownedRegions.add(region);
+
+        return ownedRegions;
+    }
+        
     public ArrayList<Region> getPickableRegions() {
         return pickableRegions;
     }
@@ -165,7 +208,7 @@ public class Game implements Cloneable {
             armies /= 2;
         
         for(Continent cd : map.getContinents())
-            if (cd.getOwner() == player)
+            if (getOwner(cd) == player)
                 armies += cd.getArmiesReward();
         
         return armies;
@@ -197,14 +240,11 @@ public class Game implements Cloneable {
         }
 
         armies = new int[world.numRegions()];
+        owner = new int[world.numRegions()];
+
         for (int i = 0 ; i < world.numRegions() ; ++i)
             armies[i] = 2;
         
-        for(Region region : map.regions)
-        {
-            region.setOwner(0);
-        }
-
         return map;
     }
 
@@ -217,7 +257,7 @@ public class Game implements Cloneable {
             Region r = pickableRegions.get(random.nextInt(pickableRegions.size()));
             boolean ok = true;
             for (Region n : r.getNeighbors())
-                if (n.getOwner() != 0 && n.getOwner() != forPlayer) {
+                if (getOwner(n) != 0 && getOwner(n) != forPlayer) {
                     ok = false;
                     break;
                 }
@@ -227,7 +267,7 @@ public class Game implements Cloneable {
     }
 
     void setAsStarting(Region r, int player) {
-        r.setOwner(player);
+        setOwner(r, player);
         pickableRegions.remove(r);
     }
     
@@ -278,7 +318,7 @@ public class Game implements Cloneable {
         setAsStarting(region, turn);
         turn = 3 - turn;
         
-        if (map.numberRegionsOwned(turn) == numStartingRegions()) {
+        if (numberRegionsOwned(turn) == numStartingRegions()) {
             round = 1;
             phase = Phase.PLACE_ARMIES;
         }
@@ -296,7 +336,7 @@ public class Game implements Cloneable {
             Region region = region(move.getRegion());
             int armies = move.getArmies();
             
-            if (!region.isOwnedBy(turn))
+            if (!isOwnedBy(region, turn))
                 move.setIllegalMove(region.getId() + " not owned");
             else if (armies < 1)
                 move.setIllegalMove("cannot place less than 1 army");
@@ -372,7 +412,7 @@ public class Game implements Cloneable {
         switch (result.winner) {
         case ATTACKER: //attack success
             setArmies(fromRegion, getArmies(fromRegion) - attackingArmies);
-            toRegion.setOwner(turn);
+            setOwner(toRegion, turn);
             setArmies(toRegion, attackingArmies - result.attackersDestroyed);
             break; 
         case DEFENDER: //attack fail
@@ -397,7 +437,7 @@ public class Game implements Cloneable {
             Region fromRegion = region(move.getFromRegion());
             Region toRegion = region(move.getToRegion());
 
-            if (!fromRegion.isOwnedBy(turn))
+            if (!isOwnedBy(fromRegion, turn))
                 move.setIllegalMove(fromRegion.getId() + " attack/transfer not owned");
             else if (!fromRegion.isNeighbor(toRegion))
                 move.setIllegalMove(toRegion.getId() + " attack/transfer not a neighbor");
@@ -436,7 +476,7 @@ public class Game implements Cloneable {
             
             move.setArmies(Math.min(move.getArmies(), getArmies(fromRegion) - 1));
 
-            if(toRegion.isOwnedBy(turn)) //transfer
+            if(isOwnedBy(toRegion, turn)) //transfer
             {
                 if (gui != null) {
                     gui.transfer(move);

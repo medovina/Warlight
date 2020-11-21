@@ -226,7 +226,7 @@ public class GUI extends JFrame implements KeyListener
         for(Region region : game.getMap().regions) {
             int id = region.getId();
             regionInfo[id].setArmies(game.getArmies(region));
-            mapView.setOwner(id, region.getOwner());
+            mapView.setOwner(id, game.getOwner(region));
         }
 
         updateOverlay();
@@ -261,7 +261,7 @@ public class GUI extends JFrame implements KeyListener
         for (Region region : regions) {
             int id = region.getId();
             RegionInfo ri = this.regionInfo[id];
-            mapView.setOwner(id, region.getOwner());
+            mapView.setOwner(id, game.getOwner(region));
             ri.setArmies(game.getArmies(region));
         }
     }
@@ -405,9 +405,9 @@ public class GUI extends JFrame implements KeyListener
         
         RegionInfo fromRegionInfo = this.regionInfo[fromRegion.getId()];
         RegionInfo toRegionInfo = this.regionInfo[toRegion.getId()];
-        int attacker = fromRegion.getOwner();
+        int attacker = game.getOwner(fromRegion);
         
-        boolean success = fromRegion.getOwner() == toRegion.getOwner();
+        boolean success = game.getOwner(fromRegion) == game.getOwner(toRegion);
         
         message("Attack " + (success ? "succeeded!" : "failed!"),
                 String.format("(attackers lost %d, defenders lost %d)", 
@@ -417,7 +417,7 @@ public class GUI extends JFrame implements KeyListener
         toRegionInfo.setArmies(game.getArmies(toRegion));
 
         if (success)
-            mapView.setOwner(toRegion.getId(), toRegion.getOwner());
+            mapView.setOwner(toRegion.getId(), game.getOwner(toRegion));
         
         fromRegionInfo.setHighlight(true);
         toRegionInfo.setHighlight(true);
@@ -682,7 +682,7 @@ public class GUI extends JFrame implements KeyListener
         if (!left)
             return;
         
-        moveFrom = region.getOwner() == game.currentPlayer() ? region : null;
+        moveFrom = game.getOwner(region) == game.currentPlayer() ? region : null;
         highlight();
     }
 

@@ -55,7 +55,7 @@ public class GameMap implements Cloneable {
         for(Region r : regions) //copy regions
         {
             Region newRegion = new Region(r.getMapRegion(),
-                    newMap.getContinent(r.getContinent().getId()), r.getOwner());
+                    newMap.getContinent(r.getContinent().getId()));
             newMap.add(newRegion);
         }
         for(Region r : regions) //add neighbors to copied regions
@@ -107,26 +107,4 @@ public class GameMap implements Cloneable {
         return getContinent(c.id);
     }
     
-    public int numberRegionsOwned(int player) {
-        int n = 0;
-        
-        for (Region r: regions)
-            if (r.getOwner() == player)
-                n += 1;
-        
-        return n;
-    }
-    
-    //return all regions owned by given player
-    public ArrayList<Region> ownedRegionsByPlayer(int player)
-    {
-        ArrayList<Region> ownedRegions = new ArrayList<Region>();
-        
-        for(Region region : this.getRegions())
-            if(region.getOwner() == player)
-                ownedRegions.add(region);
-
-        return ownedRegions;
-    }
-        
 }

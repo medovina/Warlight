@@ -101,8 +101,8 @@ public class AggressiveBot implements Bot
         int result = 0;
         
         for (Region reg : o1.getNeighbors()) {
-            result += (reg.isOwnedBy(0) ? 1 : 0) * 5;
-            result += (reg.isOwnedBy(game.opponent()) ? 1 : 0) * 2;
+            result += (game.isOwnedBy(reg, 0) ? 1 : 0) * 5;
+            result += (game.isOwnedBy(reg, game.opponent()) ? 1 : 0) * 2;
         }
         
         return result;
@@ -126,7 +126,7 @@ public class AggressiveBot implements Bot
             
             for (Region to : from.getNeighbors()) {
                 // DO NOT ATTACK OWN REGIONS
-                if (to.isOwnedBy(me)) continue;
+                if (game.isOwnedBy(to, me)) continue;
                 
                 // IF YOU HAVE ENOUGH ARMY TO WIN WITH 70%
                 int need = getRequiredSoldiersToConquerRegion(from, to, 0.7);
@@ -151,7 +151,7 @@ public class AggressiveBot implements Bot
     
     private boolean hasOnlyMyNeighbours(Region from) {
         for (Region region : from.getNeighbors()) {            
-            if (!region.isOwnedBy(game.currentPlayer())) return false;
+            if (!game.isOwnedBy(region, game.currentPlayer())) return false;
         }
         return true;
     }

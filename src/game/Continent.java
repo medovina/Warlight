@@ -34,16 +34,6 @@ public class Continent {
             regions.add(region);
     }
     
-    public int getOwner()
-    {
-        int player = regions.get(0).getOwner();
-        for(Region region : regions)
-            if (player != region.getOwner())
-                return 0;
-                
-        return player;
-    }
-
     /**
      * @return The id of this continent
      */

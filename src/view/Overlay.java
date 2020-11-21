@@ -136,7 +136,7 @@ class Overlay extends JPanel implements MouseListener {
             int y = 560 + 19 * i;
 
             Continent c = map.getContinent(mc.id);
-            int owner = c.getOwner();
+            int owner = game.getOwner(c);
             if (owner > 0) {
                 g.setColor(PlayerColors.getHighlightColor(owner));
                 g.fillRect(x - 2, y - 13, 145, 17);

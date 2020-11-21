@@ -113,9 +113,9 @@ public class RunGame
         GameResult result = new GameResult();
         
         result.config = config;
-        result.player1Regions = map.numberRegionsOwned(1);
+        result.player1Regions = game.numberRegionsOwned(1);
         result.player1Armies = game.numberArmiesOwned(1);
-        result.player2Regions = map.numberRegionsOwned(2);
+        result.player2Regions = game.numberRegionsOwned(2);
         result.player2Armies = game.numberArmiesOwned(2);
 
         result.winner = game.winningPlayer();
