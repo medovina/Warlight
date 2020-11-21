@@ -161,7 +161,7 @@ public class Game implements Cloneable {
         GameMap map = new GameMap();
         
         for (MapContinent mapContinent : allMapContinents())
-            map.add(new Continent(mapContinent, 0));
+            map.add(new Continent(mapContinent));
         
         for (MapRegion mapRegion : world.getRegions())
             map.add(new Region(mapRegion, map.getContinent(mapRegion.mapContinent)));

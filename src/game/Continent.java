@@ -21,12 +21,10 @@ import java.util.ArrayList;
 public class Continent {
     private MapContinent mapContinent;
     private ArrayList<Region> regions;
-    private int owner;
     
-    public Continent(MapContinent continent, int owner)
+    public Continent(MapContinent continent)
     {
         this.mapContinent = continent;
-        this.owner = owner;
         regions = new ArrayList<Region>();
     }
     
@@ -36,26 +34,16 @@ public class Continent {
             regions.add(region);
     }
     
-    public void computeOwner()
+    public int getOwner()
     {
         int player = regions.get(0).getOwner();
         for(Region region : regions)
-        {
-            if (player != region.getOwner()) {
-                player = 0;
-                break;
-            }
-        }
-        owner = player;
+            if (player != region.getOwner())
+                return 0;
+                
+        return player;
     }
 
-    /**
-     * @return The player that fully owns this continent, or 0 if none
-     */
-    public int getOwner() {
-        return owner;
-    }
-    
     /**
      * @return The id of this continent
      */

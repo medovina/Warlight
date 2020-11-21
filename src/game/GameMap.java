@@ -49,8 +49,7 @@ public class GameMap implements Cloneable {
 
         for(Continent sr : continents) //copy continents
         {
-            Continent newContinent = new Continent(
-                sr.getMapContinent(), sr.getOwner());
+            Continent newContinent = new Continent(sr.getMapContinent());
             newMap.add(newContinent);
         }
         for(Region r : regions) //copy regions

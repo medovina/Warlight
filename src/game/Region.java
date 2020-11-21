@@ -76,7 +76,6 @@ public class Region {
      */
     public void setOwner(int owner) {
         this.owner = owner;
-        continent.computeOwner();
     }
     
     /**
