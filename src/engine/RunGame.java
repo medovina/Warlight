@@ -20,7 +20,6 @@ package engine;
 import engine.replay.FileGameLog;
 import engine.replay.GameLog;
 import engine.robot.HumanRobot;
-import engine.robot.InternalRobot;
 import game.*;
 import view.GUI;
 
@@ -55,7 +54,7 @@ public class RunGame
             game.setGUI(gui);
         } else gui = null;
         
-        Robot[] robots = new Robot[2];
+        Bot[] robots = new Bot[2];
         robots[0] = setupRobot(config.bot1Init, gui);
         robots[1] = setupRobot(config.bot2Init, gui);
                 
@@ -91,10 +90,38 @@ public class RunGame
         return result;
     }
 
-    private Robot setupRobot(String botInit, GUI gui) {
+    static Bot constructBot(Class<?> botClass) {        
+        Object botObj;
+        try {
+            botObj = botClass.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e); 
+        }
+        if (!(Bot.class.isAssignableFrom(botObj.getClass()))) {
+            throw new RuntimeException("Constructed bot does not implement " + Bot.class.getName() + " interface, bot class instantiated: " + botClass.getName());
+        }
+        Bot bot = (Bot) botObj;
+        return bot;
+    }
+    
+    static Bot constructBot(String botFQCN) {
+        Class<?> botClass;
+        try {
+            try {
+                botClass = Class.forName(botFQCN);
+            } catch (ClassNotFoundException e) {
+                botClass = Class.forName("bots." + botFQCN);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Failed to locate bot class: " + botFQCN, e);
+        }
+        return constructBot(botClass);
+    }
+
+    private Bot setupRobot(String botInit, GUI gui) {
         if (botInit.startsWith("internal:")) {
             String botFQCN = botInit.substring(9);
-            return new InternalRobot(botFQCN);
+            return constructBot(botFQCN);
         }
         if (botInit.startsWith("human")) {
             config.visualize = true;
@@ -103,7 +130,7 @@ public class RunGame
         throw new RuntimeException("Invalid init string: " + botInit);
     }
 
-    private GameResult finish(GameMap map, Robot[] bots)
+    private GameResult finish(GameMap map, Bot[] bots)
     {
         return this.saveGame(map);        
     }
