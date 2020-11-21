@@ -1,7 +1,7 @@
 package game.move;
 
-import game.GameState;
+import game.Game;
 
 public interface Action {
-    void apply(GameState state);
+    void apply(Game state);
 }

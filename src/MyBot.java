@@ -21,7 +21,7 @@ public class MyBot implements Bot
     // Choose a starting region.
     
     @Override
-    public MapRegion chooseRegion(GameState state) {
+    public MapRegion chooseRegion(Game state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         return choosable.get(rand.nextInt(choosable.size())).getMapRegion();
     }
@@ -30,7 +30,7 @@ public class MyBot implements Bot
     // state.armiesPerTurn(state.me()) is the number of armies available to place.
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(GameState state) {
+    public List<PlaceArmiesMove> placeArmies(Game state) {
         int me = state.currentPlayer();
         List<Region> mine = state.regionsOwnedBy(me);
         int numRegions = mine.size();
@@ -51,7 +51,7 @@ public class MyBot implements Bot
     // Decide where to move armies this turn.
     
     @Override
-    public List<AttackTransferMove> moveArmies(GameState state) {
+    public List<AttackTransferMove> moveArmies(Game state) {
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
         for (Region rd : state.regionsOwnedBy(state.currentPlayer())) {

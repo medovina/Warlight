@@ -9,7 +9,7 @@ import game.move.*;
 
 public class AggressiveBot implements Bot 
 {
-    GameState state;
+    Game state;
 
     @Override
     public void init(long timeoutMillis) {
@@ -20,7 +20,7 @@ public class AggressiveBot implements Bot
     // ================
     
     @Override
-    public MapRegion chooseRegion(GameState state) {
+    public MapRegion chooseRegion(Game state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
@@ -55,7 +55,7 @@ public class AggressiveBot implements Bot
     // ==============
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(GameState state) {
+    public List<PlaceArmiesMove> placeArmies(Game state) {
         this.state = state;
 
         int me = state.currentPlayer();
@@ -113,7 +113,7 @@ public class AggressiveBot implements Bot
     // =============
 
     @Override
-    public List<AttackTransferMove> moveArmies(GameState state) {
+    public List<AttackTransferMove> moveArmies(Game state) {
         this.state = state;
         
         int me = state.currentPlayer();

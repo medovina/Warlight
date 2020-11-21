@@ -5,7 +5,7 @@ import java.util.*;
 import game.move.*;
 import view.GUI;
 
-public class GameState implements Cloneable {
+public class Game implements Cloneable {
     public GameConfig config;
     World world;
     GameMap map;
@@ -16,10 +16,10 @@ public class GameState implements Cloneable {
     public Random random;
     GUI gui;
     
-    GameState() {
+    Game() {
     }
     
-    public GameState(GameConfig config) {
+    public Game(GameConfig config) {
         this.config = config != null ? config : new GameConfig();
         world = new World();
         map = makeInitMap();
@@ -34,8 +34,8 @@ public class GameState implements Cloneable {
     }
     
     @Override
-    public GameState clone() {
-        GameState s = new GameState();
+    public Game clone() {
+        Game s = new Game();
         s.config = config;
         s.map = map.clone();
         s.round = round;

@@ -19,14 +19,14 @@ import utils.Util;
 public class MapView extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    GameState game;
+    Game game;
     SVGDiagram diagram;
     AffineTransform viewportTransform;
     Rectangle2D imageBounds;
     
     Point[] regionPositions;
     
-    public MapView(GameState game, int width, int height) {
+    public MapView(Game game, int width, int height) {
         this.game = game;
         diagram = game.getWorld().getDiagram();
         Rectangle viewport = new Rectangle(0, 0, width, height);

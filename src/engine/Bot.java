@@ -31,20 +31,20 @@ public interface Bot {
      * @param state
      * @param timeoutMillis in milliseconds
      */
-    public MapRegion chooseRegion(GameState state);
+    public MapRegion chooseRegion(Game state);
     
     /**
      * PLACE ARMIES - distribute armies between your regions.
      * @param state
      * @param timeoutMillis in milliseconds
      */
-    public List<PlaceArmiesMove> placeArmies(GameState state);
+    public List<PlaceArmiesMove> placeArmies(Game state);
     
     /**
      * MOVE ARMIES - attack opponents' regions or neutral ones ... or transfer armies between your regions.
      * @param state
      * @param timeoutMillis in milliseconds
      */
-    public List<AttackTransferMove> moveArmies(GameState state);
+    public List<AttackTransferMove> moveArmies(Game state);
 
 }

@@ -26,13 +26,13 @@ import game.move.PlaceArmiesMove;
 import view.GUI;
 
 public class Engine {
-    GameState game;
+    Game game;
     
     private Bot[] bots;
     private long timeoutMillis;
     private GUI gui;
     
-    public Engine(GameState game, Bot[] robots, GUI gui, long timeoutMillis)
+    public Engine(Game game, Bot[] robots, GUI gui, long timeoutMillis)
     {
         this.game = game;
         

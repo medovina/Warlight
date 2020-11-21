@@ -12,7 +12,7 @@ public class ChooseAction implements Action {
         this.region = region.getMapRegion();
     }
     
-    public void apply(GameState state) {
+    public void apply(Game state) {
         state.chooseRegion(state.region(region));
     }
 

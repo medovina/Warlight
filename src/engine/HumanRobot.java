@@ -19,17 +19,17 @@ public class HumanRobot implements Bot {
     }
 
     @Override
-    public MapRegion chooseRegion(GameState state) {
+    public MapRegion chooseRegion(Game state) {
         return gui.chooseRegionHuman().getMapRegion();
     }
 
     @Override
-    public List<PlaceArmiesMove> placeArmies(GameState state) {
+    public List<PlaceArmiesMove> placeArmies(Game state) {
         return gui.placeArmiesHuman();
     }
 
     @Override
-    public List<AttackTransferMove> moveArmies(GameState state) {
+    public List<AttackTransferMove> moveArmies(Game state) {
         return gui.moveArmiesHuman();
     }
 }

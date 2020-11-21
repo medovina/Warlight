@@ -23,7 +23,7 @@ public class GUI extends JFrame implements KeyListener
 
     private static final int WIDTH = 1426, HEIGHT = 715;
     
-    private GameState game;
+    private Game game;
     
     private GUINotif notification;
     
@@ -57,7 +57,7 @@ public class GUI extends JFrame implements KeyListener
     private Region moveFrom;    
     public CountDownLatch moveArmiesAction;
 
-    public GUI(GameState game, Config config)
+    public GUI(Game game, Config config)
     {
         this.game = game;
         this.config = config;

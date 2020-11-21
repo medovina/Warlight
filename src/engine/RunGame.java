@@ -24,7 +24,7 @@ public class RunGame
 {
     Config config;
     Engine engine;
-    GameState game;
+    Game game;
     
     public RunGame(Config config) {
         this.config = config;        
@@ -32,7 +32,7 @@ public class RunGame
     
     public GameResult go()
     { 
-        game = new GameState(config.game);
+        game = new Game(config.game);
 
         GUI gui;
         if (config.visualize) {

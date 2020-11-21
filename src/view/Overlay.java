@@ -19,7 +19,7 @@ import game.*;
 import utils.Util;
 
 class Overlay extends JPanel implements MouseListener {
-    GameState game;
+    Game game;
     MapView mapView;
     GUI gui;
 
@@ -32,7 +32,7 @@ class Overlay extends JPanel implements MouseListener {
     static Color Ocean = new Color(0x21, 0x4a, 0x8a);
     static Color TextColor = Color.LIGHT_GRAY;
 
-    public Overlay(GUI gui, GameState game) {
+    public Overlay(GUI gui, Game game) {
         this.game = game;
         this.mapView = gui.mapView;
         this.gui = gui;
