@@ -120,7 +120,7 @@ public class Engine {
                     
                     if (region == null || !game.pickableRegions.contains(region)) {
                         System.err.println("invalid starting region; choosing one at random");
-                        region = game.getRandomStartingRegion();
+                        region = game.getRandomStartingRegion(p);
                     }
             
                     game.chooseRegion(region);

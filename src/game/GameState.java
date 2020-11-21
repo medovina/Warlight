@@ -22,10 +22,7 @@ public class GameState implements Cloneable {
     public GameState(GameConfig config) {
         this.config = config != null ? config : new GameConfig();
         map = makeInitMap();
-        round = 0;
         turn = 1;
-        phase = Phase.STARTING_REGIONS;
-        pickableRegions = null;
         random = (config == null || config.seed < 0) ? new Random() : new Random(config.seed);
 
         initStartingRegions();
@@ -129,7 +126,7 @@ public class GameState implements Cloneable {
 
     public int armiesPerTurn(int player, boolean first)
     {
-        int armies = config.startingArmies;
+        int armies = 5;
         if (first)
             armies /= 2;
         
@@ -205,22 +202,45 @@ public class GameState implements Cloneable {
         return config.warlords ? 3 : 4;
     }
 
-    public Region getRandomStartingRegion() {
-        return pickableRegions.get(random.nextInt(pickableRegions.size()));
+    public Region getRandomStartingRegion(int forPlayer) {
+        while (true) {
+            Region r = pickableRegions.get(random.nextInt(pickableRegions.size()));
+            boolean ok = true;
+            for (Region n : r.getNeighbors())
+                if (n.getOwner() != 0 && n.getOwner() != forPlayer) {
+                    ok = false;
+                    break;
+                }
+            if (ok)
+                return r;
+        }
+    }
+
+    void setAsStarting(Region r, int player) {
+        r.setOwner(player);
+        pickableRegions.remove(r);
     }
     
     void initStartingRegions() {
         pickableRegions = new ArrayList<Region>();
         
         if (config.warlords)
-            for(MapContinent continent : MapContinent.values())
-            {
+            for(MapContinent continent : MapContinent.values()) {
                 int numRegions = continent.getRegions().size();
-                //get one random region from continent
-                int randomRegionId = random.nextInt(numRegions);
-                
-                Region randomRegion = region(continent.getRegions().get(randomRegionId));
-                pickableRegions.add(randomRegion);
+                while (true) {
+                    int randomRegionId = random.nextInt(numRegions);
+                    Region region = region(continent.getRegions().get(randomRegionId));
+                    boolean ok = true;
+                    for (Region n : region.getNeighbors())
+                        if (pickableRegions.contains(n)) {
+                            ok = false;
+                            break;
+                        }
+                    if (ok) {
+                        pickableRegions.add(region);
+                        break;
+                    }
+                }
             }
         else
             pickableRegions = new ArrayList<Region>(map.regions);
@@ -230,11 +250,11 @@ public class GameState implements Cloneable {
         else {  // automatic distribution
             for (int i = 0 ; i < numStartingRegions() ; ++i)
                 for (int player = 1; player <= 2; ++player) {
-                    Region r = getRandomStartingRegion();
-                    r.setOwner(player);
-                    pickableRegions.remove(r);
+                    Region r = getRandomStartingRegion(player);
+                    setAsStarting(r, player);
                 }
             phase = Phase.PLACE_ARMIES;
+            round = 1;
         }
     }
     
@@ -245,8 +265,7 @@ public class GameState implements Cloneable {
         if (!pickableRegions.contains(region))
             throw new Error("starting region is not pickable");
         
-        region.setOwner(turn);
-        pickableRegions.remove(region);
+        setAsStarting(region, turn);
         turn = 3 - turn;
         
         if (map.numberRegionsOwned(turn) == numStartingRegions()) {
