@@ -100,7 +100,7 @@ class Overlay extends JPanel implements MouseListener {
     }
 
     void drawRegionInfo(Graphics2D g) {
-        for (int id = 1 ; id <= game.numRegions() ; ++id) {
+        for (int id = 0 ; id < game.numRegions() ; ++id) {
             Point pos = mapView.regionPositions[id];
             RegionInfo ri = gui.regionInfo(id);
             int x = pos.x, y = pos.y;

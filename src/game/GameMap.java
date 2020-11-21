@@ -31,14 +31,14 @@ public class GameMap implements Cloneable {
 
     public void add(Region region)
     {
-        if (region.getId() != regions.size() + 1)
+        if (region.getId() != regions.size())
             throw new Error("regions out of order");
         regions.add(region);
     }
     
     public void add(Continent continent)
     {
-        if (continent.getId() != continents.size() + 1)
+        if (continent.getId() != continents.size())
             throw new Error("continents out of order");
         continents.add(continent);
     }
@@ -83,8 +83,8 @@ public class GameMap implements Cloneable {
     
     public Region getRegion(int id)
     {
-        if (1 <= id && id <= regions.size())
-            return regions.get(id - 1);
+        if (0 <= id && id < regions.size())
+            return regions.get(id);
         
         System.err.println("Could not find region with id " + id);
         return null;
@@ -96,8 +96,8 @@ public class GameMap implements Cloneable {
     
     public Continent getContinent(int id)
     {
-        if (1 <= id && id <= continents.size())
-            return continents.get(id - 1);
+        if (0 <= id && id < continents.size())
+            return continents.get(id);
 
         System.err.println("Could not find continent with id " + id);
         return null;

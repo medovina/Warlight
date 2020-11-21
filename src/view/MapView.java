@@ -32,12 +32,12 @@ public class MapView extends JPanel {
         Rectangle viewport = new Rectangle(0, 0, width, height);
         diagram.setDeviceViewport(viewport);
 
-        regionPositions = new Point[game.numRegions() + 1];
+        regionPositions = new Point[game.numRegions()];
         SVGRoot root = diagram.getRoot();
         viewportTransform = root.calcViewportTransform(viewport);
         imageBounds = Util.getBoundingBox(root);
             
-        for (int i = 1 ; i <= game.numRegions() ; ++i) {
+        for (int i = 0 ; i < game.numRegions() ; ++i) {
             MapRegion r = game.getMapRegion(i);
             Point2D p = viewportTransform.transform(r.getLabelPosition(), null);
             regionPositions[i] = new Point((int) p.getX(), (int) p.getY());

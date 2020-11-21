@@ -55,13 +55,13 @@ public class World {
             if (e instanceof Desc) {
                 mapDesc = ((Desc) e).getText();
             } else {
-                MapContinent c = new MapContinent(Util.decamel(e.getId()), continents.size() + 1);
+                MapContinent c = new MapContinent(Util.decamel(e.getId()), continents.size());
                 continents.add(c);
 
                 for (SVGElement d : e.getChildren(null)) {
                     if (d instanceof Path) {
                         Path p = (Path) d;
-                        MapRegion r = new MapRegion(p, Util.decamel(p.getId()), regions.size() + 1, c);
+                        MapRegion r = new MapRegion(p, Util.decamel(p.getId()), regions.size(), c);
                         regions.add(r);
                         c.addRegion(r);
                     } else if (d instanceof Desc) {
@@ -148,7 +148,7 @@ public class World {
     }
 
     public MapContinent getContinentById(int i) {
-        return continents.get(i - 1);
+        return continents.get(i);
     }
 
     public int numRegions() {
@@ -160,7 +160,7 @@ public class World {
     }
 
     public MapRegion getMapRegion(int i) {
-        return regions.get(i - 1);
+        return regions.get(i);
     }
 
     public MapRegion getMapRegion(String id) {
