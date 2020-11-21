@@ -36,7 +36,8 @@ public class MapRegion {
     }
 
     public void addNeighbor(MapRegion r) {
-        neighbours.add(r);
+        if (!neighbours.contains(r))
+            neighbours.add(r);
     }
     
     public List<MapRegion> getNeighbours() {

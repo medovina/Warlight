@@ -79,17 +79,17 @@
    guidetolerance="10"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:window-width="1736"
-   inkscape:window-height="901"
+   inkscape:window-width="1735"
+   inkscape:window-height="855"
    id="namedview4834"
    showgrid="false"
-   inkscape:zoom="0.84661053"
-   inkscape:cx="573.42753"
-   inkscape:cy="354.59443"
-   inkscape:window-x="149"
-   inkscape:window-y="52"
+   inkscape:zoom="2.3945762"
+   inkscape:cx="735.21094"
+   inkscape:cy="301.80757"
+   inkscape:window-x="-128"
+   inkscape:window-y="61"
    inkscape:window-maximized="0"
-   inkscape:current-layer="northAmerica"
+   inkscape:current-layer="warlightMap"
    inkscape:document-rotation="0" />
 
 <script
@@ -6780,7 +6780,24 @@
 <g
    id="map"
    transform="translate(24,36)"
-   style="display:inline">
+   style="display:inline"><desc
+   id="desc790">adj alaska kamchatka
+adj brazil northAfrica
+adj eastAfrica madagascar
+adj easternAustralia newGuinea
+adj egypt southernEurope
+adj greatBritain iceland
+adj greatBritain northernEurope
+adj greatBritain scandinavia
+adj greenland iceland
+adj greenland quebec
+adj iceland scandinavia
+adj indonesia westernAustralia
+adj indonesia newGuinea
+adj japan kamchatka
+adj japan mongolia
+adj madagascar southAfrica
+adj northAfrica southernEurope</desc>
 	<g
    id="northAmerica"><desc
    id="desc791">bonus 5</desc>

@@ -151,7 +151,6 @@ public class GUI extends JFrame implements KeyListener
     @Override
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
-        c = Character.toLowerCase(c);
         switch(c) {
         case 'n':
             nextRound = true;
@@ -160,6 +159,9 @@ public class GUI extends JFrame implements KeyListener
         case 'c':
             continual = !continual;
             showNotification( continual ? "Continual run enabled" : "Continual run disabled");
+            break;
+        case 'C':
+            overlay.toggleConnections();
             break;
         case ' ':
             clicked = true;

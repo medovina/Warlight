@@ -30,30 +30,50 @@ public class World {
         diagram = universe.getDiagram(uri);
 
         SVGElement map = diagram.getElement("map");
-
-        for (SVGElement e : map.getChildren(null)) {
-            MapContinent c = new MapContinent(Util.decamel(e.getId()), continents.size() + 1);
-            continents.add(c);
-
-            for (SVGElement d : e.getChildren(null)) {
-                if (d instanceof Path) {
-                    Path p = (Path) d;
-                    MapRegion r = new MapRegion(p, Util.decamel(p.getId()), regions.size() + 1, c);
-                    regions.add(r);
-                    c.addRegion(r);
-                } else if (d instanceof Desc) {
-                    String s = ((Desc) d).getText();
-                    String[] w = s.split(" +");
-                    if (w[0].strip().equals("bonus"))
-                        c.setReward(Integer.parseInt(w[1]));
-                    else
-                        throw new Error("unknown keyword in continent description");
-                }
-            }
-        }
+        String mapDesc = createRegions(map);
 
         findNeighbors();
+
+        if (mapDesc != null)
+            for (String line : mapDesc.split("\n")) {
+                String[] w = line.split(" +");
+                if (w[0].strip().equals("adj")) {
+                    MapRegion r = getMapRegion(w[1].strip());
+                    MapRegion s = getMapRegion(w[2].strip());
+                    r.addNeighbor(s);
+                    s.addNeighbor(r);
+                } else throw new Error("unknown keyword in map description");
+            }
+
         findLabels();
+    }
+
+    String createRegions(SVGElement map) {
+        String mapDesc = null;
+
+        for (SVGElement e : map.getChildren(null))
+            if (e instanceof Desc) {
+                mapDesc = ((Desc) e).getText();
+            } else {
+                MapContinent c = new MapContinent(Util.decamel(e.getId()), continents.size() + 1);
+                continents.add(c);
+
+                for (SVGElement d : e.getChildren(null)) {
+                    if (d instanceof Path) {
+                        Path p = (Path) d;
+                        MapRegion r = new MapRegion(p, Util.decamel(p.getId()), regions.size() + 1, c);
+                        regions.add(r);
+                        c.addRegion(r);
+                    } else if (d instanceof Desc) {
+                        String s = ((Desc) d).getText();
+                        String[] w = s.split(" +");
+                        if (w[0].strip().equals("bonus"))
+                            c.setReward(Integer.parseInt(w[1]));
+                        else throw new Error("unknown keyword in continent description");
+                    }
+            }
+        }
+        return mapDesc;
     }
 
     void findNeighbors() {
@@ -139,8 +159,16 @@ public class World {
         return regions;
     }
 
-    public MapRegion getMapRegionById(int i) {
+    public MapRegion getMapRegion(int i) {
         return regions.get(i - 1);
+    }
+
+    public MapRegion getMapRegion(String id) {
+        for (MapRegion r : regions)
+            if (r.svgElement.getId().equals(id))
+                return r;
+
+        throw new Error("no region with id '" + id + "'");
     }
 
     public MapRegion getMapRegion(SVGElement e) {

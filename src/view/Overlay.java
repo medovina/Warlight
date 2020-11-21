@@ -24,6 +24,7 @@ class Overlay extends JPanel implements MouseListener {
     GUI gui;
 
     Rectangle doneBox;
+    boolean showConnections;
 
     private static final long serialVersionUID = 1L;
 
@@ -45,6 +46,11 @@ class Overlay extends JPanel implements MouseListener {
         m.setReshowDelay(10);
 
         setToolTipText("");
+    }
+
+    public void toggleConnections() {
+        showConnections = !showConnections;
+        repaint();
     }
 
     class CompareByName implements Comparator<MapContinent> {
@@ -77,6 +83,22 @@ class Overlay extends JPanel implements MouseListener {
         }
     }
 
+    void drawConnections(Graphics2D g) {
+        Stroke save = g.getStroke();
+        g.setStroke(new BasicStroke(2));
+        g.setColor(Color.YELLOW.darker());
+
+        for (MapRegion r : game.allMapRegions())
+            for (MapRegion s : r.getNeighbours()) {
+                if (r.id < s.id) {
+                    Point p = mapView.regionPositions[r.id],
+                          q = mapView.regionPositions[s.id];
+                    g.drawLine(p.x, p.y, q.x, q.y);
+                }
+            }
+        g.setStroke(save);
+    }
+
     void drawRegionInfo(Graphics2D g) {
         for (int id = 1 ; id <= game.numRegions() ; ++id) {
             Point pos = mapView.regionPositions[id];
@@ -105,7 +127,7 @@ class Overlay extends JPanel implements MouseListener {
     void drawScroll(Graphics g) {
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
-        ArrayList<MapContinent> a = new ArrayList<MapContinent>(game.allContinents());
+        ArrayList<MapContinent> a = new ArrayList<MapContinent>(game.allMapContinents());
         Collections.sort(a, new CompareByName());
 
         GameMap map = game.getMap();
@@ -160,6 +182,9 @@ class Overlay extends JPanel implements MouseListener {
         } else doneBox = null;
 
         Util.drawCentered(g, "Round " + game.getRoundNumber(), 100, TopMargin + 5);
+
+        if (showConnections)
+            drawConnections(g2);
 
         drawRegionInfo(g2);
 

@@ -70,11 +70,13 @@ public class GameState implements Cloneable {
 
     public World getWorld() { return world; }
     
-    public List<MapContinent> allContinents() { return world.getContinents(); }
+    public List<MapContinent> allMapContinents() { return world.getContinents(); }
 
     public int numRegions() { return world.numRegions(); }
 
-    public MapRegion getMapRegion(int id) { return world.getMapRegionById(id); }
+    public List<MapRegion> allMapRegions() { return world.getRegions(); }
+
+    public MapRegion getMapRegion(int id) { return world.getMapRegion(id); }
 
     public GameMap getMap() { return map; }
 
@@ -158,7 +160,7 @@ public class GameState implements Cloneable {
     {
         GameMap map = new GameMap();
         
-        for (MapContinent mapContinent : allContinents())
+        for (MapContinent mapContinent : allMapContinents())
             map.add(new Continent(mapContinent, 0));
         
         for (MapRegion mapRegion : world.getRegions())
