@@ -14,13 +14,10 @@ public class WarlightFight {
     
     private File resultDirFile;
     
-    private File replayDirFile;
-    
-    public WarlightFight(WarlightFightConfig prototypeConfig, File tableFile, File resultDirFile, File replayDirFile) {
+    public WarlightFight(WarlightFightConfig prototypeConfig, File tableFile, File resultDirFile) {
         this.fightConfig = prototypeConfig;
         this.tableFile = tableFile;
         this.resultDirFile = resultDirFile;
-        this.replayDirFile = replayDirFile;
     }
     
     public TotalResults fight(String bot1Name, String bot1Init, String bot2Name, String bot2Init) {        
@@ -38,20 +35,7 @@ public class WarlightFight {
         
         GameResult[] results = new GameResult[rounds.length];
 
-        if (replayDirFile != null)
-            replayDirFile.mkdirs();
-                        
         for (int i = 0; i < rounds.length; ++i) {
-            if (replayDirFile != null) {
-                // SET REPLAY FILE
-                int roundNumber = 0;
-                while (true) {
-                    rounds[i].getConfig().replayLog = new File(replayDirFile, bot1Name + "-vs-" + bot2Name + "-Round-" + roundNumber + ".replay");
-                    if (!rounds[i].getConfig().replayLog.exists()) break;
-                    ++roundNumber;
-                }
-            }
-            
             GameResult result = rounds[i].run();
             results[i] = result;
             
@@ -108,14 +92,10 @@ public class WarlightFight {
         try {
             writer = new PrintWriter(new FileOutputStream(file, true));
             
-            if (outputHeader) writer.println(results[0].getCSVHeader() + ";replay");
+            if (outputHeader) writer.println(results[0].getCSVHeader());
             
-            int index = 0;
-            for (GameResult result : results) {
-                writer.println(result.getCSV() + ";" + rounds[index].getConfig().replayLog.getAbsolutePath());
-                ++index;
-            }
-            
+            for (GameResult result : results)
+                writer.println(result.getCSV());
         } catch (Exception e) {
             throw new RuntimeException("Failed to write results into file: " + file.getAbsolutePath(), e);
         } finally {

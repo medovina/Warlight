@@ -20,7 +20,6 @@ package engine;
 import java.util.ArrayList;
 import java.util.List;
 
-import engine.robot.HumanRobot;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;

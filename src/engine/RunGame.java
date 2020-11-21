@@ -17,9 +17,6 @@
 
 package engine;
 
-import engine.replay.FileGameLog;
-import engine.replay.GameLog;
-import engine.robot.HumanRobot;
 import game.*;
 import view.GUI;
 
@@ -35,11 +32,6 @@ public class RunGame
     
     public GameResult go()
     { 
-        GameLog log = null;
-        if (config.replayLog != null) {
-            log = new FileGameLog(config.replayLog);
-        }
-        
         game = new GameState(config.game, null);
 
         GUI gui;
@@ -61,10 +53,6 @@ public class RunGame
         //start the engine
         this.engine = new Engine(game, robots, gui, config.botCommandTimeoutMillis);
         
-        if (log != null) {
-            log.start(config);
-        }
-        
         for (int i = 1 ; i <= 2 ; ++i) {
             robots[i - 1].init(config.botCommandTimeoutMillis);
         }
@@ -75,17 +63,10 @@ public class RunGame
         //play the game
         while(!game.isDone())
         {
-            if (log != null) {
-                log.logComment(0, "Round " + game.getRoundNumber());
-            }
             engine.playRound();
         }
 
         GameResult result = finish(game.getMap(), robots);
-        
-        if (log != null) {
-            log.finish(result);
-        }
         
         return result;
     }

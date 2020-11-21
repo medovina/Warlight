@@ -1,7 +1,5 @@
 package engine;
 
-import java.io.File;
-
 import game.GameConfig;
 import utils.Util;
 
@@ -15,10 +13,6 @@ public class Config implements Cloneable {
     public boolean visualize = true;
     public Boolean visualizeContinual = null;
     public Integer visualizeContinualFrameTimeMillis = null;
-    
-    public boolean logToConsole = true;
-    
-    public File replayLog = null;
     
     public GameConfig game = new GameConfig();
     
@@ -54,14 +48,13 @@ public class Config implements Cloneable {
         return player1Name + ";" + player2Name + ";" +
                botCommandTimeoutMillis + ";" +
                visualize + ";" + visualizeContinual + ";" + visualizeContinualFrameTimeMillis + ";" +
-               logToConsole + ";" + game.asString();
+               game.asString();
     }
     
     @Override
     public Config clone() {
         Config result = fromString(asString());
         
-        result.replayLog = replayLog;
         result.bot1Init = bot1Init;
         result.bot2Init = bot2Init;
         
@@ -89,10 +82,9 @@ public class Config implements Cloneable {
         result.visualize = Boolean.parseBoolean(parts[3]);
         result.visualizeContinual = (parts[4].toLowerCase().equals("null") ? null : Boolean.parseBoolean(parts[4]));
         result.visualizeContinualFrameTimeMillis = (parts[5].toLowerCase().equals("null") ? null : Integer.parseInt(parts[5]));
-        result.logToConsole = Boolean.parseBoolean(parts[6]);
         
         int engineConfigStart = 0;
-        for (int i = 0; i < 7; ++i) {
+        for (int i = 0; i < 6; ++i) {
             engineConfigStart = line.indexOf(";", engineConfigStart);
             ++engineConfigStart;
         }

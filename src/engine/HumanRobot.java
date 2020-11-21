@@ -1,8 +1,7 @@
-package engine.robot;
+package engine;
 
 import java.util.List;
 
-import engine.Bot;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;

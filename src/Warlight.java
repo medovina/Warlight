@@ -25,8 +25,7 @@ public class Warlight {
 
         WarlightFight fight = new WarlightFight(fc,
             resultdir == null ? null : new File(resultdir + "/all-results.csv"),
-            resultdir == null ? null : new File(resultdir + "/fights"),
-            resultdir == null ? null : new File(resultdir + "/replays")
+            resultdir == null ? null : new File(resultdir + "/fights")
             );
         fight.fight(Util.className(bots.get(0)), internalBot(bots.get(0)),
                     Util.className(bots.get(1)), internalBot(bots.get(1)));

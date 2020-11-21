@@ -2,8 +2,7 @@ package bots;
 
 import java.util.*;
 
-import bots.map.RegionBFS;
-import bots.map.RegionBFS.*;
+import bots.RegionBFS.*;
 import engine.Bot;
 import game.*;
 import game.move.*;
