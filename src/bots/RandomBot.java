@@ -49,11 +49,11 @@ public class RandomBot implements Bot
     // Decide where to move armies this turn.
     
     @Override
-    public List<AttackTransferMove> moveArmies(Game state) {
+    public List<AttackTransferMove> moveArmies(Game game) {
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
-        for (Region rd : state.regionsOwnedBy(state.currentPlayer())) {
-            int count = rand.nextInt(rd.getArmies());
+        for (Region rd : game.regionsOwnedBy(game.currentPlayer())) {
+            int count = rand.nextInt(game.getArmies(rd));
             if (count > 0) {
                 List<Region> neighbors = rd.getNeighbors();
                 Region to = neighbors.get(rand.nextInt(neighbors.size()));

@@ -63,7 +63,6 @@ class Overlay extends JPanel implements MouseListener {
     void drawLegend(Graphics g) {
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
-        GameMap map = game.getMap();
         for (int player = 1; player <= 2; ++player) {
             int offset = 40 * (player - 1);
             int x = getWidth() - 250;
@@ -75,7 +74,7 @@ class Overlay extends JPanel implements MouseListener {
 
             g.setColor(TextColor);
             g.drawString(gui.playerName(player), x + 29, y + 7);
-            int armies = map.numberArmiesOwned(player);
+            int armies = game.numberArmiesOwned(player);
             if (player == game.currentPlayer())
                 armies += gui.armiesPlaced;
             String s = String.format("[%d armies, +%d / turn]", armies, game.armiesEachTurn(player));

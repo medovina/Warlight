@@ -225,7 +225,7 @@ public class GUI extends JFrame implements KeyListener
         
         for(Region region : game.getMap().regions) {
             int id = region.getId();
-            regionInfo[id].setArmies(region.getArmies());
+            regionInfo[id].setArmies(game.getArmies(region));
             mapView.setOwner(id, region.getOwner());
         }
 
@@ -262,7 +262,7 @@ public class GUI extends JFrame implements KeyListener
             int id = region.getId();
             RegionInfo ri = this.regionInfo[id];
             mapView.setOwner(id, region.getOwner());
-            ri.setArmies(region.getArmies());
+            ri.setArmies(game.getArmies(region));
         }
     }
     
@@ -347,10 +347,10 @@ public class GUI extends JFrame implements KeyListener
         waitForClick();
         
         fromRegionInfo.setHighlight(false);
-        fromRegionInfo.setArmies(game.getRegion(fromId).getArmies());
+        fromRegionInfo.setArmies(game.getArmies(game.getRegion(fromId)));
         
         toRegionInfo.setHighlight(false);
-        toRegionInfo.setArmies(game.getRegion(toId).getArmies());
+        toRegionInfo.setArmies(game.getArmies(game.getRegion(toId)));
         
         mainArrow.setVisible(false);
         
@@ -413,8 +413,8 @@ public class GUI extends JFrame implements KeyListener
                 String.format("(attackers lost %d, defenders lost %d)", 
                                attackersDestroyed, defendersDestroyed));
 
-        fromRegionInfo.setArmies(fromRegion.getArmies());
-        toRegionInfo.setArmies(toRegion.getArmies());
+        fromRegionInfo.setArmies(game.getArmies(fromRegion));
+        toRegionInfo.setArmies(game.getArmies(toRegion));
 
         if (success)
             mapView.setOwner(toRegion.getId(), toRegion.getOwner());

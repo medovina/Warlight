@@ -9,7 +9,7 @@ import game.move.*;
 
 public class AggressiveBot implements Bot 
 {
-    Game state;
+    Game game;
 
     @Override
     public void init(long timeoutMillis) {
@@ -56,7 +56,7 @@ public class AggressiveBot implements Bot
     
     @Override
     public List<PlaceArmiesMove> placeArmies(Game state) {
-        this.state = state;
+        this.game = state;
 
         int me = state.currentPlayer();
         List<PlaceArmiesMove> result = new ArrayList<PlaceArmiesMove>();
@@ -102,7 +102,7 @@ public class AggressiveBot implements Bot
         
         for (Region reg : o1.getNeighbors()) {
             result += (reg.isOwnedBy(0) ? 1 : 0) * 5;
-            result += (reg.isOwnedBy(state.opponent()) ? 1 : 0) * 2;
+            result += (reg.isOwnedBy(game.opponent()) ? 1 : 0) * 2;
         }
         
         return result;
@@ -113,16 +113,16 @@ public class AggressiveBot implements Bot
     // =============
 
     @Override
-    public List<AttackTransferMove> moveArmies(Game state) {
-        this.state = state;
+    public List<AttackTransferMove> moveArmies(Game game) {
+        this.game = game;
         
-        int me = state.currentPlayer();
+        int me = game.currentPlayer();
         List<AttackTransferMove> result = new ArrayList<AttackTransferMove>();
-        Collection<Region> regions = state.regionsOwnedBy(me);
+        Collection<Region> regions = game.regionsOwnedBy(me);
         
         // CAPTURE ALL REGIONS WE CAN
         for (Region from : regions) {
-            int available = from.getArmies() - 1;  // 1 army must stay behind
+            int available = game.getArmies(from) - 1;  // 1 army must stay behind
             
             for (Region to : from.getNeighbors()) {
                 // DO NOT ATTACK OWN REGIONS
@@ -141,7 +141,7 @@ public class AggressiveBot implements Bot
         
         // MOVE LEFT OVERS CLOSER TO THE FRONT
         for (Region from : regions) {
-            if (hasOnlyMyNeighbours(from) && from.getArmies() > 1) {
+            if (hasOnlyMyNeighbours(from) && game.getArmies(from) > 1) {
                 result.add(moveToFront(from));
             }
         }
@@ -151,19 +151,18 @@ public class AggressiveBot implements Bot
     
     private boolean hasOnlyMyNeighbours(Region from) {
         for (Region region : from.getNeighbors()) {            
-            if (!region.isOwnedBy(state.currentPlayer())) return false;
+            if (!region.isOwnedBy(game.currentPlayer())) return false;
         }
         return true;
     }
 
     private int getRequiredSoldiersToConquerRegion(Region from, Region to, double winProbability) {
-        int req = (int) Math.round(to.getArmies() * 1.25 + 1);
-        return req <= from.getArmies() - 1 ? req : Integer.MAX_VALUE;
+        int req = (int) Math.round(game.getArmies(to) * 1.25 + 1);
+        return req <= game.getArmies(from) - 1 ? req : Integer.MAX_VALUE;
     }
         
     private AttackTransferMove transfer(Region from, Region to) {
-        AttackTransferMove result = new AttackTransferMove(from, to, from.getArmies()-1);
-        return result;
+        return new AttackTransferMove(from, to, game.getArmies(from)-1);
     }
     
     private MapRegion moveToFrontRegion;
@@ -175,7 +174,7 @@ public class AggressiveBot implements Bot
 
             @Override
             public BFSVisitResult<BFSNode> visit(MapRegion region, int level, BFSNode parent, BFSNode thisNode) {
-                if (!hasOnlyMyNeighbours(state.region(region))) {
+                if (!hasOnlyMyNeighbours(game.region(region))) {
                     moveToFrontRegion = region;
                     return new BFSVisitResult<BFSNode>(BFSVisitResultType.TERMINATE, thisNode == null ? new BFSNode() : thisNode);
                 }
@@ -189,7 +188,7 @@ public class AggressiveBot implements Bot
             List<MapRegion> path = bfs.getAllPaths(moveToFrontRegion).get(0);
             MapRegion moveTo = path.get(1);
             
-            return transfer(from, state.region(moveTo));
+            return transfer(from, game.region(moveTo));
         }
         
         return null;

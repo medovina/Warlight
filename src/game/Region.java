@@ -22,22 +22,20 @@ public class Region {
     private MapRegion mapRegion;
     private ArrayList<Region> neighbors;
     private Continent continent;
-    private int armies;
     private int owner;
     
-    public Region(MapRegion region, Continent continent, int owner, int armies)
+    public Region(MapRegion region, Continent continent, int owner)
     {
         this.mapRegion = region;
         this.continent = continent;
         this.neighbors = new ArrayList<Region>();
         this.owner = owner;
-        this.armies = armies;
         
         continent.addRegion(this);
     }
     
     public Region(MapRegion region,Continent continent) {
-        this(region, continent, 0, 0);
+        this(region, continent, 0);
     }
     
     public void addNeighbor(Region neighbor)
@@ -62,13 +60,6 @@ public class Region {
     public boolean isOwnedBy(int player)
     {
         return owner == player;
-    }
-    
-    /**
-     * @param armies Sets the number of armies that are on this Region
-     */
-    public void setArmies(int armies) {
-        this.armies = armies;
     }
     
     /**
@@ -104,13 +95,6 @@ public class Region {
     }
     
     /**
-     * @return The number of armies on this region
-     */
-    public int getArmies() {
-        return armies;
-    }
-    
-    /**
      * @return The player that owns this region
      */
     public int getOwner() {
@@ -130,10 +114,5 @@ public class Region {
                 return true;
         
         return false;
-    }
-    
-    @Override
-    public String toString() {
-        return mapRegion.getName() + "[" + owner + "|" + armies + "]";
     }
 }

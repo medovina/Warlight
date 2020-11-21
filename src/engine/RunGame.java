@@ -114,9 +114,9 @@ public class RunGame
         
         result.config = config;
         result.player1Regions = map.numberRegionsOwned(1);
-        result.player1Armies = map.numberArmiesOwned(1);
+        result.player1Armies = game.numberArmiesOwned(1);
         result.player2Regions = map.numberRegionsOwned(2);
-        result.player2Armies = map.numberArmiesOwned(2);
+        result.player2Armies = game.numberArmiesOwned(2);
 
         result.winner = game.winningPlayer();
         result.round = game.getRoundNumber();

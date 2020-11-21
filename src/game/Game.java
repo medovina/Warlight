@@ -9,6 +9,7 @@ public class Game implements Cloneable {
     public GameConfig config;
     World world;
     GameMap map;
+    int[] armies;
     int round;
     int turn;
     Phase phase;
@@ -62,7 +63,7 @@ public class Game implements Cloneable {
             for (int player = 1 ; player <= 2 ; ++player) {
                 sb.append("p" + player + ": ");
                 for (Region r : regionsOwnedBy(player))
-                    sb.append(r.getMapRegion().getName() + "=" + r.getArmies() + " ");
+                    sb.append(r.getMapRegion().getName() + "=" + getArmies(r) + " ");
             }
         sb.append("]");
         return sb.toString();
@@ -79,6 +80,18 @@ public class Game implements Cloneable {
     public MapRegion getMapRegion(int id) { return world.getMapRegion(id); }
 
     public GameMap getMap() { return map; }
+
+    public int getArmies(MapRegion region) {
+        return armies[region.id];
+    }
+
+    public int getArmies(Region region) {
+        return armies[region.getId()];
+    }
+
+    void setArmies(Region region, int n) {
+        armies[region.getId()] = n;
+    }
 
     public int getRoundNumber() {
         return round;
@@ -107,7 +120,7 @@ public class Game implements Cloneable {
             if (regions1 > regions2) return 1;
             if (regions2 > regions1) return 2;
             
-            int armies1 = map.numberArmiesOwned(1), armies2 = map.numberArmiesOwned(2);
+            int armies1 = numberArmiesOwned(1), armies2 = numberArmiesOwned(2);
             if (armies1 > armies2) return 1;
             if (armies2 > armies1) return 2;
         }
@@ -130,7 +143,17 @@ public class Game implements Cloneable {
     public ArrayList<Region> regionsOwnedBy(int player) {
         return map.ownedRegionsByPlayer(player);
     }
+
+    public int numberArmiesOwned(int player) {
+        int n = 0;
         
+        for (Region r: map.getRegions())
+            if (r.getOwner() == player)
+                n += getArmies(r);
+        
+        return n;
+    }
+
     public ArrayList<Region> getPickableRegions() {
         return pickableRegions;
     }
@@ -172,11 +195,14 @@ public class Game implements Cloneable {
                 region.addNeighbor(map.getRegion(neighbour));
             }
         }
+
+        armies = new int[world.numRegions()];
+        for (int i = 0 ; i < world.numRegions() ; ++i)
+            armies[i] = 2;
         
         for(Region region : map.regions)
         {
             region.setOwner(0);
-            region.setArmies(2);
         }
 
         return map;
@@ -283,7 +309,7 @@ public class Game implements Cloneable {
                 }
                 
                 left -= armies;
-                region.setArmies(region.getArmies() + armies);
+                setArmies(region, getArmies(region) + armies);
             }
         }
         
@@ -329,29 +355,29 @@ public class Game implements Cloneable {
         Region fromRegion = region(move.getFromRegion());
         Region toRegion = region(move.getToRegion());
         int attackingArmies;
-        int defendingArmies = toRegion.getArmies();
+        int defendingArmies = getArmies(toRegion);
         
-        if (fromRegion.getArmies() <= 1) {
+        if (getArmies(fromRegion) <= 1) {
             move.setIllegalMove(fromRegion.getId() + " attack " + "only has 1 army");
             return;
         }
         
-        if(fromRegion.getArmies()-1 >= move.getArmies()) //are there enough armies on fromRegion?
+        if(getArmies(fromRegion)-1 >= move.getArmies()) //are there enough armies on fromRegion?
             attackingArmies = move.getArmies();
         else
-            attackingArmies = fromRegion.getArmies()-1;
+            attackingArmies = getArmies(fromRegion)-1;
         
         FightResult result = doAttack(attackingArmies, defendingArmies);
         
         switch (result.winner) {
         case ATTACKER: //attack success
-            fromRegion.setArmies(fromRegion.getArmies() - attackingArmies);
+            setArmies(fromRegion, getArmies(fromRegion) - attackingArmies);
             toRegion.setOwner(turn);
-            toRegion.setArmies(attackingArmies - result.attackersDestroyed);
+            setArmies(toRegion, attackingArmies - result.attackersDestroyed);
             break; 
         case DEFENDER: //attack fail
-            fromRegion.setArmies(fromRegion.getArmies() - result.attackersDestroyed);
-            toRegion.setArmies(toRegion.getArmies() - result.defendersDestroyed);
+            setArmies(fromRegion, getArmies(fromRegion) - result.attackersDestroyed);
+            setArmies(toRegion, getArmies(toRegion) - result.defendersDestroyed);
             break;
         default:
             throw new RuntimeException("Unhandled FightResult.winner: " + result.winner);
@@ -377,7 +403,7 @@ public class Game implements Cloneable {
                 move.setIllegalMove(toRegion.getId() + " attack/transfer not a neighbor");
             else if (move.getArmies() < 1)
                 move.setIllegalMove("attack/transfer cannot use less than 1 army");
-            else if (totalFrom[fromRegion.getId()] + move.getArmies() >= fromRegion.getArmies())
+            else if (totalFrom[fromRegion.getId()] + move.getArmies() >= getArmies(fromRegion))
                 move.setIllegalMove(fromRegion.getId() +
                         " attack/transfer has used all available armies");
             else {
@@ -408,15 +434,15 @@ public class Game implements Cloneable {
             Region fromRegion = region(move.getFromRegion());
             Region toRegion = region(move.getToRegion());
             
-            move.setArmies(Math.min(move.getArmies(), fromRegion.getArmies() - 1));
+            move.setArmies(Math.min(move.getArmies(), getArmies(fromRegion) - 1));
 
             if(toRegion.isOwnedBy(turn)) //transfer
             {
                 if (gui != null) {
                     gui.transfer(move);
                 }
-                fromRegion.setArmies(fromRegion.getArmies() - move.getArmies());
-                toRegion.setArmies(toRegion.getArmies() + move.getArmies());
+                setArmies(fromRegion, getArmies(fromRegion) - move.getArmies());
+                setArmies(toRegion, getArmies(toRegion) + move.getArmies());
             }
             else //attack
             {
