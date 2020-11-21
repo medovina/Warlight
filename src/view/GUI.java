@@ -324,13 +324,13 @@ public class GUI extends JFrame implements KeyListener
         String toName = move.getToRegion().getName();
 
         String text;
-        if (config.isHuman(game.me()))
+        if (config.isHuman(game.currentPlayer()))
             text = "You transfer ";
         else
-            text = playerName(game.me()) + " transfers ";
+            text = playerName(game.currentPlayer()) + " transfers ";
 
         message(text + armies(armies) + " to " + toName);
-        int player = game.me();
+        int player = game.currentPlayer();
         
         RegionInfo fromRegionInfo = regionInfo[fromId - 1];
         RegionInfo toRegionInfo = regionInfo[toId - 1];
@@ -378,13 +378,13 @@ public class GUI extends JFrame implements KeyListener
         int armies = move.getArmies();
 
         String text;
-        if (config.isHuman(game.me()))
+        if (config.isHuman(game.currentPlayer()))
             text = "You attack ";
         else
-            text = playerName(game.me()) + " attacks ";
+            text = playerName(game.currentPlayer()) + " attacks ";
         message(text + toName + " with " + armies(armies));
         
-        int attacker = game.me();
+        int attacker = game.currentPlayer();
         RegionInfo fromRegion = this.regionInfo[move.getFromRegion().id - 1];
         RegionInfo toRegion = this.regionInfo[move.getToRegion().id - 1];
         
@@ -484,7 +484,7 @@ public class GUI extends JFrame implements KeyListener
     public List<PlaceArmiesMove> placeArmiesHuman() {
         this.requestFocusInWindow();
         
-        List<Region> availableRegions = game.regionsOwnedBy(game.me());
+        List<Region> availableRegions = game.regionsOwnedBy(game.currentPlayer());
         return placeArmiesHuman(availableRegions);
     }
     
@@ -499,7 +499,7 @@ public class GUI extends JFrame implements KeyListener
 
     public List<PlaceArmiesMove> placeArmiesHuman(List<Region> availableRegions) {
         this.armyRegions = availableRegions;
-        armiesLeft = game.armiesPerTurn(game.me());
+        armiesLeft = game.armiesPerTurn(game.currentPlayer());
         armiesPlaced = 0;
                 
         placeArmiesAction = new CountDownLatch(1);
@@ -679,13 +679,13 @@ public class GUI extends JFrame implements KeyListener
         if (!left)
             return;
         
-        moveFrom = region.getOwner() == game.me() ? region : null;
+        moveFrom = region.getOwner() == game.currentPlayer() ? region : null;
         highlight();
     }
 
     public List<AttackTransferMove> moveArmiesHuman() {
         this.requestFocusInWindow();
-        moving = game.me();
+        moving = game.currentPlayer();
         moveFrom = null;
         
         message("Move and/or attack");

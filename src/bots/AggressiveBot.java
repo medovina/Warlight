@@ -58,7 +58,7 @@ public class AggressiveBot implements Bot
     public List<PlaceArmiesMove> placeArmies(GameState state) {
         this.state = state;
 
-        int me = state.me();
+        int me = state.currentPlayer();
         List<PlaceArmiesMove> result = new ArrayList<PlaceArmiesMove>();
         
         // CLONE REGIONS OWNED BY ME
@@ -102,7 +102,7 @@ public class AggressiveBot implements Bot
         
         for (Region reg : o1.getNeighbors()) {
             result += (reg.isOwnedBy(0) ? 1 : 0) * 5;
-            result += (reg.isOwnedBy(state.opp()) ? 1 : 0) * 2;
+            result += (reg.isOwnedBy(state.opponent()) ? 1 : 0) * 2;
         }
         
         return result;
@@ -116,7 +116,7 @@ public class AggressiveBot implements Bot
     public List<AttackTransferMove> moveArmies(GameState state) {
         this.state = state;
         
-        int me = state.me();
+        int me = state.currentPlayer();
         List<AttackTransferMove> result = new ArrayList<AttackTransferMove>();
         Collection<Region> regions = state.regionsOwnedBy(me);
         
@@ -151,7 +151,7 @@ public class AggressiveBot implements Bot
     
     private boolean hasOnlyMyNeighbours(Region from) {
         for (Region region : from.getNeighbors()) {            
-            if (!region.isOwnedBy(state.me())) return false;
+            if (!region.isOwnedBy(state.currentPlayer())) return false;
         }
         return true;
     }

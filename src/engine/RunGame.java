@@ -46,18 +46,17 @@ public class RunGame
             game.setGUI(gui);
         } else gui = null;
         
-        Bot[] robots = new Bot[2];
-        robots[0] = setupRobot(config.bot1Init, gui);
-        robots[1] = setupRobot(config.bot2Init, gui);
+        Bot[] bots = new Bot[2];
+        bots[0] = setupBot(config.bot1Init, gui);
+        bots[1] = setupBot(config.bot2Init, gui);
                 
         //start the engine
-        this.engine = new Engine(game, robots, gui, config.botCommandTimeoutMillis);
+        this.engine = new Engine(game, bots, gui, config.botCommandTimeoutMillis);
         
         for (int i = 1 ; i <= 2 ; ++i) {
-            robots[i - 1].init(config.botCommandTimeoutMillis);
+            bots[i - 1].init(config.botCommandTimeoutMillis);
         }
         
-        //send the bots the info they need to start
         engine.distributeStartingRegions(); //decide the players' starting regions
         
         //play the game
@@ -66,9 +65,7 @@ public class RunGame
             engine.playRound();
         }
 
-        GameResult result = finish(game.getMap(), robots);
-        
-        return result;
+        return finish(game.getMap(), bots);
     }
 
     static Bot constructBot(Class<?> botClass) {        
@@ -79,7 +76,9 @@ public class RunGame
             throw new RuntimeException(e); 
         }
         if (!(Bot.class.isAssignableFrom(botObj.getClass()))) {
-            throw new RuntimeException("Constructed bot does not implement " + Bot.class.getName() + " interface, bot class instantiated: " + botClass.getName());
+            throw new RuntimeException(
+                "Constructed bot does not implement " + Bot.class.getName() + " interface, " +
+                "bot class instantiated: " + botClass.getName());
         }
         Bot bot = (Bot) botObj;
         return bot;
@@ -99,7 +98,7 @@ public class RunGame
         return constructBot(botClass);
     }
 
-    private Bot setupRobot(String botInit, GUI gui) {
+    private Bot setupBot(String botInit, GUI gui) {
         if (botInit.startsWith("internal:")) {
             String botFQCN = botInit.substring(9);
             return constructBot(botFQCN);
@@ -113,11 +112,6 @@ public class RunGame
 
     private GameResult finish(GameMap map, Bot[] bots)
     {
-        return this.saveGame(map);        
-    }
-    
-    public GameResult saveGame(GameMap map) {
-
         GameResult result = new GameResult();
         
         result.config = config;

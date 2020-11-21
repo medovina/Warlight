@@ -64,7 +64,7 @@ class Overlay extends JPanel implements MouseListener {
             g.setColor(TextColor);
             g.drawString(gui.playerName(player), x + 29, y + 7);
             int armies = map.numberArmiesOwned(player);
-            if (player == game.me())
+            if (player == game.currentPlayer())
                 armies += gui.armiesPlaced;
             String s = String.format("[%d armies, +%d / turn]", armies, game.armiesEachTurn(player));
             g.drawString(s, x + 29, y + 23);

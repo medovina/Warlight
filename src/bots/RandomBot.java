@@ -30,7 +30,7 @@ public class RandomBot implements Bot
     
     @Override
     public List<PlaceArmiesMove> placeArmies(GameState state) {
-        int me = state.me();
+        int me = state.currentPlayer();
         List<Region> mine = state.regionsOwnedBy(me);
         int numRegions = mine.size();
         
@@ -53,7 +53,7 @@ public class RandomBot implements Bot
     public List<AttackTransferMove> moveArmies(GameState state) {
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
-        for (Region rd : state.regionsOwnedBy(state.me())) {
+        for (Region rd : state.regionsOwnedBy(state.currentPlayer())) {
             int count = rand.nextInt(rd.getArmies());
             if (count > 0) {
                 List<Region> neighbors = rd.getNeighbors();

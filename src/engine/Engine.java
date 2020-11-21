@@ -28,7 +28,7 @@ import view.GUI;
 public class Engine {
     GameState game;
     
-    private Bot[] robots;
+    private Bot[] bots;
     private long timeoutMillis;
     private GUI gui;
     
@@ -38,17 +38,17 @@ public class Engine {
         
         this.gui = gui;
         
-        this.robots = robots;
+        this.bots = robots;
         this.timeoutMillis = timeoutMillis;        
     }
     
-    Bot robot(int i) {
-        return robots[i - 1];
+    Bot bot(int i) {
+        return bots[i - 1];
     }
 
-    boolean timeout(Bot robot, long start) {
+    boolean timeout(Bot bot, long start) {
         long elapsed = System.currentTimeMillis() - start;
-        if (!(robot instanceof HumanRobot) &&
+        if (!(bot instanceof HumanRobot) &&
                 timeoutMillis > 0 && elapsed > timeoutMillis + 150 /* grace period */) {
             System.err.format("bot failed to respond in time!  timeout = %d, elapsed = %d\n",
                 timeoutMillis, elapsed);
@@ -66,15 +66,15 @@ public class Engine {
         
         for (int i = 1 ; i <= 2 ; ++i) {
             long start = System.currentTimeMillis();
-            List<PlaceArmiesMove> placeMoves = robot(i).placeArmies(game);
-            if (timeout(robot(i), start)) {
+            List<PlaceArmiesMove> placeMoves = bot(i).placeArmies(game);
+            if (timeout(bot(i), start)) {
                 System.err.println("bot failed to return place armies moves in time!");
                 placeMoves = new ArrayList<PlaceArmiesMove>();
             }
             
             game.placeArmies(placeMoves);
     
-            if (gui != null && !(robot(i) instanceof HumanRobot)) {
+            if (gui != null && !(bot(i) instanceof HumanRobot)) {
                 List<PlaceArmiesMove> legalMoves = new ArrayList<PlaceArmiesMove>();
     
                 for (PlaceArmiesMove move : placeMoves)
@@ -85,8 +85,8 @@ public class Engine {
             }
             
             start = System.currentTimeMillis();
-            List<AttackTransferMove> moves = robot(i).moveArmies(game);
-            if (timeout(robot(i), start)) {
+            List<AttackTransferMove> moves = bot(i).moveArmies(game);
+            if (timeout(bot(i), start)) {
                 System.err.println("bot failed to return attack transfer moves in time!");
                 moves = new ArrayList<AttackTransferMove>();
             }
@@ -112,8 +112,8 @@ public class Engine {
             for (int p = 1 ; p <= 2 ; ++p) {
                 if (game.config.manualDistribution) {
                     long start = System.currentTimeMillis();
-                    Region region = game.region(robot(p).chooseRegion(game));
-                    if (timeout(robot(p), start)) {
+                    Region region = game.region(bot(p).chooseRegion(game));
+                    if (timeout(bot(p), start)) {
                         System.err.println("bot failed to return starting region in time!");
                         region = null;
                     }

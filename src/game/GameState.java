@@ -76,19 +76,11 @@ public class GameState implements Cloneable {
         return round;
     }
 
-    public void setRoundNumber(int round) {
-        this.round = round;
-    }
-    
-    public int me() {
+    public int currentPlayer() {
         return turn;
     }
 
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
-    public int opp() {
+    public int opponent() {
         return 3 - turn;
     }
     
@@ -96,10 +88,6 @@ public class GameState implements Cloneable {
         return phase;
     }
 
-    public void setPhase(Phase phase) {
-        this.phase = phase;
-    }
-    
     public int winningPlayer() {
         if (round == 0) return 0;
         
@@ -139,10 +127,6 @@ public class GameState implements Cloneable {
         return pickableRegions;
     }
 
-    public void setPickableRegions(ArrayList<Region> regions) {
-        this.pickableRegions = regions;
-    }
-    
     //calculate how many armies a player is able to place on the map each round
     public int armiesPerTurn(int player, boolean first)
     {
@@ -228,9 +212,9 @@ public class GameState implements Cloneable {
         if (config.warlords)
             for(MapContinent continent : MapContinent.values())
             {
-                int nrOfRegions = continent.getRegions().size();
-                //get one random subregion from continent
-                int randomRegionId = random.nextInt(nrOfRegions);
+                int numRegions = continent.getRegions().size();
+                //get one random region from continent
+                int randomRegionId = random.nextInt(numRegions);
                 
                 Region randomRegion = region(continent.getRegions().get(randomRegionId));
                 pickableRegions.add(randomRegion);
