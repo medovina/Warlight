@@ -173,9 +173,9 @@ class Overlay extends JPanel implements MouseListener {
         if (doneBox != null && doneBox.contains(p))
             gui.doneClicked();
         else {
-            int id = mapView.regionFromPoint(p);
-            if (id >= 0)
-                gui.regionClicked(id, e.getButton() == MouseEvent.BUTTON1);
+            MapRegion r = mapView.regionFromPoint(p);
+            if (r != null)
+                gui.regionClicked(r.id, e.getButton() == MouseEvent.BUTTON1);
             else
                 gui.mousePressed(e);
         }
@@ -200,14 +200,14 @@ class Overlay extends JPanel implements MouseListener {
 
     @Override
     public String getToolTipText(MouseEvent event) {
-        int id = mapView.regionFromPoint(event.getPoint());
-        return id == -1 ? null : game.getRegionById(id).getName();
+        MapRegion r = mapView.regionFromPoint(event.getPoint());
+        return r == null ? null : r.getName();
     }
 
     @Override
     public Point getToolTipLocation(MouseEvent e) {
-        int id = mapView.regionFromPoint(e.getPoint());
-        if (id == -1)
+        MapRegion r = mapView.regionFromPoint(e.getPoint());
+        if (r == null)
             return new Point(0, 0);
 
         Point p = e.getPoint();

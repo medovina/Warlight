@@ -27,25 +27,21 @@ public class MapView extends JPanel {
     Point[] regionPositions;
     
     public MapView(GameState game, int width, int height) {
-        diagram = new WarlightMap().getDiagram();
+        this.game = game;
+        diagram = game.getWorld().getDiagram();
         Rectangle viewport = new Rectangle(0, 0, width, height);
         diagram.setDeviceViewport(viewport);
 
         regionPositions = new Point[game.numRegions() + 1];
         SVGRoot root = diagram.getRoot();
         viewportTransform = root.calcViewportTransform(viewport);
-        try {
-            imageBounds = root.getBoundingBox();
+        imageBounds = Util.getBoundingBox(root);
             
-            for (int i = 1 ; i <= game.numRegions() ; ++i) {
-                Text t = (Text) diagram.getElement("region" + i + "Text");
-                Point p = new Point(getAttribute(t, "x").getIntValue(),
-                                    getAttribute(t, "y").getIntValue());
-                regionPositions[i] = localToViewport(t, p);
-                // System.out.printf("region %d: x = %d, y = %d",i, regionPositions[i].x, regionPositions[i].y);
-                t.addAttribute("display", AnimationElement.AT_CSS, "none");
-            }
-        } catch (SVGException e) { throw new RuntimeException(e); }
+        for (int i = 1 ; i <= game.numRegions() ; ++i) {
+            MapRegion r = game.getMapRegion(i);
+            Point2D p = viewportTransform.transform(r.getLabelPosition(), null);
+            regionPositions[i] = new Point((int) p.getX(), (int) p.getY());
+        }
     }
 
     @Override
@@ -64,43 +60,10 @@ public class MapView extends JPanel {
         }
     }
 
-    StyleAttribute getAttribute(SVGElement e, String name) {
-        try {
-            StyleAttribute a = new StyleAttribute(name);
-            if (!e.getStyle(a))
-                throw new RuntimeException(String.format("can't get attribute '%s'", name));
-            return a;
-        } catch (SVGException ex) { throw new RuntimeException(ex); }
-    }
-
-    Point localToViewport(RenderableElement e, Point p) {
-        while (true) {
-            e = (RenderableElement) e.getParent();
-            if (e == null)
-                break;
-            AffineTransform t = e.getXForm();
-            if (t != null)
-                t.transform(p, p);
-        }
-        viewportTransform.transform(p, p);
-        return p;
-    }
-
     Rectangle getBounds(RenderableElement e) {
-        Rectangle2D bounds;
+        Rectangle2D bounds = Util.getBoundingBox(e);
+        bounds = Util.toGlobal(e, bounds).getBounds2D();
         
-        try {
-            bounds = e.getBoundingBox();
-        } catch (SVGException ex) { throw new RuntimeException(ex); }
-        while (true) {
-            e = (RenderableElement) e.getParent();
-            if (e == null)
-                break;
-            AffineTransform t = e.getXForm();
-            if (t != null)
-                bounds = t.createTransformedShape(bounds).getBounds2D();
-        }
-
         double xScale = getWidth() / imageBounds.getWidth();
         double yScale = getHeight() / imageBounds.getHeight();
         return new Rectangle(
@@ -110,12 +73,13 @@ public class MapView extends JPanel {
     }
 
     void setOwner(int regionId, int player) {
-        RenderableElement e = (RenderableElement) diagram.getElement("region" + regionId);
+        MapRegion r = game.getMapRegion(regionId);
+        RenderableElement e = r.svgElement;
         try {
             Color color = PlayerColors.getColor(player);
             String colorString = String.format(
                 "#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-            StyleAttribute a = getAttribute(e, "fill");
+            StyleAttribute a = Util.getAttribute(e, "fill");
             if (a.getStringValue().equals(colorString))
                 return;
 
@@ -125,7 +89,7 @@ public class MapView extends JPanel {
         } catch (SVGException ex) { throw new RuntimeException(ex); }
     }
 
-    int regionFromPoint(Point p) {
+    MapRegion regionFromPoint(Point p) {
         List<List<SVGElement>> elements = new ArrayList<List<SVGElement>>();
         try {
             diagram.pick(p, elements);
@@ -133,13 +97,12 @@ public class MapView extends JPanel {
 
         for (List<SVGElement> path : elements) {
             RenderableElement e = (RenderableElement) path.get(path.size() - 1);
-            String id = e.getId();
-            if (id.startsWith("region")) {
-                return Integer.parseInt(id.substring(6));
-            }
+            MapRegion r = game.getWorld().getMapRegion(e);
+            if (r != null)
+                return r;
         }
 
-        return -1;
+        return null;
     }
 
 }

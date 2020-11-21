@@ -67,12 +67,14 @@ public class GameState implements Cloneable {
         sb.append("]");
         return sb.toString();
     }
+
+    public World getWorld() { return world; }
     
     public List<MapContinent> allContinents() { return world.getContinents(); }
 
     public int numRegions() { return world.numRegions(); }
 
-    public MapRegion getRegionById(int id) { return world.getRegionById(id); }
+    public MapRegion getMapRegion(int id) { return world.getMapRegionById(id); }
 
     public GameMap getMap() { return map; }
 

@@ -4,15 +4,18 @@ import java.util.*;
 
 public class MapContinent {
     public final int id;
-    public final int reward;
+    public int reward;
     public final String mapName;
     
     private List<MapRegion> regions = new ArrayList<MapRegion>();
     
-    public MapContinent(String mapName, int id, int reward) {
+    public MapContinent(String mapName, int id) {
         this.mapName = mapName;
         this.id = id;
-        this.reward = reward;    
+    }
+
+    public void setReward(int reward) {
+        this.reward = reward;
     }
 
     public void addRegion(MapRegion r) {
