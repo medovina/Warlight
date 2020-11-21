@@ -18,13 +18,14 @@ public class WarlightMap {
         }
 
         diagram = universe.getDiagram(uri);
-        SVGElement map = diagram.getElement("map");
-        for (SVGElement c : map.getChildren(null)) {
+        /* SVGElement map = diagram.getElement("map");
+
+           for (SVGElement c : map.getChildren(null)) {
             System.out.printf("found continent: %s\n", c.getId());
             for (SVGElement d : c.getChildren(null))
                 System.out.printf("  child: %s of class %s\n", d.getId(),
                     d.getClass().getSimpleName());
-        }
+        } */
     }
 
     public SVGDiagram getDiagram() {

@@ -20,7 +20,7 @@ public class HumanRobot implements Bot {
 
     @Override
     public MapRegion chooseRegion(GameState state) {
-        return gui.chooseRegionHuman().getWorldRegion();
+        return gui.chooseRegionHuman().getMapRegion();
     }
 
     @Override

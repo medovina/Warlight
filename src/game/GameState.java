@@ -7,6 +7,7 @@ import view.GUI;
 
 public class GameState implements Cloneable {
     public GameConfig config;
+    World world;
     GameMap map;
     int round;
     int turn;
@@ -20,6 +21,7 @@ public class GameState implements Cloneable {
     
     public GameState(GameConfig config) {
         this.config = config != null ? config : new GameConfig();
+        world = new World();
         map = makeInitMap();
         turn = 1;
         random = (config == null || config.seed < 0) ? new Random() : new Random(config.seed);
@@ -60,12 +62,18 @@ public class GameState implements Cloneable {
             for (int player = 1 ; player <= 2 ; ++player) {
                 sb.append("p" + player + ": ");
                 for (Region r : regionsOwnedBy(player))
-                    sb.append(r.getWorldRegion().getName() + "=" + r.getArmies() + " ");
+                    sb.append(r.getMapRegion().getName() + "=" + r.getArmies() + " ");
             }
         sb.append("]");
         return sb.toString();
     }
     
+    public List<MapContinent> allContinents() { return world.getContinents(); }
+
+    public int numRegions() { return world.numRegions(); }
+
+    public MapRegion getRegionById(int id) { return world.getRegionById(id); }
+
     public GameMap getMap() { return map; }
 
     public int getRoundNumber() {
@@ -144,50 +152,23 @@ public class GameState implements Cloneable {
         return armiesPerTurn(player, false);
     }
 
-    public static GameMap makeInitMap()
+    public GameMap makeInitMap()
     {
         GameMap map = new GameMap();
         
-        Map<MapContinent, Continent> continents = new TreeMap<MapContinent, Continent>(new Comparator<MapContinent>() {
-            @Override
-            public int compare(MapContinent o1, MapContinent o2) {
-                return o1.id - o2.id;
-            }           
-        });
+        for (MapContinent mapContinent : allContinents())
+            map.add(new Continent(mapContinent, 0));
         
-        for (MapContinent worldContinent : MapContinent.values()) {
-            Continent continent = new Continent(worldContinent, 0);
-            continents.put(worldContinent, continent);
-        }
+        for (MapRegion mapRegion : world.getRegions())
+            map.add(new Region(mapRegion, map.getContinent(mapRegion.mapContinent)));
         
-        Map<MapRegion, Region> regions = new TreeMap<MapRegion, Region>(new Comparator<MapRegion>() {
-            @Override
-            public int compare(MapRegion o1, MapRegion o2) {
-                return o1.id - o2.id;
-            }
-        });
-        
-        for (MapRegion worldRegion : MapRegion.values()) {
-            Region region = new Region(worldRegion, continents.get(worldRegion.worldContinent));
-            regions.put(worldRegion, region);
-        }
-        
-        for (MapRegion regionName : MapRegion.values()) {
-            Region region = regions.get(regionName);
-            for (MapRegion neighbour : regionName.getForwardNeighbours()) {
-                region.addNeighbor(regions.get(neighbour));
+        for (MapRegion mapRegion : world.getRegions()) {
+            Region region = map.getRegion(mapRegion);
+            for (MapRegion neighbour : mapRegion.getNeighbours()) {
+                region.addNeighbor(map.getRegion(neighbour));
             }
         }
         
-        for (Region region : regions.values()) {
-            map.add(region);
-        }
-        
-        for (Continent continent : continents.values()) {
-            map.add(continent);
-        }
-
-        // Make every region neutral with 2 armies to start with
         for(Region region : map.regions)
         {
             region.setOwner(0);
@@ -224,7 +205,7 @@ public class GameState implements Cloneable {
         pickableRegions = new ArrayList<Region>();
         
         if (config.warlords)
-            for(MapContinent continent : MapContinent.values()) {
+            for(MapContinent continent : world.getContinents()) {
                 int numRegions = continent.getRegions().size();
                 while (true) {
                     int randomRegionId = random.nextInt(numRegions);
@@ -379,7 +360,7 @@ public class GameState implements Cloneable {
 
     void validateAttackTransfers(List<AttackTransferMove> moves)
     {
-        int[] totalFrom = new int[MapRegion.NUM_REGIONS + 1];
+        int[] totalFrom = new int[numRegions() + 1];
         
         for (int i = 0 ; i < moves.size() ; ++i) {
             AttackTransferMove move = moves.get(i);

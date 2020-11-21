@@ -20,16 +20,15 @@ package game;
 import java.util.ArrayList;
 
 public class GameMap implements Cloneable {
-    
     public ArrayList<Region> regions;  // maps (id - 1) -> Region
     public ArrayList<Continent> continents;  // maps (id - 1) -> Continent
     
     public GameMap()
     {
-        this.regions = new ArrayList<Region>();
-        this.continents = new ArrayList<Continent>();
+        regions = new ArrayList<Region>();
+        continents = new ArrayList<Continent>();
     }
-    
+
     public void add(Region region)
     {
         if (region.getId() != regions.size() + 1)
@@ -44,21 +43,19 @@ public class GameMap implements Cloneable {
         continents.add(continent);
     }
     
-    /**
-     * @return : a new Map object exactly the same as this one
-     */
     @Override
     public GameMap clone() {
         GameMap newMap = new GameMap();
+
         for(Continent sr : continents) //copy continents
         {
             Continent newContinent = new Continent(
-                MapContinent.forId(sr.getId()), sr.getOwner());
+                sr.getMapContinent(), sr.getOwner());
             newMap.add(newContinent);
         }
         for(Region r : regions) //copy regions
         {
-            Region newRegion = new Region(MapRegion.forId(r.getId()),
+            Region newRegion = new Region(r.getMapRegion(),
                     newMap.getContinent(r.getContinent().getId()), r.getOwner(), r.getArmies());
             newMap.add(newRegion);
         }
@@ -105,6 +102,10 @@ public class GameMap implements Cloneable {
 
         System.err.println("Could not find continent with id " + id);
         return null;
+    }
+
+    public Continent getContinent(MapContinent c) {
+        return getContinent(c.id);
     }
     
     public int numberRegionsOwned(int player) {

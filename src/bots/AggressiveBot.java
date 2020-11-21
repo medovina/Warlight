@@ -34,18 +34,19 @@ public class AggressiveBot implements Bot
             }
         }
         
-        return best.getWorldRegion();
+        return best.getMapRegion();
     }
     
     public int getPreferredContinentPriority(Continent continent) {
-        switch (continent.getWorldContinent()) {
-        case Australia:     return 1;
-        case South_America: return 2;
-        case North_America: return 3;
-        case Europe:        return 4;        
-        case Africa:        return 5;
-        case Asia:          return 6;
-        default:            return 7;
+        switch (continent.getMapContinent().mapName) {
+        case "Australia":     return 1;
+        case "South America": return 2;
+        case "North America": return 3;
+        case "Europe":        return 4;        
+        case "Africa":        return 5;
+        case "Asia":          return 6;
+        default:
+            throw new RuntimeException("unknown continent");
         }
     }
 
@@ -170,7 +171,7 @@ public class AggressiveBot implements Bot
     private AttackTransferMove moveToFront(Region from) {
         RegionBFS<BFSNode> bfs = new RegionBFS<BFSNode>();
         moveToFrontRegion = null;
-        bfs.run(from.getWorldRegion(), new BFSVisitor<BFSNode>() {
+        bfs.run(from.getMapRegion(), new BFSVisitor<BFSNode>() {
 
             @Override
             public BFSVisitResult<BFSNode> visit(MapRegion region, int level, BFSNode parent, BFSNode thisNode) {

@@ -9,7 +9,7 @@ public class ChooseAction implements Action {
     public MapRegion region;
     
     public ChooseAction(Region region) {
-        this.region = region.getWorldRegion();
+        this.region = region.getMapRegion();
     }
     
     public void apply(GameState state) {

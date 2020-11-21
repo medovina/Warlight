@@ -23,7 +23,7 @@ public class MyBot implements Bot
     @Override
     public MapRegion chooseRegion(GameState state) {
         ArrayList<Region> choosable = state.getPickableRegions();
-        return choosable.get(rand.nextInt(choosable.size())).getWorldRegion();
+        return choosable.get(rand.nextInt(choosable.size())).getMapRegion();
     }
 
     // Decide where to place armies this turn.

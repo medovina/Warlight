@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import bots.RegionBFS.BFSNode;
 import game.GameMap;
@@ -217,62 +216,4 @@ public class RegionBFS<NODE extends BFSNode> {
     private void reset() {
         nodes.clear();
     }
-    
-    public static void main(String[] args) {
-        // SIMPLE TEST FOR FINDING "all shortest path" BETWEEN SOME REGIONS
-        
-        BFSVisitor<BFSNode> visitor = new BFSVisitor<BFSNode>() {
-
-            @Override
-            public BFSVisitResult<BFSNode> visit(MapRegion region, int level, BFSNode parent, BFSNode thisNode) {
-                System.out.println((parent == null ? "START" : parent.level + ":" + parent.region) + " --> " + level + ":" + region);
-                // WE CAN IGNORE THE REGION
-                //return BFSVisitResult.IGNORE;
-                
-                // WE CAN TERMINATE PREMATURALY
-                //return BFSVisitResult.TERMINATE;
-                
-                return new BFSVisitResult<BFSNode>(thisNode == null ? new BFSNode() : thisNode);
-            }
-
-        };
-        
-        RegionBFS<BFSNode> bfs = new RegionBFS<BFSNode>();
-        
-        MapRegion from = MapRegion.Eastern_Australia;
-        
-        System.out.println("BFS from " + from);
-        
-        bfs.run(from, visitor);
-        
-        System.out.println();
-        
-        // GET ALL SHORTEST PATH FROM REGION 'from' TO A FEW RANDOM OTHER REGIONS
-        for (int i = 0; i < 5; ++i) {
-            MapRegion to = MapRegion.values()[new Random().nextInt(MapRegion.values().length)];
-            while (from == to) {
-                to = MapRegion.values()[new Random().nextInt(MapRegion.values().length)];
-            }
-            
-            List<List<MapRegion>> allPaths = bfs.getAllPaths(to);
-            
-            System.out.println("PATHS " + from + " --> " + to + ":");
-            
-            int j = 0;
-            for (List<MapRegion> path : allPaths) {
-                ++j;
-                System.out.print("  [" + path.size() + "] " + j + ". ");
-                boolean first = true;
-                for (MapRegion region : path) {
-                    if (first) first = false;
-                    else System.out.print(" --> ");
-                    System.out.print(region);
-                }
-                System.out.println();
-            }
-            
-        }
-        
-    }
-
 }

@@ -13,31 +13,31 @@ import com.kitfox.svg.*;
 import com.kitfox.svg.animation.AnimationElement;
 import com.kitfox.svg.xml.StyleAttribute;
 
-import game.MapRegion;
-import game.WarlightMap;
+import game.*;
 import utils.Util;
 
 public class MapView extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    GUI gui;
+    GameState game;
     SVGDiagram diagram;
     AffineTransform viewportTransform;
     Rectangle2D imageBounds;
     
-    Point[] regionPositions = new Point[MapRegion.NUM_REGIONS + 1];
+    Point[] regionPositions;
     
-    public MapView(GUI gui, int width, int height) {
+    public MapView(GameState game, int width, int height) {
         diagram = new WarlightMap().getDiagram();
         Rectangle viewport = new Rectangle(0, 0, width, height);
         diagram.setDeviceViewport(viewport);
 
+        regionPositions = new Point[game.numRegions() + 1];
         SVGRoot root = diagram.getRoot();
         viewportTransform = root.calcViewportTransform(viewport);
         try {
             imageBounds = root.getBoundingBox();
             
-            for (int i = 1 ; i <= MapRegion.NUM_REGIONS ; ++i) {
+            for (int i = 1 ; i <= game.numRegions() ; ++i) {
                 Text t = (Text) diagram.getElement("region" + i + "Text");
                 Point p = new Point(getAttribute(t, "x").getIntValue(),
                                     getAttribute(t, "y").getIntValue());

@@ -36,7 +36,7 @@ public class AttackTransferMove extends Move {
     }
 
     public AttackTransferMove(Region fromRegion, Region toRegion, int armies) {
-        this(fromRegion.getWorldRegion(), toRegion.getWorldRegion(), armies);
+        this(fromRegion.getMapRegion(), toRegion.getMapRegion(), armies);
     }
 
     /**

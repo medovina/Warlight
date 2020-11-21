@@ -34,7 +34,7 @@ public class PlaceArmiesMove extends Move {
     }
 
     public PlaceArmiesMove(Region region, int armies) {
-        this(region.getWorldRegion(), armies);
+        this(region.getMapRegion(), armies);
     }
     
     /**

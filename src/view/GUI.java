@@ -66,7 +66,7 @@ public class GUI extends JFrame implements KeyListener
         setTitle("Warlight");
         addKeyListener(this);
         
-        mapView = new MapView(this, WIDTH, HEIGHT);
+        mapView = new MapView(game, WIDTH, HEIGHT);
         mapView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         add(mapView);
 
@@ -76,9 +76,9 @@ public class GUI extends JFrame implements KeyListener
         overlay.setBounds(0, 0, WIDTH, HEIGHT);
         layeredPane.add(overlay);
 
-        regionInfo = new RegionInfo[MapRegion.NUM_REGIONS];
+        regionInfo = new RegionInfo[game.numRegions()];
         
-        for (int idx = 0; idx < MapRegion.NUM_REGIONS; idx++) {
+        for (int idx = 0; idx < game.numRegions(); idx++) {
             regionInfo[idx] = new RegionInfo();
             mapView.setOwner(idx + 1, 0);
         }
@@ -587,8 +587,8 @@ public class GUI extends JFrame implements KeyListener
         }
     }
     
-    static int encode(int fromId, int toId) {
-        return fromId * (MapRegion.NUM_REGIONS + 1) + toId;
+    int encode(int fromId, int toId) {
+        return fromId * (game.numRegions() + 1) + toId;
     }
     
     int totalFrom(Region r) {

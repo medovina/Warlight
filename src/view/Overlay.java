@@ -1,10 +1,17 @@
 package view;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 
 import javax.swing.*;
 
@@ -71,7 +78,7 @@ class Overlay extends JPanel implements MouseListener {
     }
 
     void drawRegionInfo(Graphics2D g) {
-        for (int id = 1 ; id <= MapRegion.NUM_REGIONS ; ++id) {
+        for (int id = 1 ; id <= game.numRegions() ; ++id) {
             Point pos = mapView.regionPositions[id];
             RegionInfo ri = gui.regionInfo(id);
             int x = pos.x, y = pos.y;
@@ -98,15 +105,16 @@ class Overlay extends JPanel implements MouseListener {
     void drawScroll(Graphics g) {
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
-        MapContinent[] a = MapContinent.values().clone();
-        Arrays.sort(a, new CompareByName());
+        ArrayList<MapContinent> a = new ArrayList<MapContinent>(game.allContinents());
+        Collections.sort(a, new CompareByName());
 
         GameMap map = game.getMap();
-        for (int i = 0; i < a.length; ++i) {
+        for (int i = 0; i < a.size(); ++i) {
+            MapContinent mc = a.get(i);
             int x = 104;
             int y = 560 + 19 * i;
 
-            Continent c = map.getContinent(a[i].id);
+            Continent c = map.getContinent(mc.id);
             int owner = c.getOwner();
             if (owner > 0) {
                 g.setColor(PlayerColors.getHighlightColor(owner));
@@ -114,8 +122,8 @@ class Overlay extends JPanel implements MouseListener {
             }
 
             g.setColor(new Color(47, 79, 79));
-            g.drawString(a[i].mapName, x + 2, y);
-            g.drawString("" + a[i].reward, x + 130, y);
+            g.drawString(mc.mapName, x + 2, y);
+            g.drawString("" + mc.reward, x + 130, y);
         }
     }
 
@@ -193,7 +201,7 @@ class Overlay extends JPanel implements MouseListener {
     @Override
     public String getToolTipText(MouseEvent event) {
         int id = mapView.regionFromPoint(event.getPoint());
-        return id == -1 ? null : MapRegion.forId(id).getName();
+        return id == -1 ? null : game.getRegionById(id).getName();
     }
 
     @Override

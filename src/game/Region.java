@@ -19,7 +19,7 @@ package game;
 import java.util.ArrayList;
 
 public class Region {
-    private MapRegion worldRegion;
+    private MapRegion mapRegion;
     private ArrayList<Region> neighbors;
     private Continent continent;
     private int armies;
@@ -27,7 +27,7 @@ public class Region {
     
     public Region(MapRegion region, Continent continent, int owner, int armies)
     {
-        this.worldRegion = region;
+        this.mapRegion = region;
         this.continent = continent;
         this.neighbors = new ArrayList<Region>();
         this.owner = owner;
@@ -43,10 +43,7 @@ public class Region {
     public void addNeighbor(Region neighbor)
     {
         if(!neighbors.contains(neighbor))
-        {
             neighbors.add(neighbor);
-            neighbor.addNeighbor(this);
-        }
     }
     
     /**
@@ -86,11 +83,11 @@ public class Region {
      * @return The id of this Region
      */
     public int getId() {
-        return worldRegion.id;
+        return mapRegion.id;
     }
 
     public String mapName() {
-        return worldRegion.getName();
+        return mapRegion.getName();
     }
     
     /**
@@ -121,8 +118,8 @@ public class Region {
         return owner;
     }
     
-    public MapRegion getWorldRegion() {
-        return worldRegion;
+    public MapRegion getMapRegion() {
+        return mapRegion;
     }
 
     public boolean isVisible(int player) {
@@ -138,6 +135,6 @@ public class Region {
     
     @Override
     public String toString() {
-        return worldRegion.name() + "[" + owner + "|" + armies + "]";
+        return mapRegion.getName() + "[" + owner + "|" + armies + "]";
     }
 }

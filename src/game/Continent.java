@@ -19,13 +19,13 @@ package game;
 import java.util.ArrayList;
 
 public class Continent {
-    private MapContinent worldContinent;
+    private MapContinent mapContinent;
     private ArrayList<Region> regions;
     private int owner;
     
     public Continent(MapContinent continent, int owner)
     {
-        this.worldContinent = continent;
+        this.mapContinent = continent;
         this.owner = owner;
         regions = new ArrayList<Region>();
     }
@@ -60,14 +60,14 @@ public class Continent {
      * @return The id of this continent
      */
     public int getId() {
-        return worldContinent.id;
+        return mapContinent.id;
     }
     
     /**
      * @return The number of armies a Player is rewarded when he fully owns this continent
      */
     public int getArmiesReward() {
-        return worldContinent.reward;
+        return mapContinent.reward;
     }
     
     /**
@@ -77,8 +77,8 @@ public class Continent {
         return regions;
     }
 
-    public MapContinent getWorldContinent() {
-        return worldContinent;
+    public MapContinent getMapContinent() {
+        return mapContinent;
     }
     
 }
