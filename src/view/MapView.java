@@ -33,8 +33,8 @@ public class MapView extends JPanel {
 
         SVGUniverse universe = new SVGUniverse();
         URI uri;
-        try (InputStream s = this.getClass().getResourceAsStream("/images/warlight-map.svg")) {
-            uri = universe.loadSVG(s, "warlight-map");
+        try (InputStream s = this.getClass().getResourceAsStream("/images/earth.svg")) {
+            uri = universe.loadSVG(s, "earth");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -16,31 +16,19 @@ public class GameState implements Cloneable {
     public Random random;
     GUI gui;
     
-    public GameState(GameConfig config, GameMap map,
-                     int round, int turn, Phase phase, ArrayList<Region> pickableRegions,
-                     Random random) {
-        this.config = config;
-        this.map = map;
-        this.round = round;
-        this.turn = turn;
-        this.phase = phase;
-        this.pickableRegions = pickableRegions;
-        this.random = random;
-    }
-    
-    public GameState(GameConfig config, ArrayList<Region> pickableRegions) {
-        this(
-            config != null ? config : new GameConfig(),
-            makeInitMap(),
-            0, 1, Phase.STARTING_REGIONS, pickableRegions,
-            (config == null || config.seed < 0) ? new Random() : new Random(config.seed));
-
-        if (pickableRegions == null)
-            initStartingRegions();
+    GameState() {
     }
     
     public GameState(GameConfig config) {
-        this(config, null);
+        this.config = config != null ? config : new GameConfig();
+        map = makeInitMap();
+        round = 0;
+        turn = 1;
+        phase = Phase.STARTING_REGIONS;
+        pickableRegions = null;
+        random = (config == null || config.seed < 0) ? new Random() : new Random(config.seed);
+
+        initStartingRegions();
     }
     
     public void setGUI(GUI gui) {
@@ -49,14 +37,22 @@ public class GameState implements Cloneable {
     
     @Override
     public GameState clone() {
-        GameMap newMap = map.clone();
+        GameState s = new GameState();
+        s.config = config;
+        s.map = map.clone();
+        s.round = round;
+        s.turn = turn;
+        s.phase = phase;
+
         ArrayList<Region> newPickable = new ArrayList<Region>();
         for (Region r : pickableRegions)
-            newPickable.add(newMap.getRegion(r.getId()));
-        
+            newPickable.add(s.map.getRegion(r.getId()));
+        s.pickableRegions = newPickable;
+
         // If you make several clones, each will have a distinct random number sequence.
-        return new GameState(config, newMap, round, turn, phase, newPickable,
-                             new Random(random.nextInt()));
+        s.random = new Random(random.nextInt());
+
+        return s;
     }
 
     @Override

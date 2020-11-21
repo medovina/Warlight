@@ -32,7 +32,7 @@ public class RunGame
     
     public GameResult go()
     { 
-        game = new GameState(config.game, null);
+        game = new GameState(config.game);
 
         GUI gui;
         if (config.visualize) {

@@ -29,8 +29,7 @@ public class GameConfig implements Cloneable {
     }
 
     public String getCSVHeader() {
-        return "seed;startingArmies;maxGameRounds;" +
-               "manualDistribution;warlords";         
+        return "seed;startingArmies;maxGameRounds;manualDistribution;warlords";         
     }
     
     public String getCSV() {
