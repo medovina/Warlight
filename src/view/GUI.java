@@ -16,7 +16,6 @@ import engine.*;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
-import game.world.MapRegion;
 
 public class GUI extends JFrame implements KeyListener
 {

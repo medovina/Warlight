@@ -6,7 +6,6 @@ import bots.RegionBFS.*;
 import engine.Bot;
 import game.*;
 import game.move.*;
-import game.world.MapRegion;
 
 public class AggressiveBot implements Bot 
 {

@@ -1,4 +1,4 @@
-package game.world;
+package game;
 
 import java.util.*;
 

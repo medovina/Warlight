@@ -3,7 +3,6 @@ import java.util.*;
 import engine.Bot;
 import game.*;
 import game.move.*;
-import game.world.MapRegion;
 
 public class MyBot implements Bot
 {

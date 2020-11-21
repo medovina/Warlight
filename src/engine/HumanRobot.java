@@ -5,7 +5,6 @@ import java.util.List;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
-import game.world.MapRegion;
 import view.GUI;
 
 public class HumanRobot implements Bot {

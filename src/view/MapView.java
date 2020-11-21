@@ -6,8 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.*;
-import java.io.*;
-import java.net.URI;
 import java.util.*;
 import javax.swing.*;
 
@@ -15,7 +13,8 @@ import com.kitfox.svg.*;
 import com.kitfox.svg.animation.AnimationElement;
 import com.kitfox.svg.xml.StyleAttribute;
 
-import game.world.MapRegion;
+import game.MapRegion;
+import game.WarlightMap;
 import utils.Util;
 
 public class MapView extends JPanel {
@@ -29,17 +28,7 @@ public class MapView extends JPanel {
     Point[] regionPositions = new Point[MapRegion.NUM_REGIONS + 1];
     
     public MapView(GUI gui, int width, int height) {
-        this.gui = gui;
-
-        SVGUniverse universe = new SVGUniverse();
-        URI uri;
-        try (InputStream s = this.getClass().getResourceAsStream("/images/earth.svg")) {
-            uri = universe.loadSVG(s, "earth");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        diagram = universe.getDiagram(uri);
+        diagram = new WarlightMap().getDiagram();
         Rectangle viewport = new Rectangle(0, 0, width, height);
         diagram.setDeviceViewport(viewport);
 

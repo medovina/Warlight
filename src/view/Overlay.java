@@ -9,7 +9,6 @@ import java.util.Comparator;
 import javax.swing.*;
 
 import game.*;
-import game.world.*;
 import utils.Util;
 
 class Overlay extends JPanel implements MouseListener {

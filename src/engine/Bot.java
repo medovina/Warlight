@@ -22,7 +22,6 @@ import java.util.List;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
-import game.world.MapRegion;
 
 public interface Bot {
     public void init(long timeoutMillis);

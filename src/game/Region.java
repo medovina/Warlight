@@ -18,8 +18,6 @@ package game;
 
 import java.util.ArrayList;
 
-import game.world.MapRegion;
-
 public class Region {
     private MapRegion worldRegion;
     private ArrayList<Region> neighbors;

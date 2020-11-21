@@ -1,7 +1,6 @@
 package game.move;
 
 import game.*;
-import game.world.MapRegion;
 
 public class ChooseAction implements Action {
     // The bot API uses Regions, but we store WorldRegions inside this and other action classes

@@ -10,7 +10,7 @@ import java.util.Random;
 
 import bots.RegionBFS.BFSNode;
 import game.GameMap;
-import game.world.MapRegion;
+import game.MapRegion;
 
 /**
  * BFS over {@link MapRegion}s using visitor pattern via {@link BFSVisitor}.

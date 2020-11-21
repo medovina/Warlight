@@ -17,8 +17,8 @@
 
 package game.move;
 
+import game.MapRegion;
 import game.Region;
-import game.world.MapRegion;
 
 /**
  * This Move is used in the first part of each round. It represents what Region is increased

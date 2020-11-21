@@ -19,9 +19,6 @@ package game;
 
 import java.util.ArrayList;
 
-import game.world.MapContinent;
-import game.world.MapRegion;
-
 public class GameMap implements Cloneable {
     
     public ArrayList<Region> regions;  // maps (id - 1) -> Region

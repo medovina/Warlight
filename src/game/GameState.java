@@ -3,7 +3,6 @@ package game;
 import java.util.*;
 
 import game.move.*;
-import game.world.*;
 import view.GUI;
 
 public class GameState implements Cloneable {

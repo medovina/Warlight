@@ -17,8 +17,8 @@
 
 package game.move;
 
+import game.MapRegion;
 import game.Region;
-import game.world.MapRegion;
 
 /**
  * This Move is used in the second part of each round. It represents the attack or transfer of armies from

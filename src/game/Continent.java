@@ -18,8 +18,6 @@
 package game;
 import java.util.ArrayList;
 
-import game.world.MapContinent;
-
 public class Continent {
     private MapContinent worldContinent;
     private ArrayList<Region> regions;
