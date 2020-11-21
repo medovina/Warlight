@@ -67,10 +67,7 @@ public class RunGame
         }
         
         for (int i = 1 ; i <= 2 ; ++i) {
-            RobotConfig robotCfg =
-                    new RobotConfig(i, config.playerName(i),
-                            config.botCommandTimeoutMillis, log, config.logToConsole, gui);
-            robots[i - 1].setup(robotCfg);
+            robots[i - 1].init(config.botCommandTimeoutMillis);
         }
         
         //send the bots the info they need to start

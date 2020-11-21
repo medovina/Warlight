@@ -4,7 +4,6 @@ import java.util.*;
 
 import engine.Bot;
 import engine.Robot;
-import engine.RobotConfig;
 import game.*;
 import game.move.*;
 import game.world.MapRegion;
@@ -45,8 +44,8 @@ public class InternalRobot implements Robot {
     }
     
     @Override
-    public void setup(RobotConfig config) {
-        bot.init(config.timeoutMillis);
+    public void init(long timeoutMillis) {
+        bot.init(timeoutMillis);
     }
     
     @Override

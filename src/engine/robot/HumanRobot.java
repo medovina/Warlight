@@ -3,7 +3,6 @@ package engine.robot;
 import java.util.List;
 
 import engine.Robot;
-import engine.RobotConfig;
 import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
@@ -18,7 +17,7 @@ public class HumanRobot implements Robot {
     }
 
     @Override
-    public void setup(RobotConfig config) {
+    public void init(long timeoutMillis) {
     }
 
     @Override
