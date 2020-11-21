@@ -2,9 +2,9 @@ package bots;
 
 import java.util.*;
 
-import bot.Bot;
 import bots.map.RegionBFS;
 import bots.map.RegionBFS.*;
+import engine.Bot;
 import game.*;
 import game.move.*;
 import game.world.MapRegion;

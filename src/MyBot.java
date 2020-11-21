@@ -1,6 +1,6 @@
 import java.util.*;
 
-import bot.Bot;
+import engine.Bot;
 import game.*;
 import game.move.*;
 import game.world.MapRegion;

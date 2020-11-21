@@ -2,7 +2,7 @@ package engine.robot;
 
 import java.util.*;
 
-import bot.*;
+import engine.Bot;
 import engine.Robot;
 import engine.RobotConfig;
 import game.*;
