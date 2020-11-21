@@ -223,7 +223,7 @@ public class GUI extends JFrame implements KeyListener
     public void updateMap() {
         requestFocusInWindow();
         
-        for(Region region : game.getMap().regions) {
+        for (Region region : game.getRegions()) {
             int id = region.getId();
             regionInfo[id].setArmies(game.getArmies(region));
             mapView.setOwner(id, game.getOwner(region));
@@ -277,7 +277,7 @@ public class GUI extends JFrame implements KeyListener
         waitForClick();
     }
     
-    public void placeArmies(int player, ArrayList<Region> regions, List<PlaceArmiesMove> placeArmiesMoves) {
+    public void placeArmies(int player, List<Region> regions, List<PlaceArmiesMove> placeArmiesMoves) {
         this.requestFocusInWindow();
         
         updateRegions(regions);
@@ -647,10 +647,6 @@ public class GUI extends JFrame implements KeyListener
         updateOverlay();
     }
     
-    boolean isNeighbor(Region r, Region s) {
-        return r.getNeighbors().contains(s);
-    }
-    
     void regionClicked(int id, boolean left) {
         Region region = game.getRegion(id);
         
@@ -675,7 +671,7 @@ public class GUI extends JFrame implements KeyListener
             return;
         }
         
-        if (moveFrom != null && isNeighbor(moveFrom, region)) {
+        if (moveFrom != null && game.isNeighbor(moveFrom, region)) {
             move(moveFrom, region, left ? 1 : -1);
             return;
         }

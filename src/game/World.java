@@ -15,8 +15,8 @@ import utils.Util;
 public class World {
     SVGDiagram diagram;
 
-    ArrayList<MapContinent> continents = new ArrayList<MapContinent>();
-    ArrayList<MapRegion> regions = new ArrayList<MapRegion>();
+    ArrayList<Continent> continents = new ArrayList<Continent>();
+    ArrayList<Region> regions = new ArrayList<Region>();
 
     public World() {
         SVGUniverse universe = new SVGUniverse();
@@ -38,8 +38,8 @@ public class World {
             for (String line : mapDesc.split("\n")) {
                 String[] w = line.split(" +");
                 if (w[0].strip().equals("adj")) {
-                    MapRegion r = getMapRegion(w[1].strip());
-                    MapRegion s = getMapRegion(w[2].strip());
+                    Region r = getRegion(w[1].strip());
+                    Region s = getRegion(w[2].strip());
                     r.addNeighbor(s);
                     s.addNeighbor(r);
                 } else throw new Error("unknown keyword in map description");
@@ -55,13 +55,13 @@ public class World {
             if (e instanceof Desc) {
                 mapDesc = ((Desc) e).getText();
             } else {
-                MapContinent c = new MapContinent(Util.decamel(e.getId()), continents.size());
+                Continent c = new Continent(Util.decamel(e.getId()), continents.size());
                 continents.add(c);
 
                 for (SVGElement d : e.getChildren(null)) {
                     if (d instanceof Path) {
                         Path p = (Path) d;
-                        MapRegion r = new MapRegion(p, Util.decamel(p.getId()), regions.size(), c);
+                        Region r = new Region(p, Util.decamel(p.getId()), regions.size(), c);
                         regions.add(r);
                         c.addRegion(r);
                     } else if (d instanceof Desc) {
@@ -79,9 +79,9 @@ public class World {
     void findNeighbors() {
         final int Dist = 3;
         double[] coords = new double[6];
-        for (MapRegion r : regions) {
+        for (Region r : regions) {
             Path rp = r.svgElement;
-            for (MapRegion s : regions) {
+            for (Region s : regions) {
                 if (r.id >= s.id)
                     continue;
                 Path sp = s.svgElement;
@@ -122,7 +122,7 @@ public class World {
             Text t = (Text) e;
             Point p = new Point(Util.getAttribute(t, "x").getIntValue(), Util.getAttribute(t, "y").getIntValue());
             p = Util.toGlobal(t, p);
-            for (MapRegion r : regions) {
+            for (Region r : regions) {
                 Shape s = Util.toGlobal(r.svgElement, r.svgElement.getShape());
                 if (s.contains(p)) {
                     r.setLabelPosition(p);
@@ -143,36 +143,36 @@ public class World {
         return continents.size();
     }
 
-    public List<MapContinent> getContinents() {
+    public List<Continent> getContinents() {
         return continents;
     }
 
-    public MapContinent getContinentById(int i) {
-        return continents.get(i);
+    public Continent getContinent(int id) {
+        return continents.get(id);
     }
 
     public int numRegions() {
         return regions.size();
     }
 
-    public List<MapRegion> getRegions() {
+    public List<Region> getRegions() {
         return regions;
     }
 
-    public MapRegion getMapRegion(int i) {
+    public Region getRegion(int i) {
         return regions.get(i);
     }
 
-    public MapRegion getMapRegion(String id) {
-        for (MapRegion r : regions)
+    public Region getRegion(String id) {
+        for (Region r : regions)
             if (r.svgElement.getId().equals(id))
                 return r;
 
         throw new Error("no region with id '" + id + "'");
     }
 
-    public MapRegion getMapRegion(SVGElement e) {
-        for (MapRegion r : regions)
+    public Region getRegion(SVGElement e) {
+        for (Region r : regions)
             if (r.svgElement == e)
                 return r;
                 

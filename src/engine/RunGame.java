@@ -63,7 +63,7 @@ public class RunGame
             engine.playRound();
         }
 
-        return finish(game.getMap(), bots);
+        return finish();
     }
 
     static Bot constructBot(Class<?> botClass) {        
@@ -108,7 +108,7 @@ public class RunGame
         throw new RuntimeException("Invalid init string: " + botInit);
     }
 
-    private GameResult finish(GameMap map, Bot[] bots)
+    private GameResult finish()
     {
         GameResult result = new GameResult();
         

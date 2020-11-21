@@ -61,7 +61,7 @@ public class Engine {
     {
         if (gui != null) {
             gui.newRound(game.getRoundNumber());
-            gui.updateRegions(game.getMap().regions);
+            gui.updateRegions(game.getRegions());
         }
         
         for (int i = 1 ; i <= 2 ; ++i) {
@@ -81,7 +81,7 @@ public class Engine {
                     if (move.getIllegalMove().equals(""))
                         legalMoves.add(move);
                 
-                gui.placeArmies(i, game.getMap().regions, legalMoves);
+                gui.placeArmies(i, game.getRegions(), legalMoves);
             }
             
             start = System.currentTimeMillis();
@@ -112,7 +112,7 @@ public class Engine {
             for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
                 for (int p = 1 ; p <= 2 ; ++p) {
                     long start = System.currentTimeMillis();
-                    Region region = game.region(bot(p).chooseRegion(game));
+                    Region region = bot(p).chooseRegion(game);
                     if (timeout(bot(p), start)) {
                         System.err.println("bot failed to return starting region in time!");
                         region = null;
@@ -128,7 +128,7 @@ public class Engine {
             }
         
         if (gui != null) {
-            gui.regionsChosen(game.getMap().regions);
+            gui.regionsChosen(game.getRegions());
         }
     }
 }

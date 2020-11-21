@@ -17,7 +17,6 @@
 
 package game.move;
 
-import game.MapRegion;
 import game.Region;
 
 /**
@@ -27,49 +26,30 @@ import game.Region;
  */
 
 public class AttackTransferMove extends Move {
-    private MapRegion fromRegion;
-    private MapRegion toRegion;
+    private Region fromRegion;
+    private Region toRegion;
     private int armies;
     
-    public AttackTransferMove(MapRegion fromRegion, MapRegion toRegion, int armies) {
+    public AttackTransferMove(Region fromRegion, Region toRegion, int armies) {
         this.fromRegion = fromRegion; this.toRegion = toRegion; this.armies = armies;
     }
 
-    public AttackTransferMove(Region fromRegion, Region toRegion, int armies) {
-        this(fromRegion.getMapRegion(), toRegion.getMapRegion(), armies);
-    }
-
-    /**
-     * @param n Sets the number of armies of this Move
-     */
     public void setArmies(int n) {
         armies = n;
     }
     
-    /**
-     * @return The Region this Move is attacking or transferring from
-     */
-    public MapRegion getFromRegion() {
+    public Region getFromRegion() {
         return fromRegion;
     }
     
-    /**
-     * @return The Region this Move is attacking or transferring to
-     */
-    public MapRegion getToRegion() {
+    public Region getToRegion() {
         return toRegion;
     }
     
-    /**
-     * @return The number of armies this Move is attacking or transferring with
-     */
     public int getArmies() {
         return armies;
     }
     
-    /**
-     * @return A string representation of this Move
-     */
     public String getString() {
         if(getIllegalMove().equals(""))
             return "attack/transfer " + fromRegion.id + " " + toRegion.id + " " + armies;

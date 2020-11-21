@@ -20,7 +20,7 @@ public class AggressiveBot implements Bot
     // ================
     
     @Override
-    public MapRegion chooseRegion(Game state) {
+    public Region chooseRegion(Game state) {
         ArrayList<Region> choosable = state.getPickableRegions();
         
         int min = Integer.MAX_VALUE;
@@ -34,11 +34,11 @@ public class AggressiveBot implements Bot
             }
         }
         
-        return best.getMapRegion();
+        return best;
     }
     
     public int getPreferredContinentPriority(Continent continent) {
-        switch (continent.getMapContinent().mapName) {
+        switch (continent.getName()) {
         case "Australia":     return 1;
         case "South America": return 2;
         case "North America": return 3;
@@ -165,16 +165,16 @@ public class AggressiveBot implements Bot
         return new AttackTransferMove(from, to, game.getArmies(from)-1);
     }
     
-    private MapRegion moveToFrontRegion;
+    private Region moveToFrontRegion;
     
     private AttackTransferMove moveToFront(Region from) {
         RegionBFS<BFSNode> bfs = new RegionBFS<BFSNode>();
         moveToFrontRegion = null;
-        bfs.run(from.getMapRegion(), new BFSVisitor<BFSNode>() {
+        bfs.run(from, new BFSVisitor<BFSNode>() {
 
             @Override
-            public BFSVisitResult<BFSNode> visit(MapRegion region, int level, BFSNode parent, BFSNode thisNode) {
-                if (!hasOnlyMyNeighbours(game.region(region))) {
+            public BFSVisitResult<BFSNode> visit(Region region, int level, BFSNode parent, BFSNode thisNode) {
+                if (!hasOnlyMyNeighbours(region)) {
                     moveToFrontRegion = region;
                     return new BFSVisitResult<BFSNode>(BFSVisitResultType.TERMINATE, thisNode == null ? new BFSNode() : thisNode);
                 }
@@ -185,10 +185,10 @@ public class AggressiveBot implements Bot
         
         if (moveToFrontRegion != null) {
             //List<Region> path = fw.getPath(from.getRegion(), moveToFrontRegion);
-            List<MapRegion> path = bfs.getAllPaths(moveToFrontRegion).get(0);
-            MapRegion moveTo = path.get(1);
+            List<Region> path = bfs.getAllPaths(moveToFrontRegion).get(0);
+            Region moveTo = path.get(1);
             
-            return transfer(from, game.region(moveTo));
+            return transfer(from, moveTo);
         }
         
         return null;

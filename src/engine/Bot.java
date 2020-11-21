@@ -31,7 +31,7 @@ public interface Bot {
      * @param state
      * @param timeoutMillis in milliseconds
      */
-    public MapRegion chooseRegion(Game state);
+    public Region chooseRegion(Game state);
     
     /**
      * PLACE ARMIES - distribute armies between your regions.

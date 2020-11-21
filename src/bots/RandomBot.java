@@ -19,9 +19,9 @@ public class RandomBot implements Bot
     // Choose a starting region.
     
     @Override
-    public MapRegion chooseRegion(Game state) {
+    public Region chooseRegion(Game state) {
         ArrayList<Region> choosable = state.getPickableRegions();
-        return choosable.get(rand.nextInt(choosable.size())).getMapRegion();
+        return choosable.get(rand.nextInt(choosable.size()));
     }
 
     // Decide where to place armies this turn.

@@ -8,11 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import bots.RegionBFS.BFSNode;
-import game.GameMap;
-import game.MapRegion;
+import game.Region;
 
 /**
- * BFS over {@link MapRegion}s using visitor pattern via {@link BFSVisitor}.
+ * BFS over {@link Region}s using visitor pattern via {@link BFSVisitor}.
  * 
  * Your visitor needs to have access to {@link GameMap} in order to be useful.
  * 
@@ -27,7 +26,7 @@ public class RegionBFS<NODE extends BFSNode> {
         /**
          * Will be auto-filled...
          */
-        public MapRegion region;
+        public Region region;
         
         /**
          * Will be auto-filled...
@@ -37,9 +36,9 @@ public class RegionBFS<NODE extends BFSNode> {
         /**
          * Will be auto-filled...
          */
-        public List<MapRegion> parents = new ArrayList<MapRegion>();
+        public List<Region> parents = new ArrayList<Region>();
         
-        public void addParent(MapRegion region) {
+        public void addParent(Region region) {
             this.parents.add(region);
         }
         
@@ -96,16 +95,16 @@ public class RegionBFS<NODE extends BFSNode> {
          * @param thisNode this is non-null if we already visited the region in the past
          * @return
          */
-        public BFSVisitResult<NODE> visit(MapRegion region, int level, NODE parent, NODE thisNode);
+        public BFSVisitResult<NODE> visit(Region region, int level, NODE parent, NODE thisNode);
         
     }
     
     public RegionBFS() {        
     }
     
-    private Map<MapRegion, NODE> nodes = new HashMap<MapRegion, NODE>();
+    private Map<Region, NODE> nodes = new HashMap<Region, NODE>();
     
-    public void run(MapRegion start, BFSVisitor<NODE> visitor) {
+    public void run(Region start, BFSVisitor<NODE> visitor) {
         
         reset();
         
@@ -125,7 +124,7 @@ public class RegionBFS<NODE extends BFSNode> {
         while (queue.size() > 0) {
             NODE parent = queue.removeFirst();
             
-            for (MapRegion region : parent.region.getNeighbours()) {
+            for (Region region : parent.region.getNeighbors()) {
                 
                 NODE node = nodes.get(region);
                 
@@ -160,27 +159,27 @@ public class RegionBFS<NODE extends BFSNode> {
         }        
     }
     
-    public List<List<MapRegion>> getAllPaths(MapRegion to) {
-        List<List<MapRegion>> result = new ArrayList<List<MapRegion>>();
+    public List<List<Region>> getAllPaths(Region to) {
+        List<List<Region>> result = new ArrayList<List<Region>>();
         
         NODE node = getNode(to);
         
         if (node == null) return result;
         
-        List<MapRegion> firstPath = new ArrayList<MapRegion>();
+        List<Region> firstPath = new ArrayList<Region>();
         firstPath.add(to);
         result.add(firstPath);
         
         generatePath(result, firstPath, to);
         
-        for (List<MapRegion> path : result) {
+        for (List<Region> path : result) {
             Collections.reverse(path);
         }
         
         return result;
     }
     
-    private void generatePath(List<List<MapRegion>> result, List<MapRegion> currentPath, MapRegion nodeRegion) {
+    private void generatePath(List<List<Region>> result, List<Region> currentPath, Region nodeRegion) {
         NODE node = getNode(nodeRegion);
         
         if (node.parents.size() == 0) {
@@ -191,12 +190,12 @@ public class RegionBFS<NODE extends BFSNode> {
         
         int pathLen = currentPath.size();
         
-        for (MapRegion parent : node.parents) {
-            List<MapRegion> myPath = null;
+        for (Region parent : node.parents) {
+            List<Region> myPath = null;
             if (first) {
                 myPath = currentPath;
             } else {
-                myPath = new ArrayList<MapRegion>(currentPath.subList(0, pathLen));
+                myPath = new ArrayList<Region>(currentPath.subList(0, pathLen));
                 result.add(myPath);
             }
             myPath.add(parent);
@@ -205,11 +204,11 @@ public class RegionBFS<NODE extends BFSNode> {
         }        
     }
 
-    public Map<MapRegion, NODE> getNodes() {
+    public Map<Region, NODE> getNodes() {
         return nodes;
     }
     
-    public NODE getNode(MapRegion region) {
+    public NODE getNode(Region region) {
         return nodes.get(region);
     }
 

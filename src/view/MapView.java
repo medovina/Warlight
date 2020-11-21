@@ -38,7 +38,7 @@ public class MapView extends JPanel {
         imageBounds = Util.getBoundingBox(root);
             
         for (int i = 0 ; i < game.numRegions() ; ++i) {
-            MapRegion r = game.getMapRegion(i);
+            Region r = game.getRegion(i);
             Point2D p = viewportTransform.transform(r.getLabelPosition(), null);
             regionPositions[i] = new Point((int) p.getX(), (int) p.getY());
         }
@@ -73,7 +73,7 @@ public class MapView extends JPanel {
     }
 
     void setOwner(int regionId, int player) {
-        MapRegion r = game.getMapRegion(regionId);
+        Region r = game.getRegion(regionId);
         RenderableElement e = r.svgElement;
         try {
             Color color = PlayerColors.getColor(player);
@@ -89,7 +89,7 @@ public class MapView extends JPanel {
         } catch (SVGException ex) { throw new RuntimeException(ex); }
     }
 
-    MapRegion regionFromPoint(Point p) {
+    Region regionFromPoint(Point p) {
         List<List<SVGElement>> elements = new ArrayList<List<SVGElement>>();
         try {
             diagram.pick(p, elements);
@@ -97,7 +97,7 @@ public class MapView extends JPanel {
 
         for (List<SVGElement> path : elements) {
             RenderableElement e = (RenderableElement) path.get(path.size() - 1);
-            MapRegion r = game.getWorld().getMapRegion(e);
+            Region r = game.getWorld().getRegion(e);
             if (r != null)
                 return r;
         }

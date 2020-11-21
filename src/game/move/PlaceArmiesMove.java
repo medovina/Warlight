@@ -17,7 +17,6 @@
 
 package game.move;
 
-import game.MapRegion;
 import game.Region;
 
 /**
@@ -26,47 +25,29 @@ import game.Region;
  */
 
 public class PlaceArmiesMove extends Move {
-    private MapRegion region;
+    private Region region;
     private int armies;
     
-    public PlaceArmiesMove(MapRegion region, int armies) {
+    public PlaceArmiesMove(Region region, int armies) {
         this.region = region; this.armies = armies;
     }
 
-    public PlaceArmiesMove(Region region, int armies) {
-        this(region.getMapRegion(), armies);
-    }
-    
-    /**
-     * @param n Sets the number of armies this move will place on a Region
-     */
     public void setArmies(int n) {
         armies = n;
     }
     
-    /**
-     * @return The Region this Move will be placing armies on
-     */
-    public MapRegion getRegion() {
+    public Region getRegion() {
         return region;
     }
     
-    /**
-     * @return The number of armies this move will place
-     */
     public int getArmies() {
         return armies;
     }
     
-    /**
-     * @return A string representation of this Move
-     */
     public String getString() {
         if(getIllegalMove().equals(""))
             return "place_armies " + region.id + " " + armies;
         else
             return "illegal_move " + getIllegalMove();
-                
     }
-    
 }

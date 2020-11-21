@@ -53,10 +53,10 @@ class Overlay extends JPanel implements MouseListener {
         repaint();
     }
 
-    class CompareByName implements Comparator<MapContinent> {
+    class CompareByName implements Comparator<Continent> {
         @Override
-        public int compare(MapContinent o1, MapContinent o2) {
-            return o1.mapName.compareTo(o2.mapName);
+        public int compare(Continent o1, Continent o2) {
+            return o1.name.compareTo(o2.name);
         }
     }
 
@@ -87,8 +87,8 @@ class Overlay extends JPanel implements MouseListener {
         g.setStroke(new BasicStroke(2));
         g.setColor(Color.YELLOW.darker());
 
-        for (MapRegion r : game.allMapRegions())
-            for (MapRegion s : r.getNeighbours()) {
+        for (Region r : game.getRegions())
+            for (Region s : r.getNeighbors()) {
                 if (r.id < s.id) {
                     Point p = mapView.regionPositions[r.id],
                           q = mapView.regionPositions[s.id];
@@ -126,16 +126,15 @@ class Overlay extends JPanel implements MouseListener {
     void drawScroll(Graphics g) {
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
-        ArrayList<MapContinent> a = new ArrayList<MapContinent>(game.allMapContinents());
+        ArrayList<Continent> a = new ArrayList<Continent>(game.getContinents());
         Collections.sort(a, new CompareByName());
 
-        GameMap map = game.getMap();
         for (int i = 0; i < a.size(); ++i) {
-            MapContinent mc = a.get(i);
+            Continent mc = a.get(i);
             int x = 104;
             int y = 560 + 19 * i;
 
-            Continent c = map.getContinent(mc.id);
+            Continent c = game.getContinent(mc.id);
             int owner = game.getOwner(c);
             if (owner > 0) {
                 g.setColor(PlayerColors.getHighlightColor(owner));
@@ -143,7 +142,7 @@ class Overlay extends JPanel implements MouseListener {
             }
 
             g.setColor(new Color(47, 79, 79));
-            g.drawString(mc.mapName, x + 2, y);
+            g.drawString(mc.name, x + 2, y);
             g.drawString("" + mc.reward, x + 130, y);
         }
     }
@@ -197,7 +196,7 @@ class Overlay extends JPanel implements MouseListener {
         if (doneBox != null && doneBox.contains(p))
             gui.doneClicked();
         else {
-            MapRegion r = mapView.regionFromPoint(p);
+            Region r = mapView.regionFromPoint(p);
             if (r != null)
                 gui.regionClicked(r.id, e.getButton() == MouseEvent.BUTTON1);
             else
@@ -224,13 +223,13 @@ class Overlay extends JPanel implements MouseListener {
 
     @Override
     public String getToolTipText(MouseEvent event) {
-        MapRegion r = mapView.regionFromPoint(event.getPoint());
+        Region r = mapView.regionFromPoint(event.getPoint());
         return r == null ? null : r.getName();
     }
 
     @Override
     public Point getToolTipLocation(MouseEvent e) {
-        MapRegion r = mapView.regionFromPoint(e.getPoint());
+        Region r = mapView.regionFromPoint(e.getPoint());
         if (r == null)
             return new Point(0, 0);
 
