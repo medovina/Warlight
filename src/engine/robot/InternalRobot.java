@@ -12,8 +12,36 @@ import game.world.MapRegion;
 public class InternalRobot implements Robot {
     private Bot bot;
 
+    static Bot constructBot(Class<?> botClass) {        
+        Object botObj;
+        try {
+            botObj = botClass.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e); 
+        }
+        if (!(Bot.class.isAssignableFrom(botObj.getClass()))) {
+            throw new RuntimeException("Constructed bot does not implement " + Bot.class.getName() + " interface, bot class instantiated: " + botClass.getName());
+        }
+        Bot bot = (Bot) botObj;
+        return bot;
+    }
+    
+    static Bot constructBot(String botFQCN) {
+        Class<?> botClass;
+        try {
+            try {
+                botClass = Class.forName(botFQCN);
+            } catch (ClassNotFoundException e) {
+                botClass = Class.forName("bots." + botFQCN);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Failed to locate bot class: " + botFQCN, e);
+        }
+        return constructBot(botClass);
+    }
+    
     public InternalRobot(String botFQCN) {
-        bot = BotParser.constructBot(botFQCN);
+        bot = constructBot(botFQCN);
     }
     
     @Override
