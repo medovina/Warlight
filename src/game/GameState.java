@@ -127,7 +127,6 @@ public class GameState implements Cloneable {
         return pickableRegions;
     }
 
-    //calculate how many armies a player is able to place on the map each round
     public int armiesPerTurn(int player, boolean first)
     {
         int armies = config.startingArmies;
@@ -205,6 +204,10 @@ public class GameState implements Cloneable {
     public int numStartingRegions() {
         return config.warlords ? 3 : 4;
     }
+
+    public Region getRandomStartingRegion() {
+        return pickableRegions.get(random.nextInt(pickableRegions.size()));
+    }
     
     void initStartingRegions() {
         pickableRegions = new ArrayList<Region>();
@@ -221,6 +224,18 @@ public class GameState implements Cloneable {
             }
         else
             pickableRegions = new ArrayList<Region>(map.regions);
+
+        if (config.manualDistribution)
+            phase = Phase.STARTING_REGIONS;
+        else {  // automatic distribution
+            for (int i = 0 ; i < numStartingRegions() ; ++i)
+                for (int player = 1; player <= 2; ++player) {
+                    Region r = getRandomStartingRegion();
+                    r.setOwner(player);
+                    pickableRegions.remove(r);
+                }
+            phase = Phase.PLACE_ARMIES;
+        }
     }
     
     public void chooseRegion(Region region) {

@@ -216,14 +216,12 @@ public class GUI extends JFrame implements KeyListener
         message("New round begins");
         nextRound = false;
 
-        //Wait for user to request next round
         waitForClick();        
     }
     
     public void updateMap() {
         requestFocusInWindow();
         
-        //Update region info
         for(Region region : game.getMap().regions) {
             int id = region.getId();
             regionInfo[id-1].setArmies(region.getArmies());
@@ -456,22 +454,26 @@ public class GUI extends JFrame implements KeyListener
         chooseRegionAction = new CountDownLatch(1);
         
         message("Choose a starting territory");
+
+        updateMap();
         
-        for (Region region : game.pickableRegions) {
-            RegionInfo ri = this.regionInfo[region.getId()-1];
-            ri.setHighlight(RegionInfo.Green);
-        }
+        if (game.config.warlords)
+            for (Region region : game.pickableRegions) {
+                RegionInfo ri = this.regionInfo[region.getId()-1];
+                ri.setHighlight(RegionInfo.Green);
+            }
         
         try {
             chooseRegionAction.await();
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while awaiting user action.");
         }
-        
-        for (Region region : game.pickableRegions) {
-            RegionInfo ri = this.regionInfo[region.getId()-1];
-            ri.setHighlight(false);
-        }
+
+        if (game.config.warlords)
+            for (Region region : game.pickableRegions) {
+                RegionInfo ri = this.regionInfo[region.getId()-1];
+                ri.setHighlight(false);
+            }
         
         chooseRegionAction = null;
         return chosenRegion;

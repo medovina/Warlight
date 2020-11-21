@@ -104,13 +104,13 @@ public class Engine {
     
     public void distributeStartingRegions()
     {
-        if (gui != null) {
-            gui.showPickableRegions();
-        }
-    
-        for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
-            for (int p = 1 ; p <= 2 ; ++p) {
-                if (game.config.manualDistribution) {
+        if (game.getPhase() == Phase.STARTING_REGIONS) {
+            if (gui != null) {
+                gui.showPickableRegions();
+            }
+        
+            for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
+                for (int p = 1 ; p <= 2 ; ++p) {
                     long start = System.currentTimeMillis();
                     Region region = game.region(bot(p).chooseRegion(game));
                     if (timeout(bot(p), start)) {
@@ -120,23 +120,15 @@ public class Engine {
                     
                     if (region == null || !game.pickableRegions.contains(region)) {
                         System.err.println("invalid starting region; choosing one at random");
-                        region = getRandomStartingRegion();
+                        region = game.getRandomStartingRegion();
                     }
             
                     game.chooseRegion(region);
-                    if (gui != null)
-                        gui.updateMap();
-                } else // automatic distribution
-                    game.chooseRegion(getRandomStartingRegion());
+                }
             }
         
         if (gui != null) {
             gui.regionsChosen(game.getMap().regions);
         }
     }
-    
-    private Region getRandomStartingRegion()
-    {
-        return game.pickableRegions.get(game.random.nextInt(game.pickableRegions.size()));
-    }    
 }

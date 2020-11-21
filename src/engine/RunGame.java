@@ -50,16 +50,14 @@ public class RunGame
         bots[0] = setupBot(config.bot1Init, gui);
         bots[1] = setupBot(config.bot2Init, gui);
                 
-        //start the engine
-        this.engine = new Engine(game, bots, gui, config.botCommandTimeoutMillis);
-        
-        for (int i = 1 ; i <= 2 ; ++i) {
-            bots[i - 1].init(config.botCommandTimeoutMillis);
+        for (int i = 0 ; i < 2 ; ++i) {
+            bots[i].init(config.botCommandTimeoutMillis);
         }
         
-        engine.distributeStartingRegions(); //decide the players' starting regions
+        engine = new Engine(game, bots, gui, config.botCommandTimeoutMillis);
         
-        //play the game
+        engine.distributeStartingRegions();
+        
         while(!game.isDone())
         {
             engine.playRound();

@@ -33,10 +33,6 @@ public class GameMap implements Cloneable {
         this.continents = new ArrayList<Continent>();
     }
     
-    /**
-     * add a Region to the map
-     * @param region : Region to be added
-     */
     public void add(Region region)
     {
         if (region.getId() != regions.size() + 1)
@@ -44,10 +40,6 @@ public class GameMap implements Cloneable {
         regions.add(region);
     }
     
-    /**
-     * add a Continent to the map
-     * @param continent : Continent to be added
-     */
     public void add(Continent continent)
     {
         if (continent.getId() != continents.size() + 1)
@@ -96,10 +88,6 @@ public class GameMap implements Cloneable {
         return continents;
     }
     
-    /**
-     * @param id : a Region id number
-     * @return : the matching Region object
-     */
     public Region getRegion(int id)
     {
         if (1 <= id && id <= regions.size())
@@ -113,10 +101,6 @@ public class GameMap implements Cloneable {
         return getRegion(r.id);
     }
     
-    /**
-     * @param id : a Continent id number
-     * @return : the matching Continent object
-     */
     public Continent getContinent(int id)
     {
         if (1 <= id && id <= continents.size())
@@ -124,16 +108,6 @@ public class GameMap implements Cloneable {
 
         System.err.println("Could not find continent with id " + id);
         return null;
-    }
-    
-    public String getMapString()
-    {
-        String mapString = "";
-        for(Region region : regions)
-        {
-            mapString = mapString.concat(region.getId() + ";" + region.getOwner() + ";" + region.getArmies() + " ");
-        }
-        return mapString;
     }
     
     public int numberRegionsOwned(int player) {
@@ -167,22 +141,5 @@ public class GameMap implements Cloneable {
 
         return ownedRegions;
     }
-    
-    //fog of war
-    //return all regions visible to given player
-    public ArrayList<Region> visibleRegionsForPlayer(int player)
-    {
-        ArrayList<Region> visibleRegions = new ArrayList<Region>();
-        ArrayList<Region> ownedRegions = ownedRegionsByPlayer(player);
         
-        visibleRegions.addAll(ownedRegions);
-        
-        for(Region region : ownedRegions)    
-            for(Region neighbor : region.getNeighbors())
-                if(!visibleRegions.contains(neighbor))
-                    visibleRegions.add(neighbor);
-
-        return visibleRegions;
-    }
-    
 }
