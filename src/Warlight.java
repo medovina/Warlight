@@ -17,14 +17,8 @@ public class Warlight {
         }
         config.visualize = false;
 
-        WarlightFightConfig fc = new WarlightFightConfig();
-        fc.config = config;
-        fc.games = games;
-        fc.seed = seed > 0 ? seed : 0;
-
-        WarlightFight fight = new WarlightFight(fc,
-            resultdir == null ? null : new File(resultdir + "/all-results.csv"),
-            resultdir == null ? null : new File(resultdir + "/fights")
+        WarlightFight fight = new WarlightFight(config, seed > 0 ? seed : 0, games,
+            resultdir == null ? null : new File(resultdir + "/games.csv")
             );
         fight.fight(Util.className(bots.get(0)), internalBot(bots.get(0)),
                     Util.className(bots.get(1)), internalBot(bots.get(1)));
@@ -56,7 +50,7 @@ public class Warlight {
             if (s.startsWith("-"))
                 switch (s) {
                     case "-manual":
-                        config.game.manualDistribution = true;
+                        config.gameConfig.manualDistribution = true;
                         break;
                     case "-resultdir":
                         resultdir = args[++i];
@@ -71,7 +65,7 @@ public class Warlight {
                         config.timeoutMillis = Integer.parseInt(args[++i]);
                         break;
                     case "-warlords":
-                        config.game.warlords = true;
+                        config.gameConfig.warlords = true;
                         break;
                     default:
                         usage();
@@ -92,7 +86,7 @@ public class Warlight {
             }
             
             config.visualize = true;
-            config.game.seed = seed;
+            config.gameConfig.seed = seed;
             new Engine(config).go();
         }
         

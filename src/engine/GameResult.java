@@ -1,7 +1,6 @@
 package engine;
 
 public class GameResult {
-    
     public Config config;
     
     public int player1Regions;
@@ -60,21 +59,17 @@ public class GameResult {
                player2Regions + ";" + player2Armies + ";" + round;
     }
     
-    public String getHumanString() {
-        return "Winner: " + getWinner() + " [" + getWinnerName() + "] in round " + round +
-               "\nPlayer1: " + player1Regions + " regions / " + player1Armies +
-               " armies; Player2: " +player2Regions + " regions / " + player2Armies + " armies";
-    }
-    
     public String getCSVHeader() {
-        return "winnerName;loserName;winner;winnerId;player1Regions;player1Armies;player2Regions;player2Armies;round;" + config.getCSVHeader();
+        return config.getCSVHeader() +
+               ";winnerName;loserName;winner;winnerId;player1Regions;player1Armies;" +
+               "player2Regions;player2Armies;round";
     }
     
     public String getCSV() {
-        return getWinnerName() + ";" + getLoserName() + ";" +
+        return config.getCSV() + ";" + getWinnerName() + ";" + getLoserName() + ";" +
         (winner == -1 || winner == 0 ? "NONE" : winner) + ";" +
         getWinner() + ";" + player1Regions + ";" + player1Armies + ";" +
-        player2Regions + ";" + player2Armies + ";" + round + ";" + config.getCSV();
+        player2Regions + ";" + player2Armies + ";" + round;
     }
     
 }

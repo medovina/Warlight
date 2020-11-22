@@ -185,7 +185,7 @@ public class Engine {
 
     public GameResult go()
     { 
-        game = new Game(config.game);
+        game = new Game(config.gameConfig);
 
         if (config.visualize) {
             gui = new GUI(game, config);

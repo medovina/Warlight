@@ -14,7 +14,7 @@ public class Config implements Cloneable {
     public Boolean visualizeContinual = null;
     public Integer visualizeContinualFrameTimeMillis = null;
     
-    public GameConfig game = new GameConfig();
+    public GameConfig gameConfig = new GameConfig();
     
     public void setHuman(int player) {
         if (player == 1) {
@@ -48,50 +48,15 @@ public class Config implements Cloneable {
         return player1Name + ";" + player2Name + ";" +
                timeoutMillis + ";" +
                visualize + ";" + visualizeContinual + ";" + visualizeContinualFrameTimeMillis + ";" +
-               game.asString();
-    }
-    
-    @Override
-    public Config clone() {
-        Config result = fromString(asString());
-        
-        result.bot1Init = bot1Init;
-        result.bot2Init = bot2Init;
-        
-        return result;
+               gameConfig.asString();
     }
     
     public String getCSVHeader() {
-        return "PlayerName1;PlayerName2;timeoutMillis;" + game.getCSVHeader();
+        return "PlayerName1;PlayerName2;timeoutMillis;" + gameConfig.getCSVHeader();
     }
     
     public String getCSV() {
         return player1Name + ";" + player2Name + ";" +
-               timeoutMillis + ";" + game.getCSV();
-    }
-    
-    public static Config fromString(String line) {
-        
-        String[] parts = line.split(";");
-        
-        Config result = new Config();
-
-        result.player1Name = parts[0];
-        result.player2Name = parts[1];
-        result.timeoutMillis = Integer.parseInt(parts[2]);
-        result.visualize = Boolean.parseBoolean(parts[3]);
-        result.visualizeContinual = (parts[4].toLowerCase().equals("null") ? null : Boolean.parseBoolean(parts[4]));
-        result.visualizeContinualFrameTimeMillis = (parts[5].toLowerCase().equals("null") ? null : Integer.parseInt(parts[5]));
-        
-        int engineConfigStart = 0;
-        for (int i = 0; i < 6; ++i) {
-            engineConfigStart = line.indexOf(";", engineConfigStart);
-            ++engineConfigStart;
-        }
-        
-        result.game = GameConfig.fromString(line.substring(engineConfigStart));
-        
-        return result;
-    }
-    
+               timeoutMillis + ";" + gameConfig.getCSV();
+    }    
 }
