@@ -1,18 +1,14 @@
 import java.util.*;
 
-import engine.Bot;
+import engine.Agent;
 import game.*;
 import game.move.*;
 
-public class MyBot implements Bot
+public class MyAgent implements Agent
 {
     Random random = new Random(0);
     
-    // Code your bot here.
-    
-    //
-    // This is a dummy implemementation that moves randomly.
-    //
+    // This is a dummy implementation that moves randomly.
 
     @Override
     public void init(long timeoutMillis) {
@@ -32,11 +28,13 @@ public class MyBot implements Bot
     @Override
     public List<PlaceArmiesMove> placeArmies(Game game) {
         int me = game.currentPlayer();
+        int available = game.armiesPerTurn(me);
+
         List<Region> mine = game.regionsOwnedBy(me);
         int numRegions = mine.size();
         
         int[] count = new int[numRegions];
-        for (int i = 0 ; i < game.armiesPerTurn(me) ; ++i) {
+        for (int i = 0 ; i < available ; ++i) {
             int r = random.nextInt(numRegions);
             count[r]++;
         }
@@ -52,14 +50,15 @@ public class MyBot implements Bot
     
     @Override
     public List<AttackTransferMove> moveArmies(Game game) {
+        int me = game.currentPlayer();
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
-        for (Region rd : game.regionsOwnedBy(game.currentPlayer())) {
-            int count = random.nextInt(game.getArmies(rd));
+        for (Region r : game.regionsOwnedBy(me)) {
+            int count = random.nextInt(game.getArmies(r));
             if (count > 0) {
-                List<Region> neighbors = rd.getNeighbors();
+                List<Region> neighbors = r.getNeighbors();
                 Region to = neighbors.get(random.nextInt(neighbors.size()));
-                ret.add(new AttackTransferMove(rd, to, count));
+                ret.add(new AttackTransferMove(r, to, count));
             }
         }
         return ret;        

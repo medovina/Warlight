@@ -8,11 +8,11 @@ import tournament.*;
 import utils.Util;
 
 public class Warlight {
-    static String internalBot(String name) { return "internal:" + name; }
+    static String internalAgent(String name) { return "internal:" + name; }
 
-    static void simulateGames(Config config, List<String> bots, int seed, int games, String resultdir) {
-        if (bots.size() < 2) {
-            out.println("must specify 2 bot names with -sim");
+    static void simulateGames(Config config, List<String> agents, int seed, int games, String resultdir) {
+        if (agents.size() < 2) {
+            out.println("must specify 2 agent names with -sim");
             return;
         }
         config.visualize = false;
@@ -20,17 +20,17 @@ public class Warlight {
         WarlightFight fight = new WarlightFight(config, seed > 0 ? seed : 0, games,
             resultdir == null ? null : new File(resultdir + "/games.csv")
             );
-        fight.fight(Util.className(bots.get(0)), internalBot(bots.get(0)),
-                    Util.className(bots.get(1)), internalBot(bots.get(1)));
+        fight.fight(Util.className(agents.get(0)), internalAgent(agents.get(0)),
+                    Util.className(agents.get(1)), internalAgent(agents.get(1)));
 }
 
     static void usage() {
-        out.println("usage: warlight [<bot1-classname>] [<bot2-classname>] [<option>...]");
+        out.println("usage: warlight [<agent1-classname>] [<agent2-classname>] [<option>...]");
         out.println("options:");
         out.println("  -resultdir <path> : directory for results in CSV format");
         out.println("  -seed <num> : random seed");
         out.println("  -sim <count> : simulate a series of games without visualization");
-        out.println("  -timeout <num> : bot time limit in ms");
+        out.println("  -timeout <num> : agent time limit in ms");
         out.println();
         out.println("game configuration options:");
         out.println("  -manual : manual territory distribution");
@@ -38,7 +38,7 @@ public class Warlight {
     }
 
     public static void main(String[] args) {
-        List<String> bots = new ArrayList<String>();
+        List<String> agents = new ArrayList<String>();
         String resultdir = null;
         int seed = -1;
         int sim = 0;
@@ -71,18 +71,18 @@ public class Warlight {
                         usage();
                         System.exit(1);
                 }
-            else bots.add(args[i]);
+            else agents.add(args[i]);
         }
 
         if (sim > 0) {
-            simulateGames(config, bots, seed, sim, resultdir);
+            simulateGames(config, agents, seed, sim, resultdir);
         } else {
-            if (bots.size() < 2) {
+            if (agents.size() < 2) {
                 config.setHuman(1);
-                config.setBotClass(2, bots.isEmpty() ? "bots.AggressiveBot" : bots.get(0));
+                config.setAgentClass(2, agents.isEmpty() ? "agents.AggressiveAgent" : agents.get(0));
             } else {
-                config.setBotClass(1, bots.get(0));
-                config.setBotClass(2, bots.get(1));
+                config.setAgentClass(1, agents.get(0));
+                config.setAgentClass(2, agents.get(1));
             }
             
             config.visualize = true;

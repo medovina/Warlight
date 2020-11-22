@@ -23,28 +23,22 @@ import game.*;
 import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
 
-public interface Bot {
+public interface Agent {
     public void init(long timeoutMillis);
 
     /**
      * CHOOSE REGIONS - called only at the beginning.
-     * @param state
-     * @param timeoutMillis in milliseconds
      */
-    public Region chooseRegion(Game state);
+    public Region chooseRegion(Game game);
     
     /**
      * PLACE ARMIES - distribute armies between your regions.
-     * @param state
-     * @param timeoutMillis in milliseconds
      */
-    public List<PlaceArmiesMove> placeArmies(Game state);
+    public List<PlaceArmiesMove> placeArmies(Game game);
     
     /**
      * MOVE ARMIES - attack opponents' regions or neutral ones ... or transfer armies between your regions.
-     * @param state
-     * @param timeoutMillis in milliseconds
      */
-    public List<AttackTransferMove> moveArmies(Game state);
+    public List<AttackTransferMove> moveArmies(Game game);
 
 }

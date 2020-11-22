@@ -1,4 +1,4 @@
-package bots;
+package agents;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import bots.RegionBFS.BFSNode;
+import agents.RegionBFS.BFSNode;
 import game.Region;
 
 /**

@@ -28,22 +28,22 @@ import view.GUI;
 public class Engine {
     Config config;
     Game game;
-    Bot[] bots;
+    Agent[] agents;
     GUI gui;
 
     public Engine(Config config) {
         this.config = config;        
     }
     
-    Bot bot(int i) {
-        return bots[i - 1];
+    Agent agent(int i) {
+        return agents[i - 1];
     }
 
-    boolean timeout(Bot bot, long start) {
+    boolean timeout(Agent agent, long start) {
         long elapsed = System.currentTimeMillis() - start;
-        if (!(bot instanceof HumanBot) &&
+        if (!(agent instanceof HumanAgent) &&
                 config.timeoutMillis > 0 && elapsed > config.timeoutMillis + 150 /* grace period */) {
-            System.err.format("bot failed to respond in time!  timeout = %d, elapsed = %d\n",
+            System.err.format("agent failed to respond in time!  timeout = %d, elapsed = %d\n",
                 config.timeoutMillis, elapsed);
             return true; 
         }
@@ -59,15 +59,15 @@ public class Engine {
         
         for (int i = 1 ; i <= 2 ; ++i) {
             long start = System.currentTimeMillis();
-            List<PlaceArmiesMove> placeMoves = bot(i).placeArmies(game);
-            if (timeout(bot(i), start)) {
-                System.err.println("bot failed to return place armies moves in time!");
+            List<PlaceArmiesMove> placeMoves = agent(i).placeArmies(game);
+            if (timeout(agent(i), start)) {
+                System.err.println("agent failed to return place armies moves in time!");
                 placeMoves = new ArrayList<PlaceArmiesMove>();
             }
             
             game.placeArmies(placeMoves);
     
-            if (gui != null && !(bot(i) instanceof HumanBot)) {
+            if (gui != null && !(agent(i) instanceof HumanAgent)) {
                 List<PlaceArmiesMove> legalMoves = new ArrayList<PlaceArmiesMove>();
     
                 for (PlaceArmiesMove move : placeMoves)
@@ -78,9 +78,9 @@ public class Engine {
             }
             
             start = System.currentTimeMillis();
-            List<AttackTransferMove> moves = bot(i).moveArmies(game);
-            if (timeout(bot(i), start)) {
-                System.err.println("bot failed to return attack transfer moves in time!");
+            List<AttackTransferMove> moves = agent(i).moveArmies(game);
+            if (timeout(agent(i), start)) {
+                System.err.println("agent failed to return attack transfer moves in time!");
                 moves = new ArrayList<AttackTransferMove>();
             }
             
@@ -105,9 +105,9 @@ public class Engine {
             for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
                 for (int p = 1 ; p <= 2 ; ++p) {
                     long start = System.currentTimeMillis();
-                    Region region = bot(p).chooseRegion(game);
-                    if (timeout(bot(p), start)) {
-                        System.err.println("bot failed to return starting region in time!");
+                    Region region = agent(p).chooseRegion(game);
+                    if (timeout(agent(p), start)) {
+                        System.err.println("agent failed to return starting region in time!");
                         region = null;
                     }
                     
@@ -125,46 +125,46 @@ public class Engine {
         }
     }
 
-    static Bot constructBot(Class<?> botClass) {        
-        Object botObj;
+    static Agent constructAgent(Class<?> agentClass) {        
+        Object agentObj;
         try {
-            botObj = botClass.getConstructor().newInstance();
+            agentObj = agentClass.getConstructor().newInstance();
         } catch (Exception e) {
             throw new RuntimeException(e); 
         }
-        if (!(Bot.class.isAssignableFrom(botObj.getClass()))) {
+        if (!(Agent.class.isAssignableFrom(agentObj.getClass()))) {
             throw new RuntimeException(
-                "Constructed bot does not implement " + Bot.class.getName() + " interface, " +
-                "bot class instantiated: " + botClass.getName());
+                "Constructed agent does not implement " + Agent.class.getName() + " interface, " +
+                "agent class instantiated: " + agentClass.getName());
         }
-        Bot bot = (Bot) botObj;
-        return bot;
+        Agent agent = (Agent) agentObj;
+        return agent;
     }
     
-    static Bot constructBot(String botFQCN) {
-        Class<?> botClass;
+    static Agent constructAgent(String agentFQCN) {
+        Class<?> agentClass;
         try {
             try {
-                botClass = Class.forName(botFQCN);
+                agentClass = Class.forName(agentFQCN);
             } catch (ClassNotFoundException e) {
-                botClass = Class.forName("bots." + botFQCN);
+                agentClass = Class.forName("agents." + agentFQCN);
             }
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Failed to locate bot class: " + botFQCN, e);
+            throw new RuntimeException("Failed to locate agent class: " + agentFQCN, e);
         }
-        return constructBot(botClass);
+        return constructAgent(agentClass);
     }
 
-    private Bot setupBot(String botInit, GUI gui) {
-        if (botInit.startsWith("internal:")) {
-            String botFQCN = botInit.substring(9);
-            return constructBot(botFQCN);
+    private Agent setupAgent(String agentInit, GUI gui) {
+        if (agentInit.startsWith("internal:")) {
+            String agentFQCN = agentInit.substring(9);
+            return constructAgent(agentFQCN);
         }
-        if (botInit.startsWith("human")) {
+        if (agentInit.startsWith("human")) {
             config.visualize = true;
-            return new HumanBot(gui);
+            return new HumanAgent(gui);
         }
-        throw new RuntimeException("Invalid init string: " + botInit);
+        throw new RuntimeException("Invalid init string: " + agentInit);
     }
 
     private GameResult finish()
@@ -198,12 +198,12 @@ public class Engine {
             game.setGUI(gui);
         } else gui = null;
         
-        bots = new Bot[2];
-        bots[0] = setupBot(config.bot1Init, gui);
-        bots[1] = setupBot(config.bot2Init, gui);
+        agents = new Agent[2];
+        agents[0] = setupAgent(config.agent1Init, gui);
+        agents[1] = setupAgent(config.agent2Init, gui);
                 
         for (int i = 0 ; i < 2 ; ++i) {
-            bots[i].init(config.timeoutMillis);
+            agents[i].init(config.timeoutMillis);
         }
         
         distributeStartingRegions();

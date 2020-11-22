@@ -26,9 +26,9 @@ public class GameResult {
             case 0:
                 return "NONE";
             case 1:
-                return config == null ? "Bot1" : config.player1Name;
+                return config == null ? "Agent1" : config.player1Name;
             case 2:
-                return config == null ? "Bot2" : config.player2Name;
+                return config == null ? "Agent2" : config.player2Name;
         }
         return null;
     }
@@ -39,9 +39,9 @@ public class GameResult {
             case 0:
                 return "NONE";
             case 1:
-                return config == null ? "Bot2" : config.player2Name;
+                return config == null ? "Agent2" : config.player2Name;
             case 2:
-                return config == null ? "Bot1" : config.player1Name;
+                return config == null ? "Agent1" : config.player1Name;
         }
         return null;
     }

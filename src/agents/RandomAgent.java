@@ -1,12 +1,12 @@
-package bots;
+package agents;
 
 import java.util.*;
 
-import engine.Bot;
+import engine.Agent;
 import game.*;
 import game.move.*;
 
-public class RandomBot implements Bot
+public class RandomAgent implements Agent
 {
     Random rand = new Random(0);
     

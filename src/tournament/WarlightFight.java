@@ -17,11 +17,11 @@ public class WarlightFight {
         this.tableFile = tableFile;
     }
     
-    public TotalResults fight(String bot1Name, String bot1Init, String bot2Name, String bot2Init) {        
-        config.player1Name = Sanitize.idify(bot1Name);
-        config.bot1Init = bot1Init;
-        config.player2Name = Sanitize.idify(bot2Name);
-        config.bot2Init = bot2Init;
+    public TotalResults fight(String agent1Name, String agent1Init, String agent2Name, String agent2Init) {        
+        config.player1Name = Sanitize.idify(agent1Name);
+        config.agent1Init = agent1Init;
+        config.player2Name = Sanitize.idify(agent2Name);
+        config.agent2Init = agent2Init;
     
         TotalResults res = new TotalResults();
         boolean outputHeader = false;
@@ -60,8 +60,8 @@ public class WarlightFight {
         }
         
         System.out.format("total victories: %s = %d (%.1f%%), %s = %d (%.1f%%)\n",
-            bot1Name, res.victories1, 100.0 * res.victories1 / games, 
-            bot2Name, res.victories2, 100.0 * res.victories2 / games);
+            agent1Name, res.victories1, 100.0 * res.victories1 / games, 
+            agent2Name, res.victories2, 100.0 * res.victories2 / games);
 
         return res;        
     }

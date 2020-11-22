@@ -1,13 +1,13 @@
-package bots;
+package agents;
 
 import java.util.*;
 
-import bots.RegionBFS.*;
-import engine.Bot;
+import agents.RegionBFS.*;
+import engine.Agent;
 import game.*;
 import game.move.*;
 
-public class AggressiveBot implements Bot 
+public class AggressiveAgent implements Agent 
 {
     Game game;
 
