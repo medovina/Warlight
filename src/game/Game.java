@@ -455,11 +455,11 @@ public class Game implements Cloneable {
             move.setArmies(Math.min(move.getArmies(), getArmies(fromRegion) - 1));
 
             if(isOwnedBy(toRegion, turn)) { //transfer
+                setArmies(fromRegion, getArmies(fromRegion) - move.getArmies());
+                setArmies(toRegion, getArmies(toRegion) + move.getArmies());
                 if (gui != null) {
                     gui.transfer(move);
                 }
-                setArmies(fromRegion, getArmies(fromRegion) - move.getArmies());
-                setArmies(toRegion, getArmies(toRegion) + move.getArmies());
             } else { //attack
                 if (gui != null) {
                     gui.attack(move);

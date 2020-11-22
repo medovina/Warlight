@@ -25,8 +25,6 @@ public class GUI extends JFrame implements KeyListener
     
     private Game game;
     
-    private GUINotif notification;
-    
     private String message, message2;
     
     private RegionInfo[] regionInfo;
@@ -82,8 +80,6 @@ public class GUI extends JFrame implements KeyListener
             regionInfo[idx] = new RegionInfo();
             mapView.setOwner(idx, 0);
         }
-        
-        notification = new GUINotif(layeredPane, 1015, 45, 200, 50);        
         
         mainArrow = new Arrow(0, 0, WIDTH, HEIGHT);
         layeredPane.add(mainArrow, JLayeredPane.PALETTE_LAYER);
@@ -154,11 +150,9 @@ public class GUI extends JFrame implements KeyListener
         switch(c) {
         case 'n':
             nextRound = true;
-            showNotification("SKIP TO NEXT ROUND");
             break;
         case 'c':
             continual = !continual;
-            showNotification( continual ? "Continual run enabled" : "Continual run disabled");
             break;
         case 'C':
             overlay.toggleConnections();
@@ -169,12 +163,10 @@ public class GUI extends JFrame implements KeyListener
         case '+':
             continualTime += 100;
             continualTime = Math.min(continualTime, 3000);
-            showNotification("Action visualized for: " + continualTime + " ms");
             break;
         case '-':
             continualTime -= 100;
             continualTime = Math.max(continualTime, 200);
-            showNotification("Action visualized for: " + continualTime + " ms");
             break;
         }
     }
@@ -185,10 +177,6 @@ public class GUI extends JFrame implements KeyListener
 
     @Override
     public void keyReleased(KeyEvent e) {
-    }
-    
-    public void showNotification(String txt) {
-        notification.show(txt, 1500);
     }
     
     private void updateOverlay() {
@@ -353,6 +341,7 @@ public class GUI extends JFrame implements KeyListener
         toRegionInfo.setArmies(game.getArmies(game.getRegion(toId)));
         
         mainArrow.setVisible(false);
+        updateOverlay();
         
         message("---");
     }
@@ -635,7 +624,7 @@ public class GUI extends JFrame implements KeyListener
     }
     
     void highlight() {
-        int from = moveFrom == null ? 0 : moveFrom.getId();
+        int from = moveFrom == null ? -1 : moveFrom.getId();
 
         for (int id = 0 ; id < regionInfo.length ; ++id)
             regionInfo[id].setHighlight(id == from ? RegionInfo.Green : null);
