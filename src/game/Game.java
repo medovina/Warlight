@@ -295,10 +295,18 @@ public class Game implements Cloneable {
         }
     }
     
-    public void placeArmies(List<PlaceArmiesMove> moves)
+    void illegalMove(String s) {
+        System.out.printf("warning: ignoring illegal move: %s\n", s);
+    }
+
+    public List<PlaceArmiesMove> placeArmies(List<PlaceArmiesMove> moves)
     {
-        if (phase != Phase.PLACE_ARMIES)
-            throw new Error("wrong time to place armies");
+        ArrayList<PlaceArmiesMove> valid = new ArrayList<PlaceArmiesMove>();
+
+        if (phase != Phase.PLACE_ARMIES) {
+            illegalMove("wrong time to place armies");
+            return valid;
+        }
 
         int left = armiesPerTurn(turn); 
                 
@@ -308,23 +316,28 @@ public class Game implements Cloneable {
             int armies = move.getArmies();
             
             if (!isOwnedBy(region, turn))
-                move.setIllegalMove(region.getId() + " not owned");
+                illegalMove(region.getName() + " not owned");
             else if (armies < 1)
-                move.setIllegalMove("cannot place less than 1 army");
+                illegalMove("cannot place less than 1 army");
             else if (left <= 0)
-                move.setIllegalMove("no armies left to place");
+                illegalMove("no armies left to place");
             else {
                 if(armies > left) { //player wants to place more armies than he has left
+                    System.out.printf(
+                        "warning: move wants to place %d armies, but only %d are available\n",
+                        armies, left);
                     move.setArmies(left); //place all armies he has left
                     armies = left;
                 }
                 
                 left -= armies;
                 setArmies(region, getArmies(region) + armies);
+                valid.add(move);
             }
         }
         
         phase = Phase.ATTACK_TRANSFER;
+        return valid;
     }
     
     public static enum FightSide {
@@ -365,18 +378,8 @@ public class Game implements Cloneable {
     {
         Region fromRegion = move.getFromRegion();
         Region toRegion = move.getToRegion();
-        int attackingArmies;
+        int attackingArmies = move.getArmies();
         int defendingArmies = getArmies(toRegion);
-        
-        if (getArmies(fromRegion) <= 1) {
-            move.setIllegalMove(fromRegion.getId() + " attack " + "only has 1 army");
-            return;
-        }
-        
-        if(getArmies(fromRegion)-1 >= move.getArmies()) //are there enough armies on fromRegion?
-            attackingArmies = move.getArmies();
-        else
-            attackingArmies = getArmies(fromRegion)-1;
         
         FightResult result = doAttack(attackingArmies, defendingArmies);
         
@@ -391,7 +394,7 @@ public class Game implements Cloneable {
             setArmies(toRegion, getArmies(toRegion) - result.defendersDestroyed);
             break;
         default:
-            throw new RuntimeException("Unhandled FightResult.winner: " + result.winner);
+            throw new Error("Unhandled FightResult.winner: " + result.winner);
         }
         
         if (gui != null) {
@@ -399,9 +402,9 @@ public class Game implements Cloneable {
         }
     }
 
-    void validateAttackTransfers(List<AttackTransferMove> moves)
-    {
-        int[] totalFrom = new int[numRegions() + 1];
+    List<AttackTransferMove> validateAttackTransfers(List<AttackTransferMove> moves) {
+        ArrayList<AttackTransferMove> valid = new ArrayList<AttackTransferMove>();
+        int[] totalFrom = new int[numRegions()];
         
         for (int i = 0 ; i < moves.size() ; ++i) {
             AttackTransferMove move = moves.get(i);
@@ -409,54 +412,55 @@ public class Game implements Cloneable {
             Region toRegion = move.getToRegion();
 
             if (!isOwnedBy(fromRegion, turn))
-                move.setIllegalMove(fromRegion.getId() + " attack/transfer not owned");
+                illegalMove("attack/transfer from unowned region");
             else if (!isNeighbor(fromRegion, toRegion))
-                move.setIllegalMove(toRegion.getId() + " attack/transfer not a neighbor");
+                illegalMove("attack/transfer to region that is not a neighbor");
             else if (move.getArmies() < 1)
-                move.setIllegalMove("attack/transfer cannot use less than 1 army");
+                illegalMove("attack/transfer cannot use less than 1 army");
             else if (totalFrom[fromRegion.getId()] + move.getArmies() >= getArmies(fromRegion))
-                move.setIllegalMove(fromRegion.getId() +
-                        " attack/transfer has used all available armies");
+                illegalMove("attack/transfer requests more armies than are available");
             else {
+                boolean ok = true;
                 for (int j = 0 ; j < i ; ++j) {
                     AttackTransferMove n = moves.get(j);
-                    if (n.getFromRegion() == move.getFromRegion() && n.getToRegion() == move.getToRegion()) {
-                        move.setIllegalMove(
-                            "player has already attacked/transfered from region " +
-                                fromRegion.getId() + " to region " + toRegion.getId() + " in this turn");
+                    if (n.getFromRegion() == move.getFromRegion() &&
+                        n.getToRegion() == move.getToRegion()) {
+                        illegalMove("player has already moved between same regions in this turn");
+                        ok = false;
                         break;
                     }
                 }
-                totalFrom[fromRegion.getId()] += move.getArmies();
+                if (ok) {
+                    totalFrom[fromRegion.getId()] += move.getArmies();
+                    valid.add(move);
+                }
             }
         }
+
+        return valid;
     }
     
     public void attackTransfer(List<AttackTransferMove> moves) {
-        if (phase != Phase.ATTACK_TRANSFER)
-            throw new Error("wrong time to attack/transfer");
+        if (phase != Phase.ATTACK_TRANSFER) {
+            illegalMove("wrong time to attack/transfer");
+            return;
+        }
 
-        validateAttackTransfers(moves);
+        List<AttackTransferMove> valid = validateAttackTransfers(moves);
         
-        for (AttackTransferMove move : moves) {
-            if(!move.getIllegalMove().equals("")) //the move is illegal
-                continue;
-            
+        for (AttackTransferMove move : valid) {
             Region fromRegion = move.getFromRegion();
             Region toRegion = move.getToRegion();
             
             move.setArmies(Math.min(move.getArmies(), getArmies(fromRegion) - 1));
 
-            if(isOwnedBy(toRegion, turn)) //transfer
-            {
+            if(isOwnedBy(toRegion, turn)) { //transfer
                 if (gui != null) {
                     gui.transfer(move);
                 }
                 setArmies(fromRegion, getArmies(fromRegion) - move.getArmies());
                 setArmies(toRegion, getArmies(toRegion) + move.getArmies());
-            }
-            else //attack
-            {
+            } else { //attack
                 if (gui != null) {
                     gui.attack(move);
                 }

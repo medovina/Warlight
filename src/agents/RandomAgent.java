@@ -8,10 +8,8 @@ import game.move.*;
 
 public class RandomAgent implements Agent
 {
-    Random rand = new Random(0);
+    Random random = new Random(0);
     
-    // Move randomly.
-
     @Override
     public void init(long timeoutMillis) {
     }
@@ -19,23 +17,25 @@ public class RandomAgent implements Agent
     // Choose a starting region.
     
     @Override
-    public Region chooseRegion(Game state) {
-        ArrayList<Region> choosable = state.getPickableRegions();
-        return choosable.get(rand.nextInt(choosable.size()));
+    public Region chooseRegion(Game game) {
+        ArrayList<Region> choosable = game.getPickableRegions();
+        return choosable.get(random.nextInt(choosable.size()));
     }
 
     // Decide where to place armies this turn.
-    // state.armiesPerTurn(state.me()) is the number of armies available to place.
+    // game.armiesPerTurn(game.currentPlayer()) is the number of armies available to place.
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(Game state) {
-        int me = state.currentPlayer();
-        List<Region> mine = state.regionsOwnedBy(me);
+    public List<PlaceArmiesMove> placeArmies(Game game) {
+        int me = game.currentPlayer();
+        int available = game.armiesPerTurn(me);
+
+        List<Region> mine = game.regionsOwnedBy(me);
         int numRegions = mine.size();
         
         int[] count = new int[numRegions];
-        for (int i = 0 ; i < state.armiesPerTurn(me) ; ++i) {
-            int r = rand.nextInt(numRegions);
+        for (int i = 0 ; i < available ; ++i) {
+            int r = random.nextInt(numRegions);
             count[r]++;
         }
         
@@ -50,14 +50,15 @@ public class RandomAgent implements Agent
     
     @Override
     public List<AttackTransferMove> moveArmies(Game game) {
+        int me = game.currentPlayer();
         List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
         
-        for (Region rd : game.regionsOwnedBy(game.currentPlayer())) {
-            int count = rand.nextInt(game.getArmies(rd));
+        for (Region r : game.regionsOwnedBy(me)) {
+            int count = random.nextInt(game.getArmies(r));
             if (count > 0) {
-                List<Region> neighbors = rd.getNeighbors();
-                Region to = neighbors.get(rand.nextInt(neighbors.size()));
-                ret.add(new AttackTransferMove(rd, to, count));
+                List<Region> neighbors = r.getNeighbors();
+                Region to = neighbors.get(random.nextInt(neighbors.size()));
+                ret.add(new AttackTransferMove(r, to, count));
             }
         }
         return ret;        

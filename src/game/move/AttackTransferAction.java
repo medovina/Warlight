@@ -9,7 +9,7 @@ public class AttackTransferAction implements Action {
     
     public AttackTransferAction(List<AttackTransferMove> commands) { this.commands = commands; }
     
-    public void apply(Game state) {
-        state.attackTransfer(commands);
+    public void apply(Game game) {
+        game.attackTransfer(commands);
     }
 }

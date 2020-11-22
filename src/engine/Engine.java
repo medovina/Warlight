@@ -65,17 +65,10 @@ public class Engine {
                 placeMoves = new ArrayList<PlaceArmiesMove>();
             }
             
-            game.placeArmies(placeMoves);
+            List<PlaceArmiesMove> legalMoves = game.placeArmies(placeMoves);
     
-            if (gui != null && !(agent(i) instanceof HumanAgent)) {
-                List<PlaceArmiesMove> legalMoves = new ArrayList<PlaceArmiesMove>();
-    
-                for (PlaceArmiesMove move : placeMoves)
-                    if (move.getIllegalMove().equals(""))
-                        legalMoves.add(move);
-                
+            if (gui != null && !(agent(i) instanceof HumanAgent))
                 gui.placeArmies(i, game.getRegions(), legalMoves);
-            }
             
             start = System.currentTimeMillis();
             List<AttackTransferMove> moves = agent(i).moveArmies(game);

@@ -24,7 +24,7 @@ import game.Region;
  * with how many armies.
  */
 
-public class PlaceArmiesMove extends Move {
+public class PlaceArmiesMove {
     private Region region;
     private int armies;
     
@@ -45,9 +45,6 @@ public class PlaceArmiesMove extends Move {
     }
     
     public String getString() {
-        if(getIllegalMove().equals(""))
-            return "place_armies " + region.id + " " + armies;
-        else
-            return "illegal_move " + getIllegalMove();
+        return String.format("place %d armies on %s", armies, region.getName());
     }
 }

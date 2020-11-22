@@ -25,7 +25,7 @@ import game.Region;
  * owned by the opponent, this Move is an attack. 
  */
 
-public class AttackTransferMove extends Move {
+public class AttackTransferMove {
     private Region fromRegion;
     private Region toRegion;
     private int armies;
@@ -51,9 +51,8 @@ public class AttackTransferMove extends Move {
     }
     
     public String getString() {
-        if(getIllegalMove().equals(""))
-            return "attack/transfer " + fromRegion.id + " " + toRegion.id + " " + armies;
-        else
-            return "illegal_move " + getIllegalMove();
+        return String.format(
+            "attack/transfer with %d armies from %s to %s",
+            armies, fromRegion.getName(), toRegion.getName());
     }
 }
