@@ -7,10 +7,10 @@ import game.move.AttackTransferMove;
 import game.move.PlaceArmiesMove;
 import view.GUI;
 
-public class HumanRobot implements Bot {
+public class HumanBot implements Bot {
     private GUI gui;
     
-    public HumanRobot(GUI gui) {
+    public HumanBot(GUI gui) {
         this.gui = gui;
     }
 

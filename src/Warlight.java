@@ -3,8 +3,7 @@ import static java.lang.System.out;
 import java.io.File;
 import java.util.*;
 
-import engine.Config;
-import engine.RunGame;
+import engine.*;
 import tournament.*;
 import utils.Util;
 
@@ -69,7 +68,7 @@ public class Warlight {
                         sim = Integer.parseInt(args[++i]);
                         break;
                     case "-timeout":
-                        config.botCommandTimeoutMillis = Integer.parseInt(args[++i]);
+                        config.timeoutMillis = Integer.parseInt(args[++i]);
                         break;
                     case "-warlords":
                         config.game.warlords = true;
@@ -94,7 +93,7 @@ public class Warlight {
             
             config.visualize = true;
             config.game.seed = seed;
-            new RunGame(config).go();
+            new Engine(config).go();
         }
         
         System.exit(0);

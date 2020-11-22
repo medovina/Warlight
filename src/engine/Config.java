@@ -8,7 +8,7 @@ public class Config implements Cloneable {
     
     public String bot1Init, bot2Init;
 
-    public long botCommandTimeoutMillis = 60_000;
+    public long timeoutMillis = 60_000;
     
     public boolean visualize = true;
     public Boolean visualizeContinual = null;
@@ -46,7 +46,7 @@ public class Config implements Cloneable {
 
     public String asString() {
         return player1Name + ";" + player2Name + ";" +
-               botCommandTimeoutMillis + ";" +
+               timeoutMillis + ";" +
                visualize + ";" + visualizeContinual + ";" + visualizeContinualFrameTimeMillis + ";" +
                game.asString();
     }
@@ -67,7 +67,7 @@ public class Config implements Cloneable {
     
     public String getCSV() {
         return player1Name + ";" + player2Name + ";" +
-               botCommandTimeoutMillis + ";" + game.getCSV();
+               timeoutMillis + ";" + game.getCSV();
     }
     
     public static Config fromString(String line) {
@@ -78,7 +78,7 @@ public class Config implements Cloneable {
 
         result.player1Name = parts[0];
         result.player2Name = parts[1];
-        result.botCommandTimeoutMillis = Integer.parseInt(parts[2]);
+        result.timeoutMillis = Integer.parseInt(parts[2]);
         result.visualize = Boolean.parseBoolean(parts[3]);
         result.visualizeContinual = (parts[4].toLowerCase().equals("null") ? null : Boolean.parseBoolean(parts[4]));
         result.visualizeContinualFrameTimeMillis = (parts[5].toLowerCase().equals("null") ? null : Integer.parseInt(parts[5]));

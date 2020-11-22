@@ -1,9 +1,6 @@
 package tournament;
 
-import engine.Config;
-import engine.GameResult;
-import engine.RunGame;
-
+import engine.*;
 
 public class WarlightFightRound {
     
@@ -14,7 +11,7 @@ public class WarlightFightRound {
     }
     
     public synchronized GameResult run() {
-        return new RunGame(config).go();
+        return new Engine(config).go();
     }
 
     public Config getConfig() {
