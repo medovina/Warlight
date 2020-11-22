@@ -79,7 +79,7 @@ public class Warlight {
         } else {
             if (agents.size() < 2) {
                 config.setHuman(1);
-                config.setAgentClass(2, agents.isEmpty() ? "agents.AggressiveAgent" : agents.get(0));
+                config.setAgentClass(2, agents.isEmpty() ? "agents.Attila" : agents.get(0));
             } else {
                 config.setAgentClass(1, agents.get(0));
                 config.setAgentClass(2, agents.get(1));
