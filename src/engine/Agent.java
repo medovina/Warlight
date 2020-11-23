@@ -17,28 +17,11 @@
 
 package engine;
 
-import java.util.List;
-
-import game.*;
-import game.move.AttackTransfer;
-import game.move.PlaceArmies;
+import game.Game;
+import game.move.Move;
 
 public interface Agent {
     public void init(long timeoutMillis);
 
-    /**
-     * CHOOSE REGIONS - called only at the beginning.
-     */
-    public Region chooseRegion(Game game);
-    
-    /**
-     * PLACE ARMIES - distribute armies between your regions.
-     */
-    public List<PlaceArmies> placeArmies(Game game);
-    
-    /**
-     * MOVE ARMIES - attack opponents' regions or neutral ones ... or transfer armies between your regions.
-     */
-    public List<AttackTransfer> moveArmies(Game game);
-
+    public Move getMove(Game game);
 }

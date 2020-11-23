@@ -2,11 +2,11 @@ package agents;
 
 import java.util.*;
 
-import engine.Agent;
+import engine.AgentBase;
 import game.*;
 import game.move.*;
 
-public class Attila implements Agent
+public class Attila extends AgentBase
 {
     Random random = new Random(0);
     
@@ -60,7 +60,7 @@ public class Attila implements Agent
     }
     
     @Override
-    public List<AttackTransfer> moveArmies(Game game) {
+    public List<AttackTransfer> attackTransfer(Game game) {
         int me = game.currentPlayer();
         List<AttackTransfer> ret = new ArrayList<AttackTransfer>();
         

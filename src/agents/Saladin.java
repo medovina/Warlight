@@ -2,11 +2,11 @@ package agents;
 
 import java.util.*;
 
-import engine.Agent;
+import engine.AgentBase;
 import game.*;
 import game.move.*;
 
-public class Saladin implements Agent
+public class Saladin extends AgentBase
 {
     Random random = new Random(0);
     int[] distFromTarget;
@@ -148,7 +148,7 @@ public class Saladin implements Agent
     }
     
     @Override
-    public List<AttackTransfer> moveArmies(Game game) {
+    public List<AttackTransfer> attackTransfer(Game game) {
         int me = game.currentPlayer();
         List<AttackTransfer> ret = new ArrayList<AttackTransfer>();
         

@@ -7,7 +7,7 @@ import game.move.AttackTransfer;
 import game.move.PlaceArmies;
 import view.GUI;
 
-public class HumanAgent implements Agent {
+public class HumanAgent extends AgentBase {
     private GUI gui;
     
     public HumanAgent(GUI gui) {
@@ -29,7 +29,7 @@ public class HumanAgent implements Agent {
     }
 
     @Override
-    public List<AttackTransfer> moveArmies(Game state) {
+    public List<AttackTransfer> attackTransfer(Game state) {
         return gui.moveArmiesHuman();
     }
 }

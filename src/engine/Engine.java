@@ -21,8 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import game.*;
-import game.move.AttackTransfer;
-import game.move.PlaceArmies;
+import game.move.*;
 import view.GUI;
 
 public class Engine {
@@ -50,6 +49,27 @@ public class Engine {
         return false;
     }
 
+    Region getChooseRegion(Agent agent) {
+        Move move = agent.getMove(game);
+        if (move instanceof ChooseRegion)
+            return ((ChooseRegion) move).region;
+        throw new Error("expected choose region move");
+    }
+
+    List<PlaceArmies> getPlaceArmies(Agent agent) {
+        Move move = agent.getMove(game);
+        if (move instanceof PlaceArmiesMove)
+            return ((PlaceArmiesMove) move).commands;
+        throw new Error("expected place armies move");
+    }
+
+    List<AttackTransfer> getAttackTransfer(Agent agent) {
+        Move move = agent.getMove(game);
+        if (move instanceof AttackTransferMove)
+            return ((AttackTransferMove) move).commands;
+        throw new Error("expected place armies move");
+    }
+
     void playRound()
     {
         if (gui != null) {
@@ -59,7 +79,7 @@ public class Engine {
         
         for (int i = 1 ; i <= 2 ; ++i) {
             long start = System.currentTimeMillis();
-            List<PlaceArmies> placeMoves = agent(i).placeArmies(game);
+            List<PlaceArmies> placeMoves = getPlaceArmies(agent(i));
             if (timeout(agent(i), start)) {
                 System.err.println("agent failed to return place armies moves in time!");
                 placeMoves = new ArrayList<PlaceArmies>();
@@ -71,7 +91,7 @@ public class Engine {
                 gui.placeArmies(i, game.getRegions(), legalMoves);
             
             start = System.currentTimeMillis();
-            List<AttackTransfer> moves = agent(i).moveArmies(game);
+            List<AttackTransfer> moves = getAttackTransfer(agent(i));
             if (timeout(agent(i), start)) {
                 System.err.println("agent failed to return attack transfer moves in time!");
                 moves = new ArrayList<AttackTransfer>();
@@ -98,7 +118,7 @@ public class Engine {
             for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
                 for (int p = 1 ; p <= 2 ; ++p) {
                     long start = System.currentTimeMillis();
-                    Region region = agent(p).chooseRegion(game);
+                    Region region = getChooseRegion(agent(p));
                     if (timeout(agent(p), start)) {
                         System.err.println("agent failed to return starting region in time!");
                         region = null;

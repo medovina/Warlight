@@ -2,11 +2,11 @@ package agents;
 
 import java.util.*;
 
-import engine.Agent;
+import engine.AgentBase;
 import game.*;
 import game.move.*;
 
-public class RandomAgent implements Agent
+public class RandomAgent extends AgentBase
 {
     Random random = new Random(0);
     
@@ -49,7 +49,7 @@ public class RandomAgent implements Agent
     // Decide where to move armies this turn.
     
     @Override
-    public List<AttackTransfer> moveArmies(Game game) {
+    public List<AttackTransfer> attackTransfer(Game game) {
         int me = game.currentPlayer();
         List<AttackTransfer> ret = new ArrayList<AttackTransfer>();
         

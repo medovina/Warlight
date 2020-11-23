@@ -483,4 +483,8 @@ public class Game implements Cloneable {
         if (turn == 1)
             round++;
     }
+
+    public void move(Move move) {
+        move.apply(this);
+    }
 }
