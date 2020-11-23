@@ -226,13 +226,23 @@ public class Game implements Cloneable {
     public Region getRandomStartingRegion(int forPlayer) {
         while (true) {
             Region r = pickableRegions.get(random.nextInt(pickableRegions.size()));
+
+            // Don't allow starting regions to border enemies
             boolean ok = true;
             for (Region n : r.getNeighbors())
                 if (getOwner(n) != 0 && getOwner(n) != forPlayer) {
                     ok = false;
                     break;
                 }
-            if (ok)
+            if (!ok)
+                continue;
+
+            // Each player can have at most two starting regions on any continent.
+            int count = 0;
+            for (Region s : r.getContinent().getRegions())
+                if (getOwner(s) == forPlayer)
+                    count += 1;
+            if (count < 2)
                 return r;
         }
     }
