@@ -2,10 +2,10 @@ package game.move;
 
 import game.*;
 
-public class ChooseAction implements Action {
+public class ChooseRegion implements Move {
     public Region region;
     
-    public ChooseAction(Region region) {
+    public ChooseRegion(Region region) {
         this.region = region;
     }
     

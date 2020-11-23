@@ -2,6 +2,6 @@ package game.move;
 
 import game.Game;
 
-public interface Action {
+public interface Move {
     void apply(Game game);
 }

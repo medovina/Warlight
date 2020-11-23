@@ -14,8 +14,8 @@ import javax.swing.SwingUtilities;
 
 import engine.*;
 import game.*;
-import game.move.AttackTransferMove;
-import game.move.PlaceArmiesMove;
+import game.move.AttackTransfer;
+import game.move.PlaceArmies;
 
 public class GUI extends JFrame implements KeyListener
 {
@@ -265,14 +265,14 @@ public class GUI extends JFrame implements KeyListener
         waitForClick();
     }
     
-    public void placeArmies(int player, List<Region> regions, List<PlaceArmiesMove> placeArmiesMoves) {
+    public void placeArmies(int player, List<Region> regions, List<PlaceArmies> placeArmiesMoves) {
         this.requestFocusInWindow();
         
         updateRegions(regions);
         
         int total = 0;
         
-        for (PlaceArmiesMove move : placeArmiesMoves) {
+        for (PlaceArmies move : placeArmiesMoves) {
             int id = move.getRegion().id;
             RegionInfo region = this.regionInfo[id];    
             region.setArmies(region.getArmies() - move.getArmies());
@@ -286,7 +286,7 @@ public class GUI extends JFrame implements KeyListener
         updateOverlay();
         waitForClick();
         
-        for (PlaceArmiesMove move : placeArmiesMoves) {
+        for (PlaceArmies move : placeArmiesMoves) {
             int id = move.getRegion().id;
             RegionInfo region = this.regionInfo[id];
             region.setArmies(region.getArmies() + region.armiesPlus);
@@ -303,7 +303,7 @@ public class GUI extends JFrame implements KeyListener
         return n > 1 ? n + " armies " : "1 army ";
     }
 
-    public void transfer(AttackTransferMove move) {
+    public void transfer(AttackTransfer move) {
         int fromId = move.getFromRegion().id, toId = move.getToRegion().id;
         this.requestFocusInWindow();
         
@@ -359,7 +359,7 @@ public class GUI extends JFrame implements KeyListener
         arrow.setVisible(true);
     }
     
-    public void attack(AttackTransferMove move) {
+    public void attack(AttackTransfer move) {
         this.requestFocusInWindow();
         
         String toName = move.getToRegion().getName();
@@ -473,7 +473,7 @@ public class GUI extends JFrame implements KeyListener
     // PLACE ARMIES
     // ============
     
-    public List<PlaceArmiesMove> placeArmiesHuman() {
+    public List<PlaceArmies> placeArmiesHuman() {
         this.requestFocusInWindow();
         
         List<Region> availableRegions = game.regionsOwnedBy(game.currentPlayer());
@@ -489,7 +489,7 @@ public class GUI extends JFrame implements KeyListener
             message("");
     }
 
-    public List<PlaceArmiesMove> placeArmiesHuman(List<Region> availableRegions) {
+    public List<PlaceArmies> placeArmiesHuman(List<Region> availableRegions) {
         this.armyRegions = availableRegions;
         armiesLeft = game.armiesPerTurn(game.currentPlayer());
         armiesPlaced = 0;
@@ -506,7 +506,7 @@ public class GUI extends JFrame implements KeyListener
         
         placeArmiesAction = null;
         
-        List<PlaceArmiesMove> result = new ArrayList<PlaceArmiesMove>();
+        List<PlaceArmies> result = new ArrayList<PlaceArmies>();
         
         for (Region region : availableRegions) {
             RegionInfo info = regionInfo[region.getId()];
@@ -514,7 +514,7 @@ public class GUI extends JFrame implements KeyListener
                 info.setArmies(info.getArmies() + info.armiesPlus);
                 info.setHighlight(false);
 
-                PlaceArmiesMove command = new PlaceArmiesMove(region, info.armiesPlus);
+                PlaceArmies command = new PlaceArmies(region, info.armiesPlus);
                 info.armiesPlus = 0;
                 
                 result.add(command);
@@ -671,7 +671,7 @@ public class GUI extends JFrame implements KeyListener
         highlight();
     }
 
-    public List<AttackTransferMove> moveArmiesHuman() {
+    public List<AttackTransfer> moveArmiesHuman() {
         this.requestFocusInWindow();
         moving = game.currentPlayer();
         moveFrom = null;
@@ -694,10 +694,10 @@ public class GUI extends JFrame implements KeyListener
         for (RegionInfo info : regionInfo)
             info.setHighlight(false);
         
-        List<AttackTransferMove> moveArmies = new ArrayList<AttackTransferMove>();
+        List<AttackTransfer> moveArmies = new ArrayList<AttackTransfer>();
         
         for (Move m : moves.values()) {
-            moveArmies.add(new AttackTransferMove(m.from, m.to, m.armies));
+            moveArmies.add(new AttackTransfer(m.from, m.to, m.armies));
             layeredPane.remove(m.arrow);
         }
         

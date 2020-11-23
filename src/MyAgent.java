@@ -26,7 +26,7 @@ public class MyAgent implements Agent
     // game.armiesPerTurn(game.currentPlayer()) is the number of armies available to place.
     
     @Override
-    public List<PlaceArmiesMove> placeArmies(Game game) {
+    public List<PlaceArmies> placeArmies(Game game) {
         int me = game.currentPlayer();
         int available = game.armiesPerTurn(me);
 
@@ -39,26 +39,26 @@ public class MyAgent implements Agent
             count[r]++;
         }
         
-        List<PlaceArmiesMove> ret = new ArrayList<PlaceArmiesMove>();
+        List<PlaceArmies> ret = new ArrayList<PlaceArmies>();
         for (int i = 0 ; i < numRegions ; ++i)
             if (count[i] > 0)
-                ret.add(new PlaceArmiesMove(mine.get(i), count[i]));
+                ret.add(new PlaceArmies(mine.get(i), count[i]));
         return ret;
     }
     
     // Decide where to move armies this turn.
     
     @Override
-    public List<AttackTransferMove> moveArmies(Game game) {
+    public List<AttackTransfer> moveArmies(Game game) {
         int me = game.currentPlayer();
-        List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
+        List<AttackTransfer> ret = new ArrayList<AttackTransfer>();
         
         for (Region r : game.regionsOwnedBy(me)) {
             int count = random.nextInt(game.getArmies(r));
             if (count > 0) {
                 List<Region> neighbors = r.getNeighbors();
                 Region to = neighbors.get(random.nextInt(neighbors.size()));
-                ret.add(new AttackTransferMove(r, to, count));
+                ret.add(new AttackTransfer(r, to, count));
             }
         }
         return ret;        

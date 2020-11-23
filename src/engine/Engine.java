@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import game.*;
-import game.move.AttackTransferMove;
-import game.move.PlaceArmiesMove;
+import game.move.AttackTransfer;
+import game.move.PlaceArmies;
 import view.GUI;
 
 public class Engine {
@@ -59,22 +59,22 @@ public class Engine {
         
         for (int i = 1 ; i <= 2 ; ++i) {
             long start = System.currentTimeMillis();
-            List<PlaceArmiesMove> placeMoves = agent(i).placeArmies(game);
+            List<PlaceArmies> placeMoves = agent(i).placeArmies(game);
             if (timeout(agent(i), start)) {
                 System.err.println("agent failed to return place armies moves in time!");
-                placeMoves = new ArrayList<PlaceArmiesMove>();
+                placeMoves = new ArrayList<PlaceArmies>();
             }
             
-            List<PlaceArmiesMove> legalMoves = game.placeArmies(placeMoves);
+            List<PlaceArmies> legalMoves = game.placeArmies(placeMoves);
     
             if (gui != null && !(agent(i) instanceof HumanAgent))
                 gui.placeArmies(i, game.getRegions(), legalMoves);
             
             start = System.currentTimeMillis();
-            List<AttackTransferMove> moves = agent(i).moveArmies(game);
+            List<AttackTransfer> moves = agent(i).moveArmies(game);
             if (timeout(agent(i), start)) {
                 System.err.println("agent failed to return attack transfer moves in time!");
-                moves = new ArrayList<AttackTransferMove>();
+                moves = new ArrayList<AttackTransfer>();
             }
             
             game.attackTransfer(moves);

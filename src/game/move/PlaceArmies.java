@@ -15,30 +15,36 @@
 //    For the full copyright and license information, please view the LICENSE
 //    file that was distributed with this source code.
 
-package engine;
+package game.move;
 
-import java.util.List;
+import game.Region;
 
-import game.*;
-import game.move.AttackTransfer;
-import game.move.PlaceArmies;
+/**
+ * This Move is used in the first part of each round. It represents what Region is increased
+ * with how many armies.
+ */
 
-public interface Agent {
-    public void init(long timeoutMillis);
-
-    /**
-     * CHOOSE REGIONS - called only at the beginning.
-     */
-    public Region chooseRegion(Game game);
+public class PlaceArmies {
+    private Region region;
+    private int armies;
     
-    /**
-     * PLACE ARMIES - distribute armies between your regions.
-     */
-    public List<PlaceArmies> placeArmies(Game game);
-    
-    /**
-     * MOVE ARMIES - attack opponents' regions or neutral ones ... or transfer armies between your regions.
-     */
-    public List<AttackTransfer> moveArmies(Game game);
+    public PlaceArmies(Region region, int armies) {
+        this.region = region; this.armies = armies;
+    }
 
+    public void setArmies(int n) {
+        armies = n;
+    }
+    
+    public Region getRegion() {
+        return region;
+    }
+    
+    public int getArmies() {
+        return armies;
+    }
+    
+    public String getString() {
+        return String.format("place %d armies on %s", armies, region.getName());
+    }
 }

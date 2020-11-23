@@ -309,9 +309,9 @@ public class Game implements Cloneable {
         System.out.printf("warning: ignoring illegal move: %s\n", s);
     }
 
-    public List<PlaceArmiesMove> placeArmies(List<PlaceArmiesMove> moves)
+    public List<PlaceArmies> placeArmies(List<PlaceArmies> moves)
     {
-        ArrayList<PlaceArmiesMove> valid = new ArrayList<PlaceArmiesMove>();
+        ArrayList<PlaceArmies> valid = new ArrayList<PlaceArmies>();
 
         if (phase != Phase.PLACE_ARMIES) {
             illegalMove("wrong time to place armies");
@@ -320,7 +320,7 @@ public class Game implements Cloneable {
 
         int left = armiesPerTurn(turn); 
                 
-        for(PlaceArmiesMove move : moves)
+        for(PlaceArmies move : moves)
         {
             Region region = move.getRegion();
             int armies = move.getArmies();
@@ -384,7 +384,7 @@ public class Game implements Cloneable {
         return result;
     }
 
-    private void doAttack(AttackTransferMove move)
+    private void doAttack(AttackTransfer move)
     {
         Region fromRegion = move.getFromRegion();
         Region toRegion = move.getToRegion();
@@ -412,12 +412,12 @@ public class Game implements Cloneable {
         }
     }
 
-    List<AttackTransferMove> validateAttackTransfers(List<AttackTransferMove> moves) {
-        ArrayList<AttackTransferMove> valid = new ArrayList<AttackTransferMove>();
+    List<AttackTransfer> validateAttackTransfers(List<AttackTransfer> moves) {
+        ArrayList<AttackTransfer> valid = new ArrayList<AttackTransfer>();
         int[] totalFrom = new int[numRegions()];
         
         for (int i = 0 ; i < moves.size() ; ++i) {
-            AttackTransferMove move = moves.get(i);
+            AttackTransfer move = moves.get(i);
             Region fromRegion = move.getFromRegion();
             Region toRegion = move.getToRegion();
 
@@ -432,7 +432,7 @@ public class Game implements Cloneable {
             else {
                 boolean ok = true;
                 for (int j = 0 ; j < i ; ++j) {
-                    AttackTransferMove n = moves.get(j);
+                    AttackTransfer n = moves.get(j);
                     if (n.getFromRegion() == move.getFromRegion() &&
                         n.getToRegion() == move.getToRegion()) {
                         illegalMove("player has already moved between same regions in this turn");
@@ -450,15 +450,15 @@ public class Game implements Cloneable {
         return valid;
     }
     
-    public void attackTransfer(List<AttackTransferMove> moves) {
+    public void attackTransfer(List<AttackTransfer> moves) {
         if (phase != Phase.ATTACK_TRANSFER) {
             illegalMove("wrong time to attack/transfer");
             return;
         }
 
-        List<AttackTransferMove> valid = validateAttackTransfers(moves);
+        List<AttackTransfer> valid = validateAttackTransfers(moves);
         
-        for (AttackTransferMove move : valid) {
+        for (AttackTransfer move : valid) {
             Region fromRegion = move.getFromRegion();
             Region toRegion = move.getToRegion();
             

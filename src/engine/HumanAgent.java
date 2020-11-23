@@ -3,8 +3,8 @@ package engine;
 import java.util.List;
 
 import game.*;
-import game.move.AttackTransferMove;
-import game.move.PlaceArmiesMove;
+import game.move.AttackTransfer;
+import game.move.PlaceArmies;
 import view.GUI;
 
 public class HumanAgent implements Agent {
@@ -24,12 +24,12 @@ public class HumanAgent implements Agent {
     }
 
     @Override
-    public List<PlaceArmiesMove> placeArmies(Game state) {
+    public List<PlaceArmies> placeArmies(Game state) {
         return gui.placeArmiesHuman();
     }
 
     @Override
-    public List<AttackTransferMove> moveArmies(Game state) {
+    public List<AttackTransfer> moveArmies(Game state) {
         return gui.moveArmiesHuman();
     }
 }

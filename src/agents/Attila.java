@@ -21,7 +21,7 @@ public class Attila implements Agent
     }
 
     @Override
-    public List<PlaceArmiesMove> placeArmies(Game game) {
+    public List<PlaceArmies> placeArmies(Game game) {
         int me = game.currentPlayer();
         int available = game.armiesPerTurn(me);
 
@@ -47,22 +47,22 @@ public class Attila implements Agent
             count[i] = random.nextInt(available + 1);
         Arrays.sort(count);
         
-        List<PlaceArmiesMove> ret = new ArrayList<PlaceArmiesMove>();
+        List<PlaceArmies> ret = new ArrayList<PlaceArmies>();
         int i = 0;
         for (Region r : mine)
             if (r.getContinent() == c) {
                 int n = count[i + 1] - count[i];
                 if (n > 0)
-                    ret.add(new PlaceArmiesMove(r, n));
+                    ret.add(new PlaceArmies(r, n));
                 i += 1;
             }
         return ret;
     }
     
     @Override
-    public List<AttackTransferMove> moveArmies(Game game) {
+    public List<AttackTransfer> moveArmies(Game game) {
         int me = game.currentPlayer();
-        List<AttackTransferMove> ret = new ArrayList<AttackTransferMove>();
+        List<AttackTransfer> ret = new ArrayList<AttackTransfer>();
         
         for (Region from : game.regionsOwnedBy(me)) {
             ArrayList<Region> neighbors = new ArrayList<Region>(from.getNeighbors());
@@ -78,7 +78,7 @@ public class Attila implements Agent
             int max = game.getArmies(from) - 1;
 
             if (min <= max)
-                ret.add(new AttackTransferMove(from, to, min + random.nextInt(max - min + 1)));
+                ret.add(new AttackTransfer(from, to, min + random.nextInt(max - min + 1)));
         }
         return ret;        
     }
