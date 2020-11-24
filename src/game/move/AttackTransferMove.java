@@ -4,7 +4,7 @@ import java.util.List;
 
 import game.Game;
 
-public class AttackTransferMove implements Move {
+public class AttackTransferMove extends Move {
     public List<AttackTransfer> commands;
     
     public AttackTransferMove(List<AttackTransfer> commands) { this.commands = commands; }

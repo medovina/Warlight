@@ -2,7 +2,7 @@ package game.move;
 
 import game.*;
 
-public class ChooseRegion implements Move {
+public class ChooseRegion extends Move {
     public Region region;
     
     public ChooseRegion(Region region) {

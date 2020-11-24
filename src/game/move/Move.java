@@ -2,6 +2,6 @@ package game.move;
 
 import game.Game;
 
-public interface Move {
-    void apply(Game game);
+public abstract class Move {
+    public abstract void apply(Game game);
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import game.Game;
 
-public class PlaceArmiesMove implements Move {
+public class PlaceArmiesMove extends Move {
     public List<PlaceArmies> commands;
     
     public PlaceArmiesMove(List<PlaceArmies> commands) { this.commands = commands; }
