@@ -8,6 +8,14 @@ public class ChooseRegion implements Move {
     public ChooseRegion(Region region) {
         this.region = region;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ChooseRegion))
+            return false;
+        
+        return region == ((ChooseRegion) o).region;
+    }
     
     public void apply(Game game) {
         game.chooseRegion(region);
@@ -15,6 +23,6 @@ public class ChooseRegion implements Move {
 
     @Override
     public String toString() {
-        return String.format("[ChooseAction %s]", region.getName());
+        return String.format("ChooseRegion(%s)", region.getName());
     }
 }

@@ -32,6 +32,14 @@ public class PlaceArmies {
         this.region = region; this.armies = armies;
     }
 
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof PlaceArmies))
+            return false;
+
+        PlaceArmies p = (PlaceArmies) o;
+        return region == p.region && armies == p.armies;
+    }
+
     public void setArmies(int n) {
         armies = n;
     }

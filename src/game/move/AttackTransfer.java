@@ -34,6 +34,15 @@ public class AttackTransfer {
         this.fromRegion = fromRegion; this.toRegion = toRegion; this.armies = armies;
     }
 
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof AttackTransfer))
+            return false;
+
+        AttackTransfer a = (AttackTransfer) o;
+        return fromRegion == a.fromRegion && toRegion == a.toRegion &&
+               armies == a.armies;
+    }
+
     public void setArmies(int n) {
         armies = n;
     }
