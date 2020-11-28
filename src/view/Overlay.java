@@ -63,10 +63,17 @@ class Overlay extends JPanel implements MouseListener {
     void drawLegend(Graphics g) {
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
-        for (int player = 1; player <= 2; ++player) {
-            int offset = 40 * (player - 1);
-            int x = getWidth() - 250;
-            int y = TopMargin - 2 + offset;
+        for (int player = 1; player <= game.numPlayers(); ++player) {
+            int offset, x;
+            if (game.numPlayers() < 4) {
+                x = getWidth() - 250;
+                offset = player - 1;
+            } else {
+                x = getWidth() - 440 + ((player - 1) / 2) * 220;
+                offset = (player - 1) % 2;
+            }
+            int y = TopMargin - 2 + offset * 40;
+
             g.setColor(PlayerColors.getColor(player));
             g.fillOval(x + 1, y + 1, 18, 18);
             g.setColor(TextColor);

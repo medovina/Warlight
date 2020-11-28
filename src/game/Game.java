@@ -59,11 +59,11 @@ public class Game implements Cloneable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("[GameState ");
+        StringBuilder sb = new StringBuilder("[Game ");
         if (isDone())
             sb.append("p" + winningPlayer() + " victory in " + round + " rounds");
         else
-            for (int player = 1 ; player <= 2 ; ++player) {
+            for (int player = 1 ; player <= numPlayers() ; ++player) {
                 sb.append("p" + player + ": ");
                 for (Region r : regionsOwnedBy(player))
                     sb.append(r.getName() + "=" + getArmies(r) + " ");
@@ -71,6 +71,8 @@ public class Game implements Cloneable {
         sb.append("]");
         return sb.toString();
     }
+
+    public int numPlayers() { return config.numPlayers; }
 
     // world information
 
@@ -162,10 +164,6 @@ public class Game implements Cloneable {
         return turn;
     }
 
-    public int opponent() {
-        return 3 - turn;
-    }
-    
     public Phase getPhase() {
         return phase;
     }
@@ -173,24 +171,35 @@ public class Game implements Cloneable {
     public int winningPlayer() {
         if (round == 0) return 0;
         
-        int regions1 = numberRegionsOwned(1), regions2 = numberRegionsOwned(2);
-        if (regions1 == 0) return 2;
-        if (regions2 == 0) return 1;
-        
-        if (round > config.maxGameRounds) {
-            if (regions1 > regions2) return 1;
-            if (regions2 > regions1) return 2;
-            
-            int armies1 = numberArmiesOwned(1), armies2 = numberArmiesOwned(2);
-            if (armies1 > armies2) return 1;
-            if (armies2 > armies1) return 2;
+        if (round <= config.maxGameRounds) {
+            int hasRegions = 0;
+            for (int r = 0 ; r < numRegions() ; ++r)
+                if (owner[r] > 0)
+                    if (hasRegions == 0)
+                        hasRegions = owner[r];
+                    else if (hasRegions != owner[r])
+                        return 0;   // more than one player has regions
+
+            return hasRegions;  // only one player has regions
         }
-        
-        return 0;
+
+        int maxRegions = 0, maxArmies = 0, maxPlayer = 0;
+        for (int p = 1 ; p <= numPlayers() ; ++p) {
+            int r = numberRegionsOwned(p);
+            int a = numberArmiesOwned(p);
+            if (r > maxRegions || r == maxRegions && a > maxArmies) {
+                maxRegions = r;
+                maxArmies = a;
+                maxPlayer = p;
+            } else if (r == maxRegions && a == maxArmies)
+                maxPlayer = 0;
+        }
+
+        return maxPlayer;
     }
     
     public boolean isDone() {
-        return round > 0 && (round > config.maxGameRounds || winningPlayer() > 0);
+        return round > config.maxGameRounds || winningPlayer() > 0;
     }
 
        
@@ -201,7 +210,7 @@ public class Game implements Cloneable {
     public int armiesPerTurn(int player, boolean first)
     {
         int armies = 5;
-        if (first)
+        if (first && numPlayers() == 2)
             armies /= 2;
         
         for(Continent cd : getContinents())
@@ -220,36 +229,53 @@ public class Game implements Cloneable {
     }
 
     public int numStartingRegions() {
-        return config.warlords ? 3 : 4;
+        return config.warlords ? world.numContinents() / numPlayers() : 4;
+    }
+
+    boolean bordersEnemy(Region r, int forPlayer) {
+        for (Region n : r.getNeighbors())
+            if (getOwner(n) != 0 && getOwner(n) != forPlayer)
+                return true;
+
+        return false;
+    }
+
+    int regionsOnContinent(Continent c, int player) {
+        int count = 0;
+        for (Region s : c.getRegions())
+            if (getOwner(s) == player)
+                count += 1;
+
+        return count;
     }
 
     public Region getRandomStartingRegion(int forPlayer) {
-        while (true) {
-            Region r = pickableRegions.get(random.nextInt(pickableRegions.size()));
+        for (int pass = 1 ; pass <= 2 ; ++pass) {
+            ArrayList<Region> possible = new ArrayList<Region>();
+            
+            for (Region r : pickableRegions)
+                if (regionsOnContinent(r.getContinent(), forPlayer) < 2 &&
+                    (!bordersEnemy(r, forPlayer) || pass == 2))
+                    possible.add(r);
 
-            // Don't allow starting regions to border enemies
-            boolean ok = true;
-            for (Region n : r.getNeighbors())
-                if (getOwner(n) != 0 && getOwner(n) != forPlayer) {
-                    ok = false;
-                    break;
-                }
-            if (!ok)
-                continue;
-
-            // Each player can have at most two starting regions on any continent.
-            int count = 0;
-            for (Region s : r.getContinent().getRegions())
-                if (getOwner(s) == forPlayer)
-                    count += 1;
-            if (count < 2)
-                return r;
+            if (!possible.isEmpty())
+                return possible.get(random.nextInt(possible.size()));
         }
+
+        throw new Error("no possible starting region");
     }
 
     void setAsStarting(Region r, int player) {
         setOwner(r, player);
         pickableRegions.remove(r);
+    }
+
+    void regionsChosen() {
+        if (gui != null)
+            gui.regionsChosen(getRegions());
+
+        round = 1;
+        phase = Phase.PLACE_ARMIES;
     }
     
     void initStartingRegions() {
@@ -276,17 +302,36 @@ public class Game implements Cloneable {
         else
             pickableRegions = new ArrayList<Region>(getRegions());
 
-        if (config.manualDistribution)
+        if (config.manualDistribution) {
             phase = Phase.STARTING_REGIONS;
+            if (gui != null) {
+                gui.showPickableRegions();
+            }
+        }
         else {  // automatic distribution
             for (int i = 0 ; i < numStartingRegions() ; ++i)
-                for (int player = 1; player <= 2; ++player) {
+                for (int player = 1; player <= numPlayers(); ++player) {
                     Region r = getRandomStartingRegion(player);
                     setAsStarting(r, player);
                 }
-            phase = Phase.PLACE_ARMIES;
             round = 1;
+            phase = Phase.PLACE_ARMIES;
         }
+    }
+
+    void nextTurn() {
+        do {
+            turn += 1;
+            if (turn > numPlayers()) {
+                turn = 1;
+                round += 1;
+                if (gui != null) {
+                    gui.newRound(getRoundNumber());
+                    gui.updateRegions(getRegions());
+                    gui.updateMap();
+                }
+            }
+        } while (numberRegionsOwned(turn) == 0);
     }
     
     public void chooseRegion(Region region) {
@@ -297,29 +342,29 @@ public class Game implements Cloneable {
             throw new Error("starting region is not pickable");
         
         setAsStarting(region, turn);
-        turn = 3 - turn;
+        turn += 1;
+        if (turn > numPlayers())
+            turn = 1;
         
-        if (numberRegionsOwned(turn) == numStartingRegions()) {
-            round = 1;
-            phase = Phase.PLACE_ARMIES;
-        }
+        if (numberRegionsOwned(turn) == numStartingRegions())
+            regionsChosen();
     }
     
     void illegalMove(String s) {
         System.out.printf("warning: ignoring illegal move: %s\n", s);
     }
 
-    public List<PlaceArmies> placeArmies(List<PlaceArmies> moves)
+    public void placeArmies(List<PlaceArmies> moves)
     {
         ArrayList<PlaceArmies> valid = new ArrayList<PlaceArmies>();
 
         if (phase != Phase.PLACE_ARMIES) {
             illegalMove("wrong time to place armies");
-            return valid;
+            return;
         }
 
         int left = armiesPerTurn(turn); 
-                
+
         for(PlaceArmies move : moves)
         {
             Region region = move.getRegion();
@@ -345,9 +390,11 @@ public class Game implements Cloneable {
                 valid.add(move);
             }
         }
-        
+
+        if (gui != null)
+            gui.placeArmies(turn, valid);
+    
         phase = Phase.ATTACK_TRANSFER;
-        return valid;
     }
     
     public static enum FightSide {
@@ -478,13 +525,28 @@ public class Game implements Cloneable {
             }
         }
         
-        turn = 3 - turn;
+        nextTurn();
         phase = Phase.PLACE_ARMIES;
-        if (turn == 1)
-            round++;
     }
 
     public void move(Move move) {
         move.apply(this);
+    }
+
+    public void pass() {
+        switch (phase) {
+            case STARTING_REGIONS:
+                Region r = pickableRegions.get(random.nextInt(pickableRegions.size()));
+                chooseRegion(r);
+                break;
+            case PLACE_ARMIES:
+                List<Region> owned = regionsOwnedBy(turn);
+                r = owned.get(random.nextInt(owned.size()));
+                PlaceArmies place = new PlaceArmies(r, armiesPerTurn(turn));
+                placeArmies(List.of(place));
+                break;
+            case ATTACK_TRANSFER:
+                break;
+        }
     }
 }

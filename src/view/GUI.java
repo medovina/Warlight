@@ -87,6 +87,18 @@ public class GUI extends JFrame implements KeyListener
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+
+        if (config.visualizeContinual != null) {
+            setContinual(config.visualizeContinual);
+        }
+        if (config.visualizeContinualFrameTimeMillis != null) {
+            setContinualFrameTime(config.visualizeContinualFrameTimeMillis);
+        }
+
+        if (game.getPhase() != Phase.STARTING_REGIONS) {
+            regionsChosen(game.getRegions());
+            newRound(game.getRoundNumber());
+        }
     }
 
     RegionInfo regionInfo(int id) {
@@ -105,10 +117,6 @@ public class GUI extends JFrame implements KeyListener
         continualTime = millis;
     }
 
-    boolean humanGame() {
-        return config.isHuman(1) || config.isHuman(2);
-    }
-    
     public void mousePressed(MouseEvent e) {
         if (SwingUtilities.isLeftMouseButton(e)) {
             if (moving != -1) {
@@ -221,9 +229,6 @@ public class GUI extends JFrame implements KeyListener
     }
 
     public void showPickableRegions() {
-        if (humanGame())
-            return;
-
         requestFocusInWindow();
         
         message("Available territories");
@@ -265,10 +270,13 @@ public class GUI extends JFrame implements KeyListener
         waitForClick();
     }
     
-    public void placeArmies(int player, List<Region> regions, List<PlaceArmies> placeArmiesMoves) {
+    public void placeArmies(int player, List<PlaceArmies> placeArmiesMoves) {
+        if (config.isHuman(player))
+            return;
+
         this.requestFocusInWindow();
         
-        updateRegions(regions);
+        updateRegions(game.getRegions());
         
         int total = 0;
         

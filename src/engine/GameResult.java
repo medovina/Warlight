@@ -1,62 +1,60 @@
 package engine;
 
+import game.Game;
+
 public class GameResult {
     public Config config;
     
-    public int player1Regions;
-    public int player1Armies;
+    public int[] regions;
+    public int[] armies;
     
-    public int player2Regions;
-    public int player2Armies;
-    
-    public int winner = -1;
+    public int winner;
     
     /**
      * Number of the round the game ended.
      */
     public int round;
 
+    public GameResult(Config config, Game game) {
+        this.config = config;
+        regions = new int[config.numPlayers() + 1];
+        armies = new int[config.numPlayers() + 1];
+
+        for (int p = 1 ; p <= config.numPlayers() ; ++p) {
+            regions[p] = game.numberRegionsOwned(p);
+            armies[p] = game.numberArmiesOwned(p);
+        }
+
+        winner = game.winningPlayer();
+        round = game.getRoundNumber();
+    }
+
     public int getWinner() {
         return winner;
     }
     
     public String getWinnerName() {
-        switch (winner) {
-            case -1:
-            case 0:
-                return "NONE";
-            case 1:
-                return config == null ? "Agent1" : config.player1Name;
-            case 2:
-                return config == null ? "Agent2" : config.player2Name;
-        }
-        return null;
+        return winner > 0 ? config.playerName(winner) : "NONE";
     }
     
     public String getLoserName() {
-        switch (winner) {
-            case -1:
-            case 0:
-                return "NONE";
-            case 1:
-                return config == null ? "Agent2" : config.player2Name;
-            case 2:
-                return config == null ? "Agent1" : config.player1Name;
-        }
-        return null;
+        if (config.numPlayers() == 2 && winner > 0)
+            return config.playerName(3 - winner);
+        else
+            return "NONE";
     }
     
     public int getWinnerRegions() {
-        return winner == 1 ? player1Regions : player2Regions;
+        return regions[winner];
     }
     
     public int getWinnerArmies() {
-        return winner == 1 ? player1Armies : player2Armies;
+        return armies[winner];
     }
 
     public String asString() {
-        return getWinner() + ";" + player1Regions + ";" + player1Armies + ";" +
-               player2Regions + ";" + player2Armies + ";" + round;
+        return getWinner() + ";" + regions[1] + ";" + armies[1] + ";" +
+               regions[2] + ";" + armies[2] + ";" + round;
     }
     
     public String getCSVHeader() {
@@ -68,8 +66,8 @@ public class GameResult {
     public String getCSV() {
         return config.getCSV() + ";" + getWinnerName() + ";" + getLoserName() + ";" +
         (winner == -1 || winner == 0 ? "NONE" : winner) + ";" +
-        getWinner() + ";" + player1Regions + ";" + player1Armies + ";" +
-        player2Regions + ";" + player2Armies + ";" + round;
+        getWinner() + ";" + regions[1] + ";" + armies[1] + ";" +
+        regions[2] + ";" + armies[2] + ";" + round;
     }
     
 }

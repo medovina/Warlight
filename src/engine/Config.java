@@ -1,12 +1,13 @@
 package engine;
 
+import java.util.ArrayList;
+
 import game.GameConfig;
 import utils.Util;
 
 public class Config implements Cloneable {
-    public String player1Name, player2Name;
-    
-    public String agent1Init, agent2Init;
+    ArrayList<String> playerNames = new ArrayList<String>();
+    ArrayList<String> agentInit = new ArrayList<String>();
 
     public long timeoutMillis = 60_000;
     
@@ -16,36 +17,48 @@ public class Config implements Cloneable {
     
     public GameConfig gameConfig = new GameConfig();
     
-    public void setHuman(int player) {
-        if (player == 1) {
-            agent1Init = "human";
-            player1Name = "You";
-        } else {
-            agent2Init = "human";
-            player2Name = "You";
-        }
+    public Config() {
+        playerNames.add("neutral");
+        agentInit.add("neutral");
+    }
+
+    public void addHuman() {
+        playerNames.add("You");
+        agentInit.add("human");
+        gameConfig.numPlayers = numPlayers();
     }
 
     public boolean isHuman(int player) {
-        return player == 1 ? agent1Init.equals("human") : agent2Init.equals("human");
+        return agentInit.get(player).equals("human");
     }
 
-    public void setAgentClass(int player, String fqcn) {
-        if (player == 1) {
-            agent1Init = "internal:" + fqcn;
-            player1Name = Util.className(fqcn);
-        } else {
-            agent2Init = "internal:" + fqcn;
-            player2Name = Util.className(fqcn);
-        }
+    public void addAgent(String name, String fqcn) {
+        playerNames.add(name);
+        agentInit.add("internal:" + fqcn);
+        gameConfig.numPlayers = numPlayers();
+    }
+
+    public void addAgent(String fqcn) {
+        if (fqcn.equals("human") || fqcn.equals("me"))
+            addHuman();
+        else
+            addAgent(Util.className(fqcn), fqcn);
     }
 
     public String playerName(int i) {
-        return i == 1 ? player1Name : player2Name;
+        return playerNames.get(i);
+    }
+
+    public String agentInit(int i) {
+        return agentInit.get(i);
+    }
+
+    public int numPlayers() {
+        return agentInit.size() - 1;
     }
 
     public String asString() {
-        return player1Name + ";" + player2Name + ";" +
+        return playerName(1) + ";" + playerName(2) + ";" +
                timeoutMillis + ";" +
                visualize + ";" + visualizeContinual + ";" + visualizeContinualFrameTimeMillis + ";" +
                gameConfig.asString();
@@ -56,7 +69,7 @@ public class Config implements Cloneable {
     }
     
     public String getCSV() {
-        return player1Name + ";" + player2Name + ";" +
+        return playerName(1) + ";" + playerName(2) + ";" +
                timeoutMillis + ";" + gameConfig.getCSV();
     }    
 }

@@ -17,9 +17,6 @@
 
 package engine;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import game.*;
 import game.move.*;
 import view.GUI;
@@ -34,10 +31,6 @@ public class Engine {
         this.config = config;        
     }
     
-    Agent agent(int i) {
-        return agents[i - 1];
-    }
-
     boolean timeout(Agent agent, long start) {
         long elapsed = System.currentTimeMillis() - start;
         if (!(agent instanceof HumanAgent) &&
@@ -47,95 +40,6 @@ public class Engine {
             return true; 
         }
         return false;
-    }
-
-    Region getChooseRegion(Agent agent) {
-        Move move = agent.getMove(game);
-        if (move instanceof ChooseRegion)
-            return ((ChooseRegion) move).region;
-        throw new Error("expected choose region move");
-    }
-
-    List<PlaceArmies> getPlaceArmies(Agent agent) {
-        Move move = agent.getMove(game);
-        if (move instanceof PlaceArmiesMove)
-            return ((PlaceArmiesMove) move).commands;
-        throw new Error("expected place armies move");
-    }
-
-    List<AttackTransfer> getAttackTransfer(Agent agent) {
-        Move move = agent.getMove(game);
-        if (move instanceof AttackTransferMove)
-            return ((AttackTransferMove) move).commands;
-        throw new Error("expected place armies move");
-    }
-
-    void playRound()
-    {
-        if (gui != null) {
-            gui.newRound(game.getRoundNumber());
-            gui.updateRegions(game.getRegions());
-        }
-        
-        for (int i = 1 ; i <= 2 ; ++i) {
-            long start = System.currentTimeMillis();
-            List<PlaceArmies> placeMoves = getPlaceArmies(agent(i));
-            if (timeout(agent(i), start)) {
-                System.err.println("agent failed to return place armies moves in time!");
-                placeMoves = new ArrayList<PlaceArmies>();
-            }
-            
-            List<PlaceArmies> legalMoves = game.placeArmies(placeMoves);
-    
-            if (gui != null && !(agent(i) instanceof HumanAgent))
-                gui.placeArmies(i, game.getRegions(), legalMoves);
-            
-            start = System.currentTimeMillis();
-            List<AttackTransfer> moves = getAttackTransfer(agent(i));
-            if (timeout(agent(i), start)) {
-                System.err.println("agent failed to return attack transfer moves in time!");
-                moves = new ArrayList<AttackTransfer>();
-            }
-            
-            game.attackTransfer(moves);
-            
-            if (game.isDone())
-                break;
-        }
-        
-        if (gui != null) {
-            gui.updateMap();
-        }
-    }
-    
-    void distributeStartingRegions()
-    {
-        if (game.getPhase() == Phase.STARTING_REGIONS) {
-            if (gui != null) {
-                gui.showPickableRegions();
-            }
-        
-            for (int i = 1 ; i <= game.numStartingRegions() ; ++i)
-                for (int p = 1 ; p <= 2 ; ++p) {
-                    long start = System.currentTimeMillis();
-                    Region region = getChooseRegion(agent(p));
-                    if (timeout(agent(p), start)) {
-                        System.err.println("agent failed to return starting region in time!");
-                        region = null;
-                    }
-                    
-                    if (region == null || !game.pickableRegions.contains(region)) {
-                        System.err.println("invalid starting region; choosing one at random");
-                        region = game.getRandomStartingRegion(p);
-                    }
-            
-                    game.chooseRegion(region);
-                }
-            }
-        
-        if (gui != null) {
-            gui.regionsChosen(game.getRegions());
-        }
     }
 
     static Agent constructAgent(Class<?> agentClass) {        
@@ -180,52 +84,30 @@ public class Engine {
         throw new RuntimeException("Invalid init string: " + agentInit);
     }
 
-    private GameResult finish()
-    {
-        GameResult result = new GameResult();
-        
-        result.config = config;
-        result.player1Regions = game.numberRegionsOwned(1);
-        result.player1Armies = game.numberArmiesOwned(1);
-        result.player2Regions = game.numberRegionsOwned(2);
-        result.player2Armies = game.numberArmiesOwned(2);
-
-        result.winner = game.winningPlayer();
-        result.round = game.getRoundNumber();
-        
-        return result;
-    }
-
-    public GameResult go()
+    public GameResult run()
     { 
         game = new Game(config.gameConfig);
 
         if (config.visualize) {
             gui = new GUI(game, config);
-            if (config.visualizeContinual != null) {
-                gui.setContinual(config.visualizeContinual);
-            }
-            if (config.visualizeContinualFrameTimeMillis != null) {
-                gui.setContinualFrameTime(config.visualizeContinualFrameTimeMillis);
-            }
             game.setGUI(gui);
         } else gui = null;
         
-        agents = new Agent[2];
-        agents[0] = setupAgent(config.agent1Init, gui);
-        agents[1] = setupAgent(config.agent2Init, gui);
-                
-        for (int i = 0 ; i < 2 ; ++i) {
-            agents[i].init(config.timeoutMillis);
-        }
-        
-        distributeStartingRegions();
-        
-        while(!game.isDone())
-        {
-            playRound();
+        agents = new Agent[config.numPlayers() + 1];
+        for (int p = 1 ; p <= config.numPlayers() ; ++p) {
+            agents[p] = setupAgent(config.agentInit(p), gui);
+            agents[p].init(config.timeoutMillis);
         }
 
-        return finish();
+        while(!game.isDone()) {
+            Agent agent = agents[game.currentPlayer()];
+            long start = System.currentTimeMillis();
+            Move move = agent.getMove(game);
+            if (timeout(agent, start))
+                game.pass();
+            else game.move(move);
+        }
+
+        return new GameResult(config, game);
     }
 }

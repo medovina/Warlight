@@ -17,13 +17,8 @@ public class WarlightFight {
         this.tableFile = tableFile;
     }
     
-    public TotalResults fight(String agent1Name, String agent1Init, String agent2Name, String agent2Init) {        
-        config.player1Name = Sanitize.idify(agent1Name);
-        config.agent1Init = agent1Init;
-        config.player2Name = Sanitize.idify(agent2Name);
-        config.agent2Init = agent2Init;
-    
-        TotalResults res = new TotalResults();
+    public TotalResults fight() {
+        TotalResults res = new TotalResults(config.numPlayers());
         boolean outputHeader = false;
     
         if (tableFile != null) {
@@ -36,17 +31,13 @@ public class WarlightFight {
                                     new PrintWriter(new FileOutputStream(tableFile, true))) {
             for (int i = 0; i < games; ++i) {
                 config.gameConfig.seed = seed + i;
-                GameResult result = new Engine(config).go();
+                GameResult result = new Engine(config).run();
                 
                 System.out.format(
                     "seed %d: %s won in %d rounds\n",
                     config.gameConfig.seed, result.getWinnerName(), result.round);
     
-                switch (result.winner) {
-                    case 1: res.victories1 += 1; break;
-                    case 2: res.victories2 += 1; break;
-                    default: break;
-                }
+                res.victories[result.winner] += 1;
             
                 if (outputHeader) {
                     writer.println(result.getCSVHeader());
@@ -59,9 +50,14 @@ public class WarlightFight {
             throw new Error(e);
         }
         
-        System.out.format("total victories: %s = %d (%.1f%%), %s = %d (%.1f%%)\n",
-            agent1Name, res.victories1, 100.0 * res.victories1 / games, 
-            agent2Name, res.victories2, 100.0 * res.victories2 / games);
+        System.out.format("total victories: ");
+        for (int p = 1 ; p <= config.numPlayers() ; ++p) {
+            if (p > 1)
+                System.out.print(", ");
+            System.out.format("%s = %d (%.1f%%)",
+                config.playerName(p), res.victories[p], 100.0 * res.victories[p] / games);
+        }
+        System.out.println();
 
         return res;        
     }
