@@ -109,11 +109,11 @@ public class Napoleon extends AgentBase
                     to = n;
             }
 
-            int min = game.getOwner(to) == me ? 1 : (int) Math.ceil(game.getArmies(to) * 1.6);
+            int min = game.getOwner(to) == me ? 1 : (int) Math.ceil(game.getArmies(to) * 1.5);
             int max = game.getArmies(from) - 1;
 
             if (min <= max)
-                ret.add(new AttackTransfer(from, to, min + random.nextInt(max - min + 1)));
+                ret.add(new AttackTransfer(from, to, max));
         }
         return ret;        
     }
