@@ -20,35 +20,38 @@ public class WarlightFight {
     public TotalResults fight() {
         TotalResults res = new TotalResults(config.numPlayers());
         boolean outputHeader = false;
-    
-        if (tableFile != null) {
-            tableFile.getParentFile().mkdirs();
-            outputHeader = !tableFile.exists();
-        }
+        PrintWriter writer = null;
 
-        try (PrintWriter writer =
-                tableFile == null ? null :
-                                    new PrintWriter(new FileOutputStream(tableFile, true))) {
-            for (int i = 0; i < games; ++i) {
-                config.gameConfig.seed = seed + i;
-                GameResult result = new Engine(config).run();
-                
-                System.out.format(
-                    "seed %d: %s won in %d rounds\n",
-                    config.gameConfig.seed, result.getWinnerName(), result.round);
-    
-                res.victories[result.winner] += 1;
-            
-                if (outputHeader) {
-                    writer.println(result.getCSVHeader());
-                    outputHeader = false;
-                }
-                if (tableFile != null)
-                    writer.println(result.getCSV());
+        try {
+            if (tableFile != null) {
+                tableFile.getParentFile().mkdirs();
+                outputHeader = !tableFile.exists();
+                writer = new PrintWriter(new FileOutputStream(tableFile, true));
             }
         } catch (FileNotFoundException e) {
             throw new Error(e);
         }
+
+        for (int i = 0; i < games; ++i) {
+            config.gameConfig.seed = seed + i;
+            GameResult result = new Engine(config).run();
+            
+            System.out.format(
+                "seed %d: %s won in %d rounds\n",
+                config.gameConfig.seed, result.getWinnerName(), result.round);
+
+            res.victories[result.winner] += 1;
+        
+            if (outputHeader) {
+                writer.println(result.getCSVHeader());
+                outputHeader = false;
+            }
+            if (tableFile != null)
+                writer.println(result.getCSV());
+        }
+
+        if (writer != null)
+            writer.close();
         
         System.out.format("total victories: ");
         for (int p = 1 ; p <= config.numPlayers() ; ++p) {

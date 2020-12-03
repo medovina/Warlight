@@ -77,6 +77,8 @@ public class Game implements Cloneable {
     // world information
 
     public World getWorld() { return world; }
+
+    public int numContinents() { return world.numContinents(); }
     
     public List<Continent> getContinents() { return world.getContinents(); }
 

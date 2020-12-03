@@ -22,6 +22,7 @@ import game.move.Move;
 
 public interface Agent {
     public void init(long timeoutMillis);
+    public void terminate();
 
     public Move getMove(Game game);
 }

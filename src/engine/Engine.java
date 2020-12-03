@@ -108,6 +108,9 @@ public class Engine {
             else game.move(move);
         }
 
+        for (int p = 1 ; p <= config.numPlayers() ; ++p)
+            agents[p].terminate();
+
         return new GameResult(config, game);
     }
 }

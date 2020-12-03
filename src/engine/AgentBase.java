@@ -22,4 +22,6 @@ public abstract class AgentBase implements Agent {
                 throw new Error("unknown phase");
         }
     }
+
+    @Override public void terminate() { }
 }
