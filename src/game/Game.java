@@ -213,7 +213,7 @@ public class Game implements Cloneable {
     {
         int armies = 5;
         if (first && numPlayers() == 2)
-            armies /= 2;
+            armies = 3;
         
         for(Continent cd : getContinents())
             if (getOwner(cd) == player)

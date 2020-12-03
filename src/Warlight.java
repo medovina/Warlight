@@ -9,7 +9,8 @@ import tournament.*;
 public class Warlight {
     static String internalAgent(String name) { return "internal:" + name; }
 
-    static void simulateGames(Config config, List<String> agents, int seed, int games, String resultdir) {
+    static void simulateGames(Config config, List<String> agents, int seed, int games,
+                              String resultdir, boolean verbose) {
         if (agents.size() < 2) {
             out.println("must specify at least 2 agent names with -sim");
             return;
@@ -22,7 +23,7 @@ public class Warlight {
         WarlightFight fight = new WarlightFight(config, seed > 0 ? seed : 0, games,
             resultdir == null ? null : new File(resultdir + "/games.csv")
             );
-        fight.fight();
+        fight.fight(verbose);
 }
 
     static void usage() {
@@ -32,6 +33,7 @@ public class Warlight {
         out.println("  -seed <num> : random seed");
         out.println("  -sim <count> : simulate a series of games without visualization");
         out.println("  -timeout <num> : agent time limit in ms");
+        out.println("  -v : verbose output");
         out.println();
         out.println("game configuration options:");
         out.println("  -manual : manual territory distribution");
@@ -43,6 +45,7 @@ public class Warlight {
         String resultdir = null;
         int seed = -1;
         int sim = 0;
+        boolean verbose = false;
 
         Config config = new Config();
 
@@ -65,6 +68,9 @@ public class Warlight {
                     case "-timeout":
                         config.timeoutMillis = Integer.parseInt(args[++i]);
                         break;
+                    case "-v":
+                        verbose = true;
+                        break;
                     case "-warlords":
                         config.gameConfig.warlords = true;
                         break;
@@ -81,7 +87,7 @@ public class Warlight {
         }
 
         if (sim > 0) {
-            simulateGames(config, agents, seed, sim, resultdir);
+            simulateGames(config, agents, seed, sim, resultdir, verbose);
         } else {
             if (agents.size() < 2) {
                 config.addHuman();

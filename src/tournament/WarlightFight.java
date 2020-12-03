@@ -2,6 +2,8 @@ package tournament;
 
 import java.io.*;
 
+import org.apache.commons.math3.stat.interval.*;
+
 import engine.*;
 
 public class WarlightFight {
@@ -17,7 +19,7 @@ public class WarlightFight {
         this.tableFile = tableFile;
     }
     
-    public TotalResults fight() {
+    public TotalResults fight(boolean verbose) {
         TotalResults res = new TotalResults(config.numPlayers());
         boolean outputHeader = false;
         PrintWriter writer = null;
@@ -61,6 +63,18 @@ public class WarlightFight {
                 config.playerName(p), res.victories[p], 100.0 * res.victories[p] / games);
         }
         System.out.println();
+
+        if (verbose) {
+            int confidence = 98;
+            System.out.printf("with %d%% confidence:\n", confidence);
+            for (int p = 1 ; p <= config.numPlayers() ; ++p) {
+                ConfidenceInterval ci =
+                    IntervalUtils.getWilsonScoreInterval(
+                        games, res.victories[p], confidence / 100.0);
+                double lo = ci.getLowerBound() * 100, hi = ci.getUpperBound() * 100;
+                System.out.printf("  %s wins %.1f%% - %.1f%%\n", config.playerName(p), lo, hi);
+            }
+        }
 
         return res;        
     }

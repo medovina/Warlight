@@ -26,9 +26,9 @@ import game.Region;
  */
 
 public class AttackTransfer {
-    private Region fromRegion;
-    private Region toRegion;
-    private int armies;
+    public Region fromRegion;
+    public Region toRegion;
+    public int armies;
     
     public AttackTransfer(Region fromRegion, Region toRegion, int armies) {
         this.fromRegion = fromRegion; this.toRegion = toRegion; this.armies = armies;

@@ -53,7 +53,7 @@ Now the main part of the game begins.  The game proceeds in a series of rounds. 
 
 In each round, each player can place a number of new armies on their territories.  Each player normally receives 5 new armies, plus bonus armies for each continent that they currently control.  A player controls a continent if they own all regions on that continent.  Larger continents yield more bonus armies; the game map displays the number of bonus armies available for each continent.
 
-As an exception to the above, in the first round player 1 receives only 2 armies, not 5.  This is intended to compensate for the advantage of moving first.
+As an exception to the above, in the first round player 1 receives only 3 armies, not 5.  This is intended to compensate for the advantage of moving first.
 
 In each round, each player can perform a series of moves or attacks.  A player can move armies between adjacent territories that they own.  As least one army must always stay behind in any move or attack; it is not possible to abandon a territory.
 

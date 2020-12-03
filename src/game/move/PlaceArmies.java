@@ -25,8 +25,8 @@ import game.Region;
  */
 
 public class PlaceArmies {
-    private Region region;
-    private int armies;
+    public Region region;
+    public int armies;
     
     public PlaceArmies(Region region, int armies) {
         this.region = region; this.armies = armies;
