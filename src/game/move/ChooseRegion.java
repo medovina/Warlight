@@ -17,7 +17,8 @@ public class ChooseRegion extends Move {
         return region == ((ChooseRegion) o).region;
     }
     
-    public void apply(Game game) {
+    @Override
+    public void apply(Game game, boolean mostLikely) {
         game.chooseRegion(region);
     }
 

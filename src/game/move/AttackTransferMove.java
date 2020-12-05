@@ -17,8 +17,9 @@ public class AttackTransferMove extends Move {
         return commands.equals(m.commands);
     }
     
-    public void apply(Game game) {
-        game.attackTransfer(commands);
+    @Override
+    public void apply(Game game, boolean mostLikely) {
+        game.attackTransfer(commands, mostLikely);
     }
 
     @Override public String toString() {

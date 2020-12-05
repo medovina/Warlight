@@ -419,29 +419,32 @@ public class Game implements Cloneable {
         }
     }
 
-    int prob_round(double d) {
+    int round(double d, boolean mostLikely) {
+        if (mostLikely)
+            return (int) Math.round(d);
+
         double p = d - Math.floor(d);
         return (int) (random.nextDouble() < p ? Math.ceil(d) : Math.floor(d));
     }
 
-    FightResult doAttack(int attackingArmies, int defendingArmies) {
+    FightResult doAttack(int attackingArmies, int defendingArmies, boolean mostLikely) {
         FightResult result = new FightResult();
 
-        result.defendersDestroyed = Math.min(prob_round(attackingArmies * 0.6), defendingArmies);
-        result.attackersDestroyed = Math.min(prob_round(defendingArmies * 0.7), attackingArmies);
+        result.defendersDestroyed = Math.min(round(attackingArmies * 0.6, mostLikely), defendingArmies);
+        result.attackersDestroyed = Math.min(round(defendingArmies * 0.7, mostLikely), attackingArmies);
         
         result.postProcess(attackingArmies, defendingArmies);
         return result;
     }
 
-    private void doAttack(AttackTransfer move)
+    private void doAttack(AttackTransfer move, boolean mostLikely)
     {
         Region fromRegion = move.getFromRegion();
         Region toRegion = move.getToRegion();
         int attackingArmies = move.getArmies();
         int defendingArmies = getArmies(toRegion);
         
-        FightResult result = doAttack(attackingArmies, defendingArmies);
+        FightResult result = doAttack(attackingArmies, defendingArmies, mostLikely);
         
         switch (result.winner) {
         case ATTACKER: //attack success
@@ -500,7 +503,7 @@ public class Game implements Cloneable {
         return valid;
     }
     
-    public void attackTransfer(List<AttackTransfer> moves) {
+    public void attackTransfer(List<AttackTransfer> moves, boolean mostLikely) {
         if (phase != Phase.ATTACK_TRANSFER) {
             illegalMove("wrong time to attack/transfer");
             return;
@@ -524,7 +527,7 @@ public class Game implements Cloneable {
                 if (gui != null) {
                     gui.attack(move);
                 }
-                doAttack(move);
+                doAttack(move, mostLikely);
             }
         }
         
@@ -532,8 +535,12 @@ public class Game implements Cloneable {
         phase = Phase.PLACE_ARMIES;
     }
 
+    public void move(Move move, boolean mostLikely) {
+        move.apply(this, mostLikely);
+    }
+
     public void move(Move move) {
-        move.apply(this);
+        move(move, false);
     }
 
     public void pass() {

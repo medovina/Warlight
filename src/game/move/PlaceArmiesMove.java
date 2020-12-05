@@ -17,7 +17,8 @@ public class PlaceArmiesMove extends Move {
         return commands.equals(m.commands);
     }
     
-    public void apply(Game state) {
+    @Override
+    public void apply(Game state, boolean mostLikely) {
         state.placeArmies(commands);
     }
 
