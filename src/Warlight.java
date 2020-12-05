@@ -27,7 +27,7 @@ public class Warlight {
 }
 
     static void usage() {
-        out.println("usage: warlight [<agent-classname> ...] [<option> ...]");
+        out.println("usage: warlight [<agent-classname>[<agent-opts>] ...] [<option> ...]");
         out.println("options:");
         out.println("  -resultdir <path> : directory for results in CSV format");
         out.println("  -seed <num> : random seed");
@@ -38,6 +38,9 @@ public class Warlight {
         out.println("game configuration options:");
         out.println("  -manual : manual territory distribution");
         out.println("  -warlords : distribute only one territory from each continent");
+        out.println();
+        out.println("agent options:");
+        out.println("  +<num> : give agent <num> extra armies on each starting territory");
     }
 
     public static void main(String[] args) {

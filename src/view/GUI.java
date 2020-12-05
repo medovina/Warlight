@@ -88,13 +88,6 @@ public class GUI extends JFrame implements KeyListener
         setLocationRelativeTo(null);
         setVisible(true);
 
-        if (config.visualizeContinual != null) {
-            setContinual(config.visualizeContinual);
-        }
-        if (config.visualizeContinualFrameTimeMillis != null) {
-            setContinualFrameTime(config.visualizeContinualFrameTimeMillis);
-        }
-
         if (game.getPhase() != Phase.STARTING_REGIONS) {
             regionsChosen(game.getRegions());
             newRound(game.getRoundNumber());

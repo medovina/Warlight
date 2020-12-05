@@ -5,62 +5,70 @@ import java.util.ArrayList;
 import game.GameConfig;
 import utils.Util;
 
-public class Config implements Cloneable {
-    ArrayList<String> playerNames = new ArrayList<String>();
-    ArrayList<String> agentInit = new ArrayList<String>();
+class AgentConfig {
+    public String name;
+    public String init;
+
+    public AgentConfig(String name, String init) {
+        this.name = name;
+        this.init = init;
+    }
+}
+
+public class Config {
+    ArrayList<AgentConfig> agentConfig = new ArrayList<AgentConfig>();
 
     public long timeoutMillis = 60_000;
     
     public boolean visualize = true;
-    public Boolean visualizeContinual = null;
-    public Integer visualizeContinualFrameTimeMillis = null;
     
-    public GameConfig gameConfig = new GameConfig();
+    public GameConfig gameConfig = new GameConfig(0);
     
     public Config() {
-        playerNames.add("neutral");
-        agentInit.add("neutral");
-    }
-
-    public void addHuman() {
-        playerNames.add("You");
-        agentInit.add("human");
-        gameConfig.numPlayers = numPlayers();
+        agentConfig.add(new AgentConfig("neutral", "neutral"));
     }
 
     public boolean isHuman(int player) {
-        return agentInit.get(player).equals("human");
+        return agentInit(player).equals("human");
     }
 
-    public void addAgent(String name, String fqcn) {
-        playerNames.add(name);
-        agentInit.add("internal:" + fqcn);
-        gameConfig.numPlayers = numPlayers();
-    }
+    public void addAgent(String name) {
+        int extraArmies = 0;
 
-    public void addAgent(String fqcn) {
-        if (fqcn.equals("human") || fqcn.equals("me"))
-            addHuman();
+        int i = name.indexOf('+');
+        if (i >= 0) {
+            extraArmies = Integer.parseInt(name.substring(i + 1));
+            name = name.substring(0, i);
+        }
+
+        if (name.equals("me") || name.equals("human"))
+            agentConfig.add(new AgentConfig("You", "human"));
         else
-            addAgent(Util.className(fqcn), fqcn);
+            agentConfig.add(new AgentConfig(Util.className(name), "internal:" + name));
+
+        gameConfig.addPlayer(extraArmies);
+    }
+
+    public void addHuman() {
+        addAgent("human");
     }
 
     public String playerName(int i) {
-        return playerNames.get(i);
+        return agentConfig.get(i).name;
     }
 
     public String agentInit(int i) {
-        return agentInit.get(i);
+        return agentConfig.get(i).init;
     }
 
     public int numPlayers() {
-        return agentInit.size() - 1;
+        return agentConfig.size() - 1;
     }
 
     public String asString() {
         return playerName(1) + ";" + playerName(2) + ";" +
                timeoutMillis + ";" +
-               visualize + ";" + visualizeContinual + ";" + visualizeContinualFrameTimeMillis + ";" +
+               visualize + ";" +
                gameConfig.asString();
     }
     

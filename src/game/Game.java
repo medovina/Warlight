@@ -269,6 +269,7 @@ public class Game implements Cloneable {
 
     void setAsStarting(Region r, int player) {
         setOwner(r, player);
+        setArmies(r, 2 + config.extraArmies.get(player));
         pickableRegions.remove(r);
     }
 
