@@ -102,7 +102,7 @@ public class Engine {
         while(!game.isDone()) {
             Agent agent = agents[game.currentPlayer()];
             long start = System.currentTimeMillis();
-            Move move = agent.getMove(game);
+            Move move = agent.getMove(game.clone());
             if (timeout(agent, start))
                 game.pass();
             else game.move(move);
