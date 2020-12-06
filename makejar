@@ -1,3 +1,7 @@
 #!/bin/bash
 
-jar cf warlight.jar -C target/classes .
+jar cf warlight_tmp.jar -C target/classes .
+
+zip -d warlight_tmp.jar MyAgent.class
+
+mv -f warlight_tmp.jar warlight.jar
