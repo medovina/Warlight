@@ -31,8 +31,7 @@ public class Engine {
         this.config = config;        
     }
     
-    boolean timeout(Agent agent, long start) {
-        long elapsed = System.currentTimeMillis() - start;
+    boolean timeout(Agent agent, long elapsed) {
         if (!(agent instanceof HumanAgent) &&
                 config.timeoutMillis > 0 && elapsed > config.timeoutMillis + 150 /* grace period */) {
             System.err.format("agent failed to respond in time!  timeout = %d, elapsed = %d\n",
@@ -92,18 +91,29 @@ public class Engine {
             gui = new GUI(game, config);
             game.setGUI(gui);
         } else gui = null;
+
+        int players = config.numPlayers();
         
-        agents = new Agent[config.numPlayers() + 1];
-        for (int p = 1 ; p <= config.numPlayers() ; ++p) {
+        agents = new Agent[players + 1];
+        for (int p = 1 ; p <= players ; ++p) {
             agents[p] = setupAgent(config.agentInit(p), gui);
             agents[p].init(config.timeoutMillis);
         }
 
+        int[] totalMoves = new int[players + 1];
+        long[] totalTime = new long[players + 1];
+
         while(!game.isDone()) {
-            Agent agent = agents[game.currentPlayer()];
+            int player = game.currentPlayer();
+            Agent agent = agents[player];
+
             long start = System.currentTimeMillis();
             Move move = agent.getMove(game.clone());
-            if (timeout(agent, start))
+            long elapsed = System.currentTimeMillis() - start;
+            totalMoves[player] += 1;
+            totalTime[player] += elapsed;
+
+            if (timeout(agent, elapsed))
                 game.pass();
             else game.move(move);
         }
@@ -111,6 +121,6 @@ public class Engine {
         for (int p = 1 ; p <= config.numPlayers() ; ++p)
             agents[p].terminate();
 
-        return new GameResult(config, game);
+        return new GameResult(config, game, totalMoves, totalTime);
     }
 }

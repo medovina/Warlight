@@ -9,14 +9,20 @@ public class GameResult {
     public int[] armies;
     
     public int winner;
+
+    public int[] totalMoves;
+    public long[] totalTime;
     
     /**
      * Number of the round the game ended.
      */
     public int round;
 
-    public GameResult(Config config, Game game) {
+    public GameResult(Config config, Game game, int[] totalMoves, long[] totalTime) {
         this.config = config;
+        this.totalMoves = totalMoves;
+        this.totalTime = totalTime;
+
         regions = new int[config.numPlayers() + 1];
         armies = new int[config.numPlayers() + 1];
 

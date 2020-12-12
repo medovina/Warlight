@@ -20,7 +20,10 @@ public class WarlightFight {
     }
     
     public TotalResults fight(boolean verbose) {
-        TotalResults res = new TotalResults(config.numPlayers());
+        int numPlayers = config.numPlayers();
+        TotalResults res = new TotalResults(numPlayers);
+        int[] totalMoves = new int[numPlayers + 1];
+        long[] totalTime = new long[numPlayers + 1];
         boolean outputHeader = false;
         PrintWriter writer = null;
 
@@ -37,6 +40,10 @@ public class WarlightFight {
         for (int i = 0; i < games; ++i) {
             config.gameConfig.seed = seed + i;
             GameResult result = new Engine(config).run();
+            for (int p = 1 ; p <= numPlayers ; ++p) {
+                totalMoves[p] += result.totalMoves[p];
+                totalTime[p] += result.totalTime[p];
+            }
             
             System.out.format(
                 "seed %d: %s won in %d rounds\n",
@@ -56,7 +63,7 @@ public class WarlightFight {
             writer.close();
         
         System.out.format("total victories: ");
-        for (int p = 1 ; p <= config.numPlayers() ; ++p) {
+        for (int p = 1 ; p <= numPlayers ; ++p) {
             if (p > 1)
                 System.out.print(", ");
             System.out.format("%s = %d (%.1f%%)",
@@ -64,10 +71,18 @@ public class WarlightFight {
         }
         System.out.println();
 
+        for (int p = 1 ; p <= numPlayers ; ++p) {
+            if (p > 1)
+                System.out.print(", ");
+            System.out.format("%s took %.1f ms/move", config.playerName(p),
+                1.0 * totalTime[p] / totalMoves[p]);
+        }
+        System.out.println();
+
         if (verbose) {
             int confidence = 98;
             System.out.printf("with %d%% confidence:\n", confidence);
-            for (int p = 1 ; p <= config.numPlayers() ; ++p) {
+            for (int p = 1 ; p <= numPlayers ; ++p) {
                 ConfidenceInterval ci =
                     IntervalUtils.getWilsonScoreInterval(
                         games, res.victories[p], confidence / 100.0);
