@@ -24,6 +24,7 @@ public class MapView extends JPanel {
     SVGDiagram diagram;
     
     Point[] regionPositions;
+    boolean hasScroll;
     
     public MapView(Game game) {
         this.game = game;
@@ -36,6 +37,8 @@ public class MapView extends JPanel {
             Point2D p = r.getLabelPosition();
             regionPositions[i] = new Point((int) p.getX(), (int) p.getY());
         }
+
+        hasScroll = (diagram.getElement("scroll_background") != null);
     }
 
     @Override
@@ -77,12 +80,7 @@ public class MapView extends JPanel {
     }
 
     Region regionFromPoint(Point p) {
-        List<List<SVGElement>> elements = new ArrayList<List<SVGElement>>();
-        try {
-            diagram.pick(p, elements);
-        } catch (SVGException e) { throw new RuntimeException(e); }
-
-        for (List<SVGElement> path : elements) {
+        for (List<SVGElement> path : Util.pick(diagram, p)) {
             RenderableElement e = (RenderableElement) path.get(path.size() - 1);
             Region r = game.getWorld().getRegion(e);
             if (r != null)
@@ -92,4 +90,18 @@ public class MapView extends JPanel {
         return null;
     }
 
+    Continent rewardFromPoint(Point p) {
+        for (List<SVGElement> path : Util.pick(diagram, p)) {
+            if (path.size() < 2)
+                continue;
+            SVGElement g = path.get(path.size() - 2);
+            if (g instanceof Group) {
+                Continent c = game.getWorld().getContinentWithReward((Group) g);
+                if (c != null)
+                    return c;
+            }
+        }
+
+        return null;
+    }
 }

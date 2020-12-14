@@ -1,8 +1,14 @@
 package utils;
 
-import java.awt.*;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.*;
 
 import com.kitfox.svg.*;
 import com.kitfox.svg.xml.StyleAttribute;
@@ -53,7 +59,15 @@ public class Util {
 	    } catch (SVGException ex) {
 	        throw new Error(ex);
 	    }
-	}
+    }
+    
+    public static List<List<SVGElement>> pick(SVGDiagram diagram, Point p) {
+        List<List<SVGElement>> elements = new ArrayList<List<SVGElement>>();
+        try {
+            diagram.pick(p, elements);
+            return elements;
+        } catch (SVGException e) { throw new Error(e); }
+    }
 
     public static Point toGlobal(RenderableElement e, Point p) {
         while (true) {

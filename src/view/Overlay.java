@@ -131,6 +131,9 @@ class Overlay extends JPanel implements MouseListener {
     }
     
     void drawScroll(Graphics g) {
+        if (!mapView.hasScroll)
+            return;
+
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
 
         ArrayList<Continent> a = new ArrayList<Continent>(game.getContinents());
@@ -230,14 +233,18 @@ class Overlay extends JPanel implements MouseListener {
 
     @Override
     public String getToolTipText(MouseEvent event) {
+        Point p = event.getPoint();
+        Continent c = mapView.rewardFromPoint(p);
+        if (c != null)
+            return c.getName();
+
         Region r = mapView.regionFromPoint(event.getPoint());
         return r == null ? null : r.getName();
     }
 
     @Override
     public Point getToolTipLocation(MouseEvent e) {
-        Region r = mapView.regionFromPoint(e.getPoint());
-        if (r == null)
+        if (getToolTipText(e) == null)
             return new Point(0, 0);
 
         Point p = e.getPoint();

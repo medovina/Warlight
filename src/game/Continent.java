@@ -2,7 +2,11 @@ package game;
 
 import java.util.*;
 
+import com.kitfox.svg.Group;
+
 public class Continent {
+    public Group rewardElement;
+
     public final int id;
     public int reward;
     public final String name;

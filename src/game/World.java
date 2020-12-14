@@ -62,6 +62,7 @@ public class World {
             }
 
         findLabels();
+        findRewards();
     }
 
     String getName(SVGElement e) {
@@ -164,6 +165,18 @@ public class World {
         }
     }
 
+    void findRewards() {
+        SVGElement rewards = getChildByName(diagram.getRoot(), "rewards");
+        if (rewards == null)
+            return;
+
+        for (SVGElement g : rewards.getChildren(null)) {
+            String name = Util.capitalize(getName(g));
+            Continent c = getContinent(name);
+            c.rewardElement = (Group) g;
+        }
+    }
+
     public SVGDiagram getDiagram() {
         return diagram;
     }
@@ -178,6 +191,22 @@ public class World {
 
     public Continent getContinent(int id) {
         return continents.get(id);
+    }
+
+    public Continent getContinent(String name) {
+        for (Continent c : continents)
+            if (c.getName().equals(name))
+                return c;
+        
+        throw new Error("no continent with name '" + name + "'");
+    }
+
+    public Continent getContinentWithReward(Group g) {
+        for (Continent c : continents)
+            if (c.rewardElement == g)
+                return c;
+        
+        return null;
     }
 
     public int numRegions() {
