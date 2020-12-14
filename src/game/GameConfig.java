@@ -3,6 +3,7 @@ package game;
 import java.util.ArrayList;
 
 public class GameConfig {
+    public String mapName;
     public int seed = -1;       // -1 will use random seed
     
     public int numPlayers;

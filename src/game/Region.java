@@ -40,6 +40,9 @@ public class Region {
     }
 
     public Point getLabelPosition() {
+        if (labelPosition == null)
+            throw new Error("region '" + name + "' has no label position");
+
         return labelPosition;
     }
 

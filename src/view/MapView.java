@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -21,25 +22,24 @@ public class MapView extends JPanel {
 
     Game game;
     SVGDiagram diagram;
-    AffineTransform viewportTransform;
     Rectangle2D imageBounds;
     
     Point[] regionPositions;
     
-    public MapView(Game game, int width, int height) {
+    public MapView(Game game) {
         this.game = game;
         diagram = game.getWorld().getDiagram();
-        Rectangle viewport = new Rectangle(0, 0, width, height);
-        diagram.setDeviceViewport(viewport);
 
-        regionPositions = new Point[game.numRegions()];
         SVGRoot root = diagram.getRoot();
-        viewportTransform = root.calcViewportTransform(viewport);
         imageBounds = Util.getBoundingBox(root);
+        Rectangle viewport = new Rectangle(0, 0, (int) imageBounds.getWidth(), (int) imageBounds.getHeight());
+        diagram.setDeviceViewport(viewport);
+        setPreferredSize(new Dimension(viewport.width, viewport.height));
             
+        regionPositions = new Point[game.numRegions()];
         for (int i = 0 ; i < game.numRegions() ; ++i) {
             Region r = game.getRegion(i);
-            Point2D p = viewportTransform.transform(r.getLabelPosition(), null);
+            Point2D p = r.getLabelPosition();
             regionPositions[i] = new Point((int) p.getX(), (int) p.getY());
         }
     }
@@ -83,7 +83,7 @@ public class MapView extends JPanel {
             if (a.getStringValue().equals(colorString))
                 return;
 
-            e.setAttribute("fill", AnimationElement.AT_XML, colorString);
+            e.setAttribute("fill", AnimationElement.AT_AUTO, colorString);
 
             repaint(getBounds(e));
         } catch (SVGException ex) { throw new RuntimeException(ex); }

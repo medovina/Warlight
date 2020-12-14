@@ -21,7 +21,7 @@ public class Game implements Cloneable {
     
     public Game(GameConfig config) {
         this.config = config != null ? config : new GameConfig();
-        world = new World();
+        world = new World(config.mapName);
 
         armies = new int[world.numRegions()];
         for (int i = 0 ; i < world.numRegions() ; ++i)

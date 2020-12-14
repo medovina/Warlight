@@ -21,7 +21,7 @@ public class GUI extends JFrame implements KeyListener
 {
     private static final long serialVersionUID = 0;
 
-    private static final int WIDTH = 1426, HEIGHT = 715;
+    private int width, height;
     
     private Game game;
     
@@ -64,14 +64,16 @@ public class GUI extends JFrame implements KeyListener
         setTitle("Warlight");
         addKeyListener(this);
         
-        mapView = new MapView(game, WIDTH, HEIGHT);
-        mapView.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        mapView = new MapView(game);
+        Dimension size = mapView.getPreferredSize();
+        width = size.width;
+        height = size.height;
         add(mapView);
 
         layeredPane = getLayeredPane();
 
         overlay = new Overlay(this, game);
-        overlay.setBounds(0, 0, WIDTH, HEIGHT);
+        overlay.setBounds(0, 0, width, height);
         layeredPane.add(overlay);
 
         regionInfo = new RegionInfo[game.numRegions()];
@@ -81,7 +83,7 @@ public class GUI extends JFrame implements KeyListener
             mapView.setOwner(idx, 0);
         }
         
-        mainArrow = new Arrow(0, 0, WIDTH, HEIGHT);
+        mainArrow = new Arrow(0, 0, width, height);
         layeredPane.add(mainArrow, JLayeredPane.PALETTE_LAYER);
                 
         pack();
@@ -435,7 +437,7 @@ public class GUI extends JFrame implements KeyListener
         b.setForeground(Color.WHITE);
         b.setBackground(Color.BLACK);
         b.setSize(60, 30);
-        b.setLocation(WIDTH / 2 - 30, 60);
+        b.setLocation(width / 2 - 30, 60);
         return b;
     }
     
@@ -607,7 +609,7 @@ public class GUI extends JFrame implements KeyListener
         e = encode(from.getId(), to.getId());
         m = moves.get(e);
         if (m == null && delta > 0) {
-            Arrow arrow = new Arrow(0, 0, WIDTH, HEIGHT);
+            Arrow arrow = new Arrow(0, 0, width, height);
             showArrow(arrow, from.getId(), to.getId(), moving, delta);
             layeredPane.add(arrow, JLayeredPane.PALETTE_LAYER);
             moves.put(e, new Move(from, to, delta, arrow));

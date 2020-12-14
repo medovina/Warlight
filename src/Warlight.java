@@ -29,6 +29,7 @@ public class Warlight {
     static void usage() {
         out.println("usage: warlight [<agent-classname>[<agent-opts>] ...] [<option> ...]");
         out.println("options:");
+        out.println("  -map <name> : map for game");
         out.println("  -resultdir <path> : directory for results in CSV format");
         out.println("  -seed <num> : random seed");
         out.println("  -sim <count> : simulate a series of games without visualization");
@@ -58,6 +59,9 @@ public class Warlight {
                 switch (s) {
                     case "-manual":
                         config.gameConfig.manualDistribution = true;
+                        break;
+                    case "-map":
+                        config.gameConfig.mapName = args[++i];
                         break;
                     case "-resultdir":
                         resultdir = args[++i];

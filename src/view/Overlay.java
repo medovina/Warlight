@@ -138,8 +138,8 @@ class Overlay extends JPanel implements MouseListener {
 
         for (int i = 0; i < a.size(); ++i) {
             Continent mc = a.get(i);
-            int x = 104;
-            int y = 560 + 19 * i;
+            int x = 110;
+            int y = 582 + 19 * i;
 
             Continent c = game.getContinent(mc.id);
             int owner = game.getOwner(c);

@@ -9,6 +9,7 @@ import java.util.*;
 
 import com.kitfox.svg.*;
 import com.kitfox.svg.animation.AnimationElement;
+import com.kitfox.svg.xml.StyleAttribute;
 
 import utils.Util;
 
@@ -18,10 +19,13 @@ public class World {
     ArrayList<Continent> continents = new ArrayList<Continent>();
     ArrayList<Region> regions = new ArrayList<Region>();
 
-    public World() {
+    public World(String mapName) {
         SVGUniverse universe = new SVGUniverse();
         URI uri;
-        try (InputStream s = this.getClass().getResourceAsStream("/images/earth.svg")) {
+
+        if (mapName == null)
+            mapName = "earth";
+        try (InputStream s = this.getClass().getResourceAsStream("/maps/" + mapName + ".svg")) {
             uri = universe.loadSVG(s, "earth");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -29,7 +33,10 @@ public class World {
 
         diagram = universe.getDiagram(uri);
 
-        SVGElement map = diagram.getElement("map");
+        SVGElement map = getChildByName(diagram.getRoot(), "map");
+        if (map == null)
+            throw new Error("can't find map element");
+
         String mapDesc = createRegions(map);
 
         findNeighbors();
@@ -48,6 +55,19 @@ public class World {
         findLabels();
     }
 
+    String getName(SVGElement e) {
+        StyleAttribute a = e.getPresAbsolute("inkscape:label");
+        return a != null ? a.getStringValue() : e.getId();
+    }
+
+    SVGElement getChildByName(SVGElement e, String name) {
+        for (SVGElement child : e.getChildren(null))
+            if (getName(child).equals(name))
+                return child;
+
+        return null;
+    }
+
     String createRegions(SVGElement map) {
         String mapDesc = null;
 
@@ -55,13 +75,13 @@ public class World {
             if (e instanceof Desc) {
                 mapDesc = ((Desc) e).getText();
             } else {
-                Continent c = new Continent(Util.decamel(e.getId()), continents.size());
+                Continent c = new Continent(Util.decamel(getName(e)), continents.size());
                 continents.add(c);
 
                 for (SVGElement d : e.getChildren(null)) {
                     if (d instanceof Path) {
                         Path p = (Path) d;
-                        Region r = new Region(p, Util.decamel(p.getId()), regions.size(), c);
+                        Region r = new Region(p, Util.decamel(getName(p)), regions.size(), c);
                         regions.add(r);
                         c.addRegion(r);
                     } else if (d instanceof Desc) {
@@ -117,7 +137,7 @@ public class World {
     }
 
     void findLabels() {
-        SVGElement text = diagram.getElement("text");
+        SVGElement text = getChildByName(diagram.getRoot(), "text");
         for (SVGElement e : text.getChildren(null)) {
             Text t = (Text) e;
             Point p = new Point(Util.getAttribute(t, "x").getIntValue(), Util.getAttribute(t, "y").getIntValue());
