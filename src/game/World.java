@@ -43,10 +43,19 @@ public class World {
 
         if (mapDesc != null)
             for (String line : mapDesc.split("\n")) {
-                String[] w = line.split(" +");
-                if (w[0].strip().equals("adj")) {
-                    Region r = getRegion(w[1].strip());
-                    Region s = getRegion(w[2].strip());
+                line = line.strip();
+                int i = line.indexOf(' ');
+                String keyword = line.substring(0, i);
+                line = line.substring(i + 1);
+
+                if (keyword.equals("adj")) {
+                    i = line.indexOf(':');
+                    if (i == -1)
+                        throw new Error("expected : in '" + line + "'");
+                    String name1 = Util.capitalize(line.substring(0, i).strip());
+                    Region r = getRegion(name1);
+                    String name2 = Util.capitalize(line.substring(i + 1).strip());
+                    Region s = getRegion(name2);
                     r.addNeighbor(s);
                     s.addNeighbor(r);
                 } else throw new Error("unknown keyword in map description");
@@ -75,13 +84,13 @@ public class World {
             if (e instanceof Desc) {
                 mapDesc = ((Desc) e).getText();
             } else {
-                Continent c = new Continent(Util.decamel(getName(e)), continents.size());
+                Continent c = new Continent(Util.capitalize(getName(e)), continents.size());
                 continents.add(c);
 
                 for (SVGElement d : e.getChildren(null)) {
                     if (d instanceof Path) {
                         Path p = (Path) d;
-                        Region r = new Region(p, Util.decamel(getName(p)), regions.size(), c);
+                        Region r = new Region(p, Util.capitalize(getName(p)), regions.size(), c);
                         regions.add(r);
                         c.addRegion(r);
                     } else if (d instanceof Desc) {
@@ -183,12 +192,12 @@ public class World {
         return regions.get(i);
     }
 
-    public Region getRegion(String id) {
+    public Region getRegion(String name) {
         for (Region r : regions)
-            if (r.svgElement.getId().equals(id))
+            if (r.getName().equals(name))
                 return r;
 
-        throw new Error("no region with id '" + id + "'");
+        throw new Error("no region with name '" + name + "'");
     }
 
     public Region getRegion(SVGElement e) {

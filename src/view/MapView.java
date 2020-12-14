@@ -22,19 +22,13 @@ public class MapView extends JPanel {
 
     Game game;
     SVGDiagram diagram;
-    Rectangle2D imageBounds;
     
     Point[] regionPositions;
     
     public MapView(Game game) {
         this.game = game;
         diagram = game.getWorld().getDiagram();
-
-        SVGRoot root = diagram.getRoot();
-        imageBounds = Util.getBoundingBox(root);
-        Rectangle viewport = new Rectangle(0, 0, (int) imageBounds.getWidth(), (int) imageBounds.getHeight());
-        diagram.setDeviceViewport(viewport);
-        setPreferredSize(new Dimension(viewport.width, viewport.height));
+        setPreferredSize(new Dimension((int) diagram.getWidth(), (int) diagram.getHeight()));
             
         regionPositions = new Point[game.numRegions()];
         for (int i = 0 ; i < game.numRegions() ; ++i) {
@@ -62,14 +56,7 @@ public class MapView extends JPanel {
 
     Rectangle getBounds(RenderableElement e) {
         Rectangle2D bounds = Util.getBoundingBox(e);
-        bounds = Util.toGlobal(e, bounds).getBounds2D();
-        
-        double xScale = getWidth() / imageBounds.getWidth();
-        double yScale = getHeight() / imageBounds.getHeight();
-        return new Rectangle(
-            (int) (xScale * bounds.getX()), (int) (yScale * bounds.getY()),
-            (int) (xScale * bounds.getWidth()), (int) (yScale * bounds.getHeight())
-        );
+        return Util.toGlobal(e, bounds).getBounds();
     }
 
     void setOwner(int regionId, int player) {

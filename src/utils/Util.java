@@ -8,17 +8,16 @@ import com.kitfox.svg.*;
 import com.kitfox.svg.xml.StyleAttribute;
 
 public class Util {
-    public static String decamel(String s) {
-        StringBuilder t = new StringBuilder();
-        t.append(Character.toUpperCase(s.charAt(0)));
-    
-        for (int i = 1 ; i < s.length() ; ++i) {
-            char c = s.charAt(i);
-            if (Character.isUpperCase(c))
-                t.append(' ');
-            t.append(c);
+    public static String capitalize(String s) {
+        String[] words = s.split(" +");
+
+        for (int i = 0 ; i < words.length ; ++i) {
+            String w = words[i];
+            if (!w.equals("of") && !w.equals("and"))
+                words[i] = Character.toUpperCase(w.charAt(0)) + w.substring(1);
         }
-        return t.toString();
+
+        return String.join(" ", words);
     }
 
     public static String className(String name) {
