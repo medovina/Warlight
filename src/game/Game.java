@@ -374,7 +374,7 @@ public class Game implements Cloneable {
             int armies = move.getArmies();
             
             if (!isOwnedBy(region, turn))
-                illegalMove(region.getName() + " not owned");
+                illegalMove("can't place armies on unowned region " + region.getName());
             else if (armies < 1)
                 illegalMove("cannot place less than 1 army");
             else if (left <= 0)

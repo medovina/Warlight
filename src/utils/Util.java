@@ -19,7 +19,7 @@ public class Util {
 
         for (int i = 0 ; i < words.length ; ++i) {
             String w = words[i];
-            if (!w.equals("of") && !w.equals("and"))
+            if (!w.equals("of") && !w.equals("and") && !w.startsWith("d'"))
                 words[i] = Character.toUpperCase(w.charAt(0)) + w.substring(1);
         }
 

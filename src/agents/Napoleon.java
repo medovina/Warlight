@@ -64,7 +64,7 @@ public class Napoleon extends AgentBase
                 if (r.getContinent() == c && isBorder(game, r))
                     dest.add(r);
         if (dest.isEmpty())
-            dest = new ArrayList<Region>(c.getRegions());
+            dest = new ArrayList<Region>(mine);
         
         int[] count = new int[dest.size() + 1];
         count[0] = 0;

@@ -69,7 +69,7 @@ class Overlay extends JPanel implements MouseListener {
                 x = getWidth() - 250;
                 offset = player - 1;
             } else {
-                x = getWidth() - 440 + ((player - 1) / 2) * 220;
+                x = getWidth() - 430 + ((player - 1) / 2) * 220;
                 offset = (player - 1) % 2;
             }
             int y = TopMargin - 2 + offset * 40;
@@ -189,7 +189,7 @@ class Overlay extends JPanel implements MouseListener {
             Util.drawCentered(g, text, width / 2, y);
         } else doneBox = null;
 
-        Util.drawCentered(g, "Round " + game.getRoundNumber(), 100, TopMargin + 5);
+        Util.drawCentered(g, "Round " + game.getRoundNumber(), 80, TopMargin + 5);
 
         if (showConnections)
             drawConnections(g2);
