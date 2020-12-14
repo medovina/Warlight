@@ -43,8 +43,12 @@ public class Config {
 
         if (name.equals("me") || name.equals("human"))
             agentConfig.add(new AgentConfig("You", "human"));
-        else
-            agentConfig.add(new AgentConfig(Util.className(name), "internal:" + name));
+        else {
+            String displayName = Util.className(name);
+            if (extraArmies > 0)
+                displayName = displayName + "+" + extraArmies;
+            agentConfig.add(new AgentConfig(displayName, "internal:" + name));
+        }
 
         gameConfig.addPlayer(extraArmies);
     }
