@@ -33,21 +33,26 @@ public class Config {
     }
 
     public void addAgent(String name) {
+        String id = null;
         int extraArmies = 0;
 
-        int i = name.indexOf('+');
+        int i = name.indexOf('=');
+        if (i >= 0) {
+            id = name.substring(i + 1);
+            name = name.substring(0, i);
+        }
+        i = name.indexOf('+');
         if (i >= 0) {
             extraArmies = Integer.parseInt(name.substring(i + 1));
             name = name.substring(0, i);
         }
 
         if (name.equals("me") || name.equals("human"))
-            agentConfig.add(new AgentConfig("You", "human"));
+            agentConfig.add(new AgentConfig(id == null ? "You" : id, "human"));
         else {
-            String displayName = Util.className(name);
-            if (extraArmies > 0)
-                displayName = displayName + "+" + extraArmies;
-            agentConfig.add(new AgentConfig(displayName, "internal:" + name));
+            if (id == null)
+                id = Util.className(name);
+            agentConfig.add(new AgentConfig(id, "internal:" + name));
         }
 
         gameConfig.addPlayer(extraArmies);
