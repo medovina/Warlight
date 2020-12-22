@@ -76,8 +76,8 @@ public class Config {
                gameConfig.asString();
     }
     
-    public String getCSVHeader() {
-        return "PlayerName1;PlayerName2;timeoutMillis;" + gameConfig.getCSVHeader();
+    public static String getCSVHeader() {
+        return "PlayerName1;PlayerName2;timeoutMillis;" + GameConfig.getCSVHeader();
     }
     
     public String getCSV() {

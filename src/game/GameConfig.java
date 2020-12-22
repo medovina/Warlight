@@ -29,12 +29,12 @@ public class GameConfig {
         extraArmies.add(extra);
     }
     
-    public String getCSVHeader() {
-        return "seed;maxGameRounds;manualDistribution;warlords";         
+    public static String getCSVHeader() {
+        return "maxGameRounds;manualDistribution;warlords";         
     }
     
     public String getCSV() {
-        return seed + ";" + maxGameRounds + ";" + manualDistribution + ";" + warlords;
+        return maxGameRounds + ";" + manualDistribution + ";" + warlords;
     }
     
     public String asString() {

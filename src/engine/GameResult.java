@@ -63,17 +63,15 @@ public class GameResult {
                regions[2] + ";" + armies[2] + ";" + round;
     }
     
-    public String getCSVHeader() {
-        return config.getCSVHeader() +
-               ";winnerName;loserName;winner;winnerId;player1Regions;player1Armies;" +
-               "player2Regions;player2Armies;round";
+    public static String getCSVHeader() {
+        return "winnerName;loserName;winner;rounds;player1Regions;player1Armies;" +
+               "player2Regions;player2Armies";
     }
     
     public String getCSV() {
-        return config.getCSV() + ";" + getWinnerName() + ";" + getLoserName() + ";" +
-        (winner == -1 || winner == 0 ? "NONE" : winner) + ";" +
-        getWinner() + ";" + regions[1] + ";" + armies[1] + ";" +
-        regions[2] + ";" + armies[2] + ";" + round;
+        return getWinnerName() + ";" + getLoserName() + ";" +
+            winner + ";" + round + ";" + regions[1] + ";" + armies[1] + ";" +
+            regions[2] + ";" + armies[2];
     }
     
 }

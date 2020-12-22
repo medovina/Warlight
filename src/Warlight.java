@@ -1,6 +1,5 @@
 import static java.lang.System.out;
 
-import java.io.File;
 import java.util.*;
 
 import engine.*;
@@ -20,9 +19,7 @@ public class Warlight {
         for (String s : agents)
             config.addAgent(s);
 
-        WarlightFight fight = new WarlightFight(config, seed > 0 ? seed : 0, games,
-            resultdir == null ? null : new File(resultdir + "/games.csv")
-            );
+        WarlightFight fight = new WarlightFight(config, seed > 0 ? seed : 0, games, resultdir);
         fight.fight(verbose);
 }
 

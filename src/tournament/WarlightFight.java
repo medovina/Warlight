@@ -1,6 +1,7 @@
 package tournament;
 
 import java.io.*;
+import java.time.LocalDateTime;
 
 import org.apache.commons.math3.stat.interval.*;
 
@@ -8,59 +9,35 @@ import engine.*;
 
 public class WarlightFight {
     Config config;
-    int seed;
+    int baseSeed;
     int games;
-    private File tableFile;
+    private String resultdir;
     
-    public WarlightFight(Config config, int seed, int games, File tableFile) {
+    public WarlightFight(Config config, int baseSeed, int games, String resultdir) {
         this.config = config;
-        this.seed = seed;
+        this.baseSeed = baseSeed;
         this.games = games;
-        this.tableFile = tableFile;
+        this.resultdir = resultdir;
     }
-    
-    public TotalResults fight(boolean verbose) {
-        int numPlayers = config.numPlayers();
-        TotalResults res = new TotalResults(numPlayers);
-        int[] totalMoves = new int[numPlayers + 1];
-        long[] totalTime = new long[numPlayers + 1];
-        boolean outputHeader = false;
-        PrintWriter writer = null;
 
+    PrintWriter open(String filename, String header) {
+        File tableFile = new File(resultdir + "/" + filename);
+        tableFile.getParentFile().mkdirs();
+        boolean outputHeader = !tableFile.exists();
+        PrintWriter writer;
         try {
-            if (tableFile != null) {
-                tableFile.getParentFile().mkdirs();
-                outputHeader = !tableFile.exists();
-                writer = new PrintWriter(new FileOutputStream(tableFile, true));
-            }
+            writer = new PrintWriter(new FileOutputStream(tableFile, true));
         } catch (FileNotFoundException e) {
             throw new Error(e);
         }
-
-        for (int i = 0; i < games; ++i) {
-            config.gameConfig.seed = seed + i;
-            GameResult result = new Engine(config).run();
-            for (int p = 1 ; p <= numPlayers ; ++p) {
-                totalMoves[p] += result.totalMoves[p];
-                totalTime[p] += result.totalTime[p];
-            }
-            
-            System.out.format(
-                "seed %d: %s won in %d rounds\n",
-                config.gameConfig.seed, result.getWinnerName(), result.round);
-
-            res.victories[result.winner] += 1;
-        
-            if (outputHeader) {
-                writer.println(result.getCSVHeader());
-                outputHeader = false;
-            }
-            if (tableFile != null)
-                writer.println(result.getCSV());
+        if (outputHeader) {
+            writer.println(header);
         }
+        return writer;
+    }
 
-        if (writer != null)
-            writer.close();
+    void reportTotals(TotalResults res, long[] totalTime, int[] totalMoves, boolean verbose) {
+        int numPlayers = config.numPlayers();
         
         System.out.format("total victories: ");
         for (int p = 1 ; p <= numPlayers ; ++p) {
@@ -91,6 +68,53 @@ public class WarlightFight {
             }
         }
 
+        if (resultdir == null)
+            return;
+        
+        try (PrintWriter writer = open("matches.csv",
+                "datetime;" + Config.getCSVHeader() +
+                ";games;baseSeed;wonBy1;winRate1;wonBy2;winRate2;draws")) {
+            writer.printf("%s;%s;%d;%d;%d;%.2f;%d;%.2f;%d",
+                LocalDateTime.now(), config.getCSV(), games, baseSeed,
+                res.victories[1], 1.0 * res.victories[1] / games,
+                res.victories[2], 1.0 * res.victories[2] / games, res.victories[0]);
+        }
+    }
+    
+    public TotalResults fight(boolean verbose) {
+        int numPlayers = config.numPlayers();
+        TotalResults res = new TotalResults(numPlayers);
+        int[] totalMoves = new int[numPlayers + 1];
+        long[] totalTime = new long[numPlayers + 1];
+        PrintWriter writer = null;
+
+        if (resultdir != null)
+            writer = open("games.csv",
+                "datetime;" + Config.getCSVHeader() + ";seed;" + GameResult.getCSVHeader());
+
+        for (int i = 0; i < games; ++i) {
+            int seed = baseSeed + i;
+            config.gameConfig.seed = seed;
+            GameResult result = new Engine(config).run();
+            for (int p = 1 ; p <= numPlayers ; ++p) {
+                totalMoves[p] += result.totalMoves[p];
+                totalTime[p] += result.totalTime[p];
+            }
+            
+            System.out.printf(
+                "seed %d: %s won in %d rounds\n", seed, result.getWinnerName(), result.round);
+
+            res.victories[result.winner] += 1;
+        
+            if (writer != null)
+                writer.println(LocalDateTime.now() + ";" + config.getCSV() + ";" + seed + ";" +
+                               result.getCSV());
+        }
+
+        if (writer != null)
+            writer.close();
+        
+        reportTotals(res, totalTime, totalMoves, verbose);
         return res;        
     }
 }
