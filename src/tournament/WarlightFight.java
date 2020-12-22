@@ -74,7 +74,7 @@ public class WarlightFight {
         try (PrintWriter writer = open("matches.csv",
                 "datetime;" + Config.getCSVHeader() +
                 ";games;baseSeed;wonBy1;winRate1;wonBy2;winRate2;draws")) {
-            writer.printf("%s;%s;%d;%d;%d;%.2f;%d;%.2f;%d",
+            writer.printf("%s;%s;%d;%d;%d;%.2f;%d;%.2f;%d\n",
                 LocalDateTime.now(), config.getCSV(), games, baseSeed,
                 res.victories[1], 1.0 * res.victories[1] / games,
                 res.victories[2], 1.0 * res.victories[2] / games, res.victories[0]);
