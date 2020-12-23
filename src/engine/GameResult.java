@@ -37,10 +37,6 @@ public class GameResult {
         round = game.getRoundNumber();
     }
 
-    public String getWinnerName() {
-        return config.playerName(winner);
-    }
-    
     public static String getCSVHeader(int numPlayers) {
         StringBuilder sb = new StringBuilder();
         for (int p = 1 ; p <= numPlayers ; ++p)

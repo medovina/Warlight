@@ -53,7 +53,7 @@ public class WarlightFight {
             if (p > 1)
                 out.print(", ");
             out.printf("%s = %d (%.1f%%)",
-                config.playerName(p), res.totalVictories[p], 100.0 * res.totalVictories[p] / games);
+                config.fullName(p), res.totalVictories[p], 100.0 * res.totalVictories[p] / games);
         }
         out.println();
 
@@ -62,7 +62,7 @@ public class WarlightFight {
             for (int p = 1 ; p <= numPlayers ; ++p) {
                 if (p > 1)
                     out.print(", ");
-                out.printf("%s = %.2f", config.playerName(p), 1.0 * res.totalScore[p] / games);
+                out.printf("%s = %.2f", config.fullName(p), 1.0 * res.totalScore[p] / games);
             }
             out.println();
         }
@@ -70,7 +70,7 @@ public class WarlightFight {
         for (int p = 1 ; p <= numPlayers ; ++p) {
             if (p > 1)
                 out.print(", ");
-            out.format("%s took %.1f ms/move", config.playerName(p),
+            out.format("%s took %.1f ms/move", config.fullName(p),
                 1.0 * totalTime[p] / totalMoves[p]);
         }
         out.println();
@@ -83,11 +83,11 @@ public class WarlightFight {
                     IntervalUtils.getWilsonScoreInterval(
                         games, res.totalVictories[p], confidence / 100.0);
                 double lo = ci.getLowerBound() * 100, hi = ci.getUpperBound() * 100;
-                out.printf("  %s wins %.1f%% - %.1f%%\n", config.playerName(p), lo, hi);
+                out.printf("  %s wins %.1f%% - %.1f%%\n", config.fullName(p), lo, hi);
             }
         }
 
-        if (resultdir == null)
+        if (games == 1 || resultdir == null)
             return;
         
         try (PrintWriter writer = open("matches.csv",
@@ -119,7 +119,7 @@ public class WarlightFight {
             }
             
             out.printf("seed %d: %s won in %d rounds",
-                      seed, config.playerName(result.winner), result.round);
+                      seed, config.fullName(result.winner), result.round);
             if (verbose && numPlayers > 2) {
                 out.print(" (");
                 for (int i = 2 ; i <= numPlayers ; ++i) {
@@ -131,7 +131,7 @@ public class WarlightFight {
                             break;
                         p += 1;
                     }
-                    out.printf("#%d = %s", i, config.playerName(p));
+                    out.printf("#%d = %s", i, config.fullName(p));
                 }
                 out.print(")");
             }
