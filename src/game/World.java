@@ -23,8 +23,6 @@ public class World {
         SVGUniverse universe = new SVGUniverse();
         URI uri;
 
-        if (mapName == null)
-            mapName = "earth";
         try (InputStream s = this.getClass().getResourceAsStream("/maps/" + mapName + ".svg")) {
             uri = universe.loadSVG(s, "earth");
         } catch (IOException e) {

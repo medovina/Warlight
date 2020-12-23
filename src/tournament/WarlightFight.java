@@ -1,6 +1,7 @@
 package tournament;
 
 import java.io.*;
+import static java.lang.System.out;
 import java.time.LocalDateTime;
 
 import org.apache.commons.math3.stat.interval.*;
@@ -23,13 +24,21 @@ public class WarlightFight {
     PrintWriter open(String filename, String header) {
         File tableFile = new File(resultdir + "/" + filename);
         tableFile.getParentFile().mkdirs();
-        boolean outputHeader = !tableFile.exists();
+        boolean outputHeader;
+        
+        if (tableFile.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(tableFile))) {
+                String line = reader.readLine();
+                if (!line.equals(header))
+                    throw new Error("incompatible file format");
+            } catch (IOException e) { throw new Error(e); }
+            outputHeader = false;
+        } else outputHeader = true;
+
         PrintWriter writer;
         try {
             writer = new PrintWriter(new FileOutputStream(tableFile, true));
-        } catch (FileNotFoundException e) {
-            throw new Error(e);
-        }
+        } catch (FileNotFoundException e) { throw new Error(e); }
         if (outputHeader) {
             writer.println(header);
         }
@@ -39,32 +48,42 @@ public class WarlightFight {
     void reportTotals(TotalResults res, long[] totalTime, int[] totalMoves, boolean verbose) {
         int numPlayers = config.numPlayers();
         
-        System.out.format("total victories: ");
+        out.print("total victories: ");
         for (int p = 1 ; p <= numPlayers ; ++p) {
             if (p > 1)
-                System.out.print(", ");
-            System.out.format("%s = %d (%.1f%%)",
-                config.playerName(p), res.victories[p], 100.0 * res.victories[p] / games);
+                out.print(", ");
+            out.printf("%s = %d (%.1f%%)",
+                config.playerName(p), res.totalVictories[p], 100.0 * res.totalVictories[p] / games);
         }
-        System.out.println();
+        out.println();
+
+        if (numPlayers > 2 && verbose) {
+            out.print("average score: ");
+            for (int p = 1 ; p <= numPlayers ; ++p) {
+                if (p > 1)
+                    out.print(", ");
+                out.printf("%s = %.2f", config.playerName(p), 1.0 * res.totalScore[p] / games);
+            }
+            out.println();
+        }
 
         for (int p = 1 ; p <= numPlayers ; ++p) {
             if (p > 1)
-                System.out.print(", ");
-            System.out.format("%s took %.1f ms/move", config.playerName(p),
+                out.print(", ");
+            out.format("%s took %.1f ms/move", config.playerName(p),
                 1.0 * totalTime[p] / totalMoves[p]);
         }
-        System.out.println();
+        out.println();
 
-        if (verbose) {
+        if (verbose && numPlayers == 2) {
             int confidence = 98;
-            System.out.printf("with %d%% confidence:\n", confidence);
+            out.printf("with %d%% confidence:\n", confidence);
             for (int p = 1 ; p <= numPlayers ; ++p) {
                 ConfidenceInterval ci =
                     IntervalUtils.getWilsonScoreInterval(
-                        games, res.victories[p], confidence / 100.0);
+                        games, res.totalVictories[p], confidence / 100.0);
                 double lo = ci.getLowerBound() * 100, hi = ci.getUpperBound() * 100;
-                System.out.printf("  %s wins %.1f%% - %.1f%%\n", config.playerName(p), lo, hi);
+                out.printf("  %s wins %.1f%% - %.1f%%\n", config.playerName(p), lo, hi);
             }
         }
 
@@ -72,28 +91,26 @@ public class WarlightFight {
             return;
         
         try (PrintWriter writer = open("matches.csv",
-                "datetime;" + Config.getCSVHeader() +
-                ";games;baseSeed;wonBy1;winRate1;wonBy2;winRate2;draws")) {
-            writer.printf("%s;%s;%d;%d;%d;%.2f;%d;%.2f;%d\n",
-                LocalDateTime.now(), config.getCSV(), games, baseSeed,
-                res.victories[1], 1.0 * res.victories[1] / games,
-                res.victories[2], 1.0 * res.victories[2] / games, res.victories[0]);
+                "datetime;" + config.getCSVHeader() + ";baseSeed;" + res.getCSVHeader())) {
+                    
+            writer.printf("%s;%s;%d;%s\n",
+                LocalDateTime.now(), config.getCSV(), baseSeed, res.getCSV());
         }
     }
     
     public TotalResults fight(boolean verbose) {
         int numPlayers = config.numPlayers();
-        TotalResults res = new TotalResults(numPlayers);
+        TotalResults totalResults = new TotalResults(numPlayers, games);
         int[] totalMoves = new int[numPlayers + 1];
         long[] totalTime = new long[numPlayers + 1];
         PrintWriter writer = null;
 
         if (resultdir != null)
             writer = open("games.csv",
-                "datetime;" + Config.getCSVHeader() + ";seed;" + GameResult.getCSVHeader());
+                "datetime;" + config.getCSVHeader() + ";seed;" + GameResult.getCSVHeader(numPlayers));
 
-        for (int i = 0; i < games; ++i) {
-            int seed = baseSeed + i;
+        for (int game = 0; game < games; ++game) {
+            int seed = baseSeed + game;
             config.gameConfig.seed = seed;
             GameResult result = new Engine(config).run();
             for (int p = 1 ; p <= numPlayers ; ++p) {
@@ -101,10 +118,28 @@ public class WarlightFight {
                 totalTime[p] += result.totalTime[p];
             }
             
-            System.out.printf(
-                "seed %d: %s won in %d rounds\n", seed, result.getWinnerName(), result.round);
+            out.printf("seed %d: %s won in %d rounds",
+                      seed, config.playerName(result.winner), result.round);
+            if (verbose && numPlayers > 2) {
+                out.print(" (");
+                for (int i = 2 ; i <= numPlayers ; ++i) {
+                    if (i > 2)
+                        out.print(", ");
+                    int p = 1;
+                    while (true) {
+                        if (result.score[p] == numPlayers - i)
+                            break;
+                        p += 1;
+                    }
+                    out.printf("#%d = %s", i, config.playerName(p));
+                }
+                out.print(")");
+            }
+            out.println();
 
-            res.victories[result.winner] += 1;
+            totalResults.totalVictories[result.winner] += 1;
+            for (int p = 1 ; p <= numPlayers ; ++p)
+                totalResults.totalScore[p] += result.score[p];
         
             if (writer != null)
                 writer.println(LocalDateTime.now() + ";" + config.getCSV() + ";" + seed + ";" +
@@ -114,7 +149,7 @@ public class WarlightFight {
         if (writer != null)
             writer.close();
         
-        reportTotals(res, totalTime, totalMoves, verbose);
-        return res;        
+        reportTotals(totalResults, totalTime, totalMoves, verbose);
+        return totalResults;        
     }
 }

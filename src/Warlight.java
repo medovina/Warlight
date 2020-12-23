@@ -35,6 +35,7 @@ public class Warlight {
         out.println();
         out.println("game configuration options:");
         out.println("  -manual : manual territory distribution");
+        out.println("  -maxrounds <num> : maximum rounds before game end");
         out.println("  -warlords : distribute only one territory from each continent");
         out.println();
         out.println("agent options:");
@@ -59,6 +60,9 @@ public class Warlight {
                         break;
                     case "-map":
                         config.gameConfig.mapName = args[++i];
+                        break;
+                    case "-maxrounds":
+                        config.gameConfig.maxGameRounds = Integer.parseInt(args[++i]);
                         break;
                     case "-resultdir":
                         resultdir = args[++i];

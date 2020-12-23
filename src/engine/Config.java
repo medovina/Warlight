@@ -81,12 +81,19 @@ public class Config {
                gameConfig.asString();
     }
     
-    public static String getCSVHeader() {
-        return "PlayerName1;PlayerName2;timeoutMillis;" + GameConfig.getCSVHeader();
+    public String getCSVHeader() {
+        StringBuilder sb = new StringBuilder();
+        for (int p = 1 ; p <= numPlayers() ; ++p)
+            sb.append("player" + p + ";");
+        
+        return GameConfig.getCSVHeader() + ";timeoutMillis;" + sb.toString();
     }
     
     public String getCSV() {
-        return playerName(1) + ";" + playerName(2) + ";" +
-               timeoutMillis + ";" + gameConfig.getCSV();
+        StringBuilder sb = new StringBuilder();
+        for (int p = 1 ; p <= numPlayers() ; ++p)
+            sb.append(playerName(p) + ";");
+
+        return gameConfig.getCSV() + ";" + timeoutMillis + ";" + sb.toString();
     }    
 }

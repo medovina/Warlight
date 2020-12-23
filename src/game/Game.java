@@ -13,6 +13,7 @@ public class Game implements Cloneable {
     int round;
     int turn;
     Phase phase;
+    int[] score;
     public ArrayList<Region> pickableRegions;
     public Random random;
     GUI gui;
@@ -28,6 +29,10 @@ public class Game implements Cloneable {
             armies[i] = 2;
 
         owner = new int[world.numRegions()];
+
+        score = new int[config.numPlayers + 1];
+        for (int p = 1 ; p <= config.numPlayers ; ++p)
+            score[p] = -1;
 
         turn = 1;
         random = (config == null || config.seed < 0) ? new Random() : new Random(config.seed);
@@ -49,6 +54,7 @@ public class Game implements Cloneable {
         s.round = round;
         s.turn = turn;
         s.phase = phase;
+        s.score = score.clone();
         s.pickableRegions = new ArrayList<Region>(pickableRegions);
 
         // If you make several clones, each will have a distinct random number sequence.
@@ -112,8 +118,32 @@ public class Game implements Cloneable {
         return owner[region.getId()] == player;
     }
 
+    int maxScore() {
+        int max = -1;
+        for (int p = 1 ; p <= config.numPlayers ; ++p)
+            max = Math.max(max, score[p]);
+
+        return max;
+    }
+
     void setOwner(Region region, int player) {
+        int oldOwner = owner[region.getId()];
         owner[region.getId()] = player;
+
+        if (oldOwner > 0 && numberRegionsOwned(oldOwner) == 0) {    // player is eliminated
+            int max = maxScore();
+            if (score[oldOwner] != -1)
+                throw new Error("score should be -1");
+            score[oldOwner] = max + 1;
+
+            if (score[oldOwner] == config.numPlayers - 2) { // only one player remains
+                for (int p = 1 ; p <= config.numPlayers ; ++p)
+                    if (score[p] == -1) {
+                        score[p] = config.numPlayers - 1;   // mark as winner
+                        break;
+                    }
+            }
+        }
     }
 
     public int getOwner(Continent continent) {
@@ -171,39 +201,24 @@ public class Game implements Cloneable {
     }
 
     public int winningPlayer() {
-        if (round == 0) return 0;
+        for (int p = 1 ; p <= config.numPlayers ; ++p)
+            if (score[p] == config.numPlayers - 1)
+                return p;
         
-        if (round <= config.maxGameRounds) {
-            int hasRegions = 0;
-            for (int r = 0 ; r < numRegions() ; ++r)
-                if (owner[r] > 0)
-                    if (hasRegions == 0)
-                        hasRegions = owner[r];
-                    else if (hasRegions != owner[r])
-                        return 0;   // more than one player has regions
-
-            return hasRegions;  // only one player has regions
-        }
-
-        int maxRegions = 0, maxArmies = 0, maxPlayer = 0;
-        for (int p = 1 ; p <= numPlayers() ; ++p) {
-            int r = numberRegionsOwned(p);
-            int a = numberArmiesOwned(p);
-            if (r > maxRegions || r == maxRegions && a > maxArmies) {
-                maxRegions = r;
-                maxArmies = a;
-                maxPlayer = p;
-            } else if (r == maxRegions && a == maxArmies)
-                maxPlayer = 0;
-        }
-
-        return maxPlayer;
+        throw new Error("game is not done");
     }
     
     public boolean isDone() {
-        return round > config.maxGameRounds || winningPlayer() > 0;
+        for (int p = 1 ; p <= config.numPlayers ; ++p)
+            if (score[p] == -1)
+                return false;
+
+        return true;
     }
 
+    public int[] getScore() {
+        return score;
+    }
        
     public ArrayList<Region> getPickableRegions() {
         return pickableRegions;
@@ -328,13 +343,37 @@ public class Game implements Cloneable {
             if (turn > numPlayers()) {
                 turn = 1;
                 round += 1;
+
+                if (round > config.maxGameRounds) {     // game ends
+                    int max = maxScore();
+                            
+                    while (true) {
+                        int minPlayer = -1, minRegions = 0, minArmies = 0;
+                        for (int p = 1 ; p <= config.numPlayers ; ++p)
+                            if (score[p] == -1) {
+                                int r = numberRegionsOwned(p);
+                                int a = numberArmiesOwned(p);
+                                if (minPlayer == -1 ||
+                                    r < minRegions || r == minRegions && a < minArmies) {
+                                        minPlayer = p;
+                                        minRegions = r;
+                                        minArmies = a;
+                                    }
+                            }
+                        if (minPlayer == -1)    // all players have scores
+                            return;
+
+                        score[minPlayer] = ++max;
+                    }
+                }
+
                 if (gui != null) {
                     gui.newRound(getRoundNumber());
                     gui.updateRegions(getRegions());
                     gui.updateMap();
                 }
             }
-        } while (numberRegionsOwned(turn) == 0);
+        } while (score[turn] >= 0);
     }
     
     public void chooseRegion(Region region) {
@@ -528,6 +567,8 @@ public class Game implements Cloneable {
                     gui.attack(move);
                 }
                 doAttack(move, mostLikely);
+                if (isDone())
+                    return;
             }
         }
         

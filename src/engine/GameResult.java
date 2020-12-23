@@ -9,6 +9,7 @@ public class GameResult {
     public int[] armies;
     
     public int winner;
+    public int[] score;
 
     public int[] totalMoves;
     public long[] totalTime;
@@ -32,46 +33,34 @@ public class GameResult {
         }
 
         winner = game.winningPlayer();
+        score = game.getScore();
         round = game.getRoundNumber();
     }
 
-    public int getWinner() {
-        return winner;
-    }
-    
     public String getWinnerName() {
-        return winner > 0 ? config.playerName(winner) : "NONE";
+        return config.playerName(winner);
     }
     
-    public String getLoserName() {
-        if (config.numPlayers() == 2 && winner > 0)
-            return config.playerName(3 - winner);
-        else
-            return "NONE";
-    }
-    
-    public int getWinnerRegions() {
-        return regions[winner];
-    }
-    
-    public int getWinnerArmies() {
-        return armies[winner];
-    }
+    public static String getCSVHeader(int numPlayers) {
+        StringBuilder sb = new StringBuilder();
+        for (int p = 1 ; p <= numPlayers ; ++p)
+            sb.append(String.format("p%dScore;", p));
 
-    public String asString() {
-        return getWinner() + ";" + regions[1] + ";" + armies[1] + ";" +
-               regions[2] + ";" + armies[2] + ";" + round;
-    }
-    
-    public static String getCSVHeader() {
-        return "winnerName;loserName;winner;rounds;player1Regions;player1Armies;" +
-               "player2Regions;player2Armies";
+        sb.append("rounds;");
+        for (int p = 1 ; p <= numPlayers ; ++p)
+            sb.append(String.format("p%dRegions;p%dArmies;", p, p));
+
+        return sb.toString();
     }
     
     public String getCSV() {
-        return getWinnerName() + ";" + getLoserName() + ";" +
-            winner + ";" + round + ";" + regions[1] + ";" + armies[1] + ";" +
-            regions[2] + ";" + armies[2];
+        StringBuilder sb = new StringBuilder();
+        for (int p = 1 ; p <= config.numPlayers() ; ++p)
+            sb.append(score[p] + ";");
+        sb.append(round + ";");
+        for (int p = 1 ; p <= config.numPlayers() ; ++p)
+            sb.append(regions[p] + ";" + armies[p] + ";");
+        return sb.toString();
     }
     
 }

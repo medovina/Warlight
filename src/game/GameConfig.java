@@ -3,7 +3,7 @@ package game;
 import java.util.ArrayList;
 
 public class GameConfig {
-    public String mapName;
+    public String mapName = "earth";
     public int seed = -1;       // -1 will use random seed
     
     public int numPlayers;
@@ -30,11 +30,11 @@ public class GameConfig {
     }
     
     public static String getCSVHeader() {
-        return "maxGameRounds;manualDistribution;warlords";         
+        return "map;maxRounds;manualDistribution;warlords";         
     }
     
     public String getCSV() {
-        return maxGameRounds + ";" + manualDistribution + ";" + warlords;
+        return mapName + ";" + maxGameRounds + ";" + manualDistribution + ";" + warlords;
     }
     
     public String asString() {

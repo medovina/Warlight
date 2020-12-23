@@ -63,7 +63,7 @@ If all defending armies are destroyed and at least one attacking army survives, 
 
 In each game round, each army may move or attack only once.  For example, suppose that player 1 has 6 armies in North Africa, and moves 4 more armies from Congo to North Africa.  In that same round, the player may attack from North Africa to Brazil with at most 5 armies; the newly arrived armies may not attack.  Suppose that the attack succeeds and 4 surviving armies occupy Brazil.  The player must wait until the next round before launching a subsequent attack from Brazil.
 
-The game is played until one player has no armies remaining; that player has lost.  If 100 rounds are played and both players still have armies on the board, the player with the most regions wins.  If both players have the same number of regions, the player with the most armies wins.  If both players have the same number of regions and armies (which is extremely unlikely), the game is a draw.
+The game is played until one player has no armies remaining; that player has lost.  If 100 rounds are played and both players still have armies on the board, the player with the most regions wins.  If both players have the same number of regions, the player with the most armies wins.
 
 ## User interface
 
