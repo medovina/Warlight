@@ -24,15 +24,16 @@ public class WarlightFight {
     PrintWriter open(String filename, String header) {
         File tableFile = new File(resultdir + "/" + filename);
         tableFile.getParentFile().mkdirs();
-        boolean outputHeader;
+        boolean outputHeader = false;
         
         if (tableFile.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(tableFile))) {
                 String line = reader.readLine();
-                if (!line.equals(header))
+                if (line == null)   // empty file
+                    outputHeader = true;
+                else if (!line.equals(header))
                     throw new Error("incompatible file format");
             } catch (IOException e) { throw new Error(e); }
-            outputHeader = false;
         } else outputHeader = true;
 
         PrintWriter writer;
