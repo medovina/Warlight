@@ -84,16 +84,16 @@ public class Config {
     public String getCSVHeader() {
         StringBuilder sb = new StringBuilder();
         for (int p = 1 ; p <= numPlayers() ; ++p)
-            sb.append("player" + p + ";");
+            sb.append(";player" + p);
         
-        return GameConfig.getCSVHeader() + ";timeoutMillis;" + sb.toString();
+        return GameConfig.getCSVHeader() + ";timeoutMillis" + sb.toString();
     }
     
     public String getCSV() {
         StringBuilder sb = new StringBuilder();
         for (int p = 1 ; p <= numPlayers() ; ++p)
-            sb.append(playerName(p) + ";");
+            sb.append(";" + playerName(p));
 
-        return gameConfig.getCSV() + ";" + timeoutMillis + ";" + sb.toString();
+        return gameConfig.getCSV() + ";" + timeoutMillis + sb.toString();
     }    
 }

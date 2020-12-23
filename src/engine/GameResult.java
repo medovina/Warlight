@@ -46,9 +46,9 @@ public class GameResult {
         for (int p = 1 ; p <= numPlayers ; ++p)
             sb.append(String.format("p%dScore;", p));
 
-        sb.append("rounds;");
+        sb.append("rounds");
         for (int p = 1 ; p <= numPlayers ; ++p)
-            sb.append(String.format("p%dRegions;p%dArmies;", p, p));
+            sb.append(String.format(";p%dRegions;p%dArmies", p, p));
 
         return sb.toString();
     }
@@ -57,9 +57,9 @@ public class GameResult {
         StringBuilder sb = new StringBuilder();
         for (int p = 1 ; p <= config.numPlayers() ; ++p)
             sb.append(score[p] + ";");
-        sb.append(round + ";");
+        sb.append(round);
         for (int p = 1 ; p <= config.numPlayers() ; ++p)
-            sb.append(regions[p] + ";" + armies[p] + ";");
+            sb.append(";" + regions[p] + ";" + armies[p]);
         return sb.toString();
     }
     
