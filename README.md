@@ -69,6 +69,8 @@ The game is played until one player has no armies remaining; that player has los
 
 When playing as a human against a computer player, click the map or press the space bar to advance past informational messages such as "New Round".  When placing or moving armies, use the left mouse button to add armies to be placed/moved and use the right mouse button to subtract armies.  To move or attack, first click a source region, then repeatedly click a destination region until you have moved as many armies as you like.  Enter all your moves or attacks for a single round before pressing DONE.
 
+When placing or moving armies, you can hold down Shift to place or move all available armies, or Ctrl to place or move in units of 5.
+
 When two agents are playing each other, you can left click the map or press the space bar to advance to the next action.  Press 'N' to skip to the next game round.  Alternatively, press 'C' to enter continuous mode, in which the game will periodically advance to the next action automatically.  In this mode, press '+' and '-' to adjust the time delay between actions.
 
 ## Game variations

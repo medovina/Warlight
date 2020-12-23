@@ -208,7 +208,8 @@ class Overlay extends JPanel implements MouseListener {
         else {
             Region r = mapView.regionFromPoint(p);
             if (r != null)
-                gui.regionClicked(r.id, e.getButton() == MouseEvent.BUTTON1);
+                gui.regionClicked(r.id, e.getButton() == MouseEvent.BUTTON1,
+                                  e.isShiftDown(), e.isControlDown());
             else
                 gui.mousePressed(e);
         }

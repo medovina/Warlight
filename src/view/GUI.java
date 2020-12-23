@@ -555,14 +555,9 @@ public class GUI extends JFrame implements KeyListener
         armiesPlaced += change;
         armiesLeft -= change;
         
-        if (info.armiesPlus > 0) {
-            info.setHighlight(true);
-        } else {
-            info.setHighlight(false);
-        }
+        info.setHighlight(info.armiesPlus > 0);
         
         setPlaceArmiesText(armiesLeft);
-        
         updateOverlay();
     }
 
@@ -603,17 +598,20 @@ public class GUI extends JFrame implements KeyListener
              return;
         }
         
-        if (totalFrom(from) + delta >= regionInfo(from).getArmies())
-            return;        // no available armies
-        
         e = encode(from.getId(), to.getId());
         m = moves.get(e);
-        if (m == null && delta > 0) {
+
+        delta = Math.min(delta, regionInfo(from).getArmies() - totalFrom(from) - 1);
+        delta = Math.max(delta, m == null ? 0 : - m.armies);
+        if (delta == 0)
+            return;
+
+        if (m == null) {
             Arrow arrow = new Arrow(0, 0, width, height);
             showArrow(arrow, from.getId(), to.getId(), moving, delta);
             layeredPane.add(arrow, JLayeredPane.PALETTE_LAYER);
             moves.put(e, new Move(from, to, delta, arrow));
-        } else if (m != null) {
+        } else {
             m.armies += delta;
             if (m.armies > 0)
                 m.arrow.setNumber(m.armies);
@@ -639,7 +637,7 @@ public class GUI extends JFrame implements KeyListener
         updateOverlay();
     }
     
-    void regionClicked(int id, boolean left) {
+    void regionClicked(int id, boolean left, boolean shift, boolean ctrl) {
         Region region = game.getRegion(id);
         
         if (chooseRegionAction != null) {
@@ -650,9 +648,15 @@ public class GUI extends JFrame implements KeyListener
             return;
         }
 
+        int count = left ? 1 : -1;
+        if (shift)
+            count *= Integer.MAX_VALUE;
+        else if (ctrl)
+            count *= 5;
+
         if (placeArmiesAction != null) {
             if (armyRegions.contains(region)) {
-                placeArmyRegionClicked(region, left ? 1 : -1);
+                placeArmyRegionClicked(region, count);
                 GUI.this.requestFocusInWindow();
             }
             return;
@@ -664,10 +668,10 @@ public class GUI extends JFrame implements KeyListener
         }
         
         if (moveFrom != null && game.isNeighbor(moveFrom, region)) {
-            move(moveFrom, region, left ? 1 : -1);
+            move(moveFrom, region, count);
             return;
         }
-        if (!left)
+        if (!left || shift)
             return;
         
         moveFrom = game.getOwner(region) == game.currentPlayer() ? region : null;
