@@ -216,7 +216,11 @@ public class Game implements Cloneable {
         return true;
     }
 
-    public int[] getScore() {
+    public int getScore(int player) {
+        return score[player];
+    }
+
+    public int[] getScoreArray() {
         return score;
     }
        

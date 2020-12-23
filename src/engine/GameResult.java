@@ -33,7 +33,7 @@ public class GameResult {
         }
 
         winner = game.winningPlayer();
-        score = game.getScore();
+        score = game.getScoreArray();
         round = game.getRoundNumber();
     }
 
