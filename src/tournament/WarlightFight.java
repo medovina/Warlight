@@ -76,7 +76,10 @@ public class WarlightFight {
         }
         out.println();
 
-        if (verbose && numPlayers == 2) {
+        if (games == 1)
+            return;
+
+        if (verbose) {
             int confidence = 98;
             out.printf("with %d%% confidence:\n", confidence);
             for (int p = 1 ; p <= numPlayers ; ++p) {
@@ -88,7 +91,7 @@ public class WarlightFight {
             }
         }
 
-        if (games == 1 || resultdir == null)
+        if (resultdir == null)
             return;
         
         try (PrintWriter writer = open("matches.csv",
@@ -113,7 +116,7 @@ public class WarlightFight {
         for (int game = 0; game < games; ++game) {
             int seed = baseSeed + game;
             config.gameConfig.seed = seed;
-            GameResult result = new Engine(config).run();
+            GameResult result = new Engine(config).run(verbose);
             for (int p = 1 ; p <= numPlayers ; ++p) {
                 totalMoves[p] += result.totalMoves[p];
                 totalTime[p] += result.totalTime[p];

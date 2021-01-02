@@ -107,7 +107,7 @@ public class Warlight {
             
             config.visualize = true;
             config.gameConfig.seed = seed;
-            new Engine(config).run();
+            new Engine(config).run(false);
         }
         
         System.exit(0);

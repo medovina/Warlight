@@ -397,7 +397,7 @@ public class Game implements Cloneable {
     }
     
     void illegalMove(String s) {
-        System.out.printf("warning: ignoring illegal move: %s\n", s);
+        System.out.printf("ignoring illegal move by player %d: %s\n", turn, s);
     }
 
     public void placeArmies(List<PlaceArmies> moves)
@@ -601,6 +601,7 @@ public class Game implements Cloneable {
                 placeArmies(List.of(place));
                 break;
             case ATTACK_TRANSFER:
+                attackTransfer(List.of(), false);
                 break;
         }
     }

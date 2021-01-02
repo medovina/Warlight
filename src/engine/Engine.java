@@ -83,7 +83,7 @@ public class Engine {
         throw new RuntimeException("Invalid init string: " + agentInit);
     }
 
-    public GameResult run()
+    public GameResult run(boolean verbose)
     { 
         game = new Game(config.gameConfig);
 
@@ -103,7 +103,12 @@ public class Engine {
         int[] totalMoves = new int[players + 1];
         long[] totalTime = new long[players + 1];
 
+        int round = -1;
         while(!game.isDone()) {
+            if (verbose && game.getRoundNumber() != round) {
+                round = game.getRoundNumber();
+                System.out.printf("\rRound %d...", round);
+            }
             int player = game.currentPlayer();
             Agent agent = agents[player];
 
@@ -117,6 +122,8 @@ public class Engine {
                 game.pass();
             else game.move(move);
         }
+        if (verbose)
+            System.out.print("\r");
 
         for (int p = 1 ; p <= config.numPlayers() ; ++p)
             agents[p].terminate();
