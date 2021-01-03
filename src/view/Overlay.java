@@ -169,6 +169,12 @@ class Overlay extends JPanel implements MouseListener {
         int width = getWidth();
 
         g.setColor(Color.WHITE);
+
+        Util.drawCentered(g, "Round " + game.getRoundNumber(), 80, TopMargin + 5);
+
+        if (gui.continual && System.currentTimeMillis() < gui.continualChanged + 2000)
+            g.drawString(gui.continualTime + " ms", 150, TopMargin + 5);
+
         Util.drawCentered(g, gui.getMessage(), width / 2, TopMargin + 5);
         String s = gui.getMessage2();
         if (s != null)
@@ -188,8 +194,6 @@ class Overlay extends JPanel implements MouseListener {
             g.drawRoundRect(doneBox.x, doneBox.y, doneBox.width, doneBox.height, 6, 6);
             Util.drawCentered(g, text, width / 2, y);
         } else doneBox = null;
-
-        Util.drawCentered(g, "Round " + game.getRoundNumber(), 80, TopMargin + 5);
 
         if (showConnections)
             drawConnections(g2);

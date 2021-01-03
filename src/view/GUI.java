@@ -31,8 +31,9 @@ public class GUI extends JFrame implements KeyListener
     private boolean clicked = false;
     private boolean rightClick = false;
     private boolean nextRound = false;
-    private boolean continual = false;
-    private int continualTime = 1000;
+    boolean continual = false;
+    int continualTime = 1000;
+    long continualChanged;
     
     private Config config;
     
@@ -147,6 +148,12 @@ public class GUI extends JFrame implements KeyListener
     // KEY LISTENER
     // ============
     
+    void setContinual(int time) {
+        continualTime = time;
+        continualChanged = System.currentTimeMillis();
+        updateOverlay();
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
         char c = e.getKeyChar();
@@ -156,6 +163,7 @@ public class GUI extends JFrame implements KeyListener
             break;
         case 'c':
             continual = !continual;
+            setContinual(continualTime);
             break;
         case 'C':
             overlay.toggleConnections();
@@ -164,12 +172,10 @@ public class GUI extends JFrame implements KeyListener
             clicked = true;
             break;
         case '+':
-            continualTime += 100;
-            continualTime = Math.min(continualTime, 3000);
+            setContinual(Math.min(continualTime + 100, 5000));
             break;
         case '-':
-            continualTime -= 100;
-            continualTime = Math.max(continualTime, 200);
+            setContinual(Math.max(continualTime - 100, 200));
             break;
         }
     }
@@ -284,7 +290,12 @@ public class GUI extends JFrame implements KeyListener
             total += move.getArmies();
         }
         
-        message(playerName(player) + " places " + total + " armies");
+        String s = playerName(player) + " places " + total + " armies in ";
+        if (placeArmiesMoves.size() == 1)
+            s += placeArmiesMoves.get(0).region.getName();
+        else
+            s += placeArmiesMoves.size() + " regions";
+        message(s);
         
         updateOverlay();
         waitForClick();
